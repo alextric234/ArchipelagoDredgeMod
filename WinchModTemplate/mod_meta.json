@@ -1,0 +1,9 @@
+{
+	"Author": "YourName",
+	"Name": "Winch Mod Template",
+	"ModGUID": "YourName.WinchModTemplate",
+	"Version": "0.0.1",
+	"ModAssembly": "WinchModTemplate.dll",
+	"MinWinchVersion": "0.4.0",
+	"Entrypoint": "WinchModTemplate.Loader/Initialize"
+}

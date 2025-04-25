@@ -1,0 +1,6 @@
+<Project>
+	<PropertyGroup>
+		<DredgePath>C:\Program Files (x86)\Steam\steamapps\common\DREDGE</DredgePath>
+		<OutputPath>$(DredgePath)\Mods\YourName.WinchModTemplate</OutputPath>
+	</PropertyGroup>
+</Project>

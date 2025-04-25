@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.33627.172
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WinchModTemplate", "WinchModTemplate\WinchModTemplate.csproj", "{DEABC6B2-2551-43D8-A7B5-B4F7D3A6F423}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DEABC6B2-2551-43D8-A7B5-B4F7D3A6F423}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DEABC6B2-2551-43D8-A7B5-B4F7D3A6F423}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DEABC6B2-2551-43D8-A7B5-B4F7D3A6F423}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DEABC6B2-2551-43D8-A7B5-B4F7D3A6F423}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {AB827B5F-21FB-42A3-9722-89F90C4F0DAA}
+	EndGlobalSection
+EndGlobal
