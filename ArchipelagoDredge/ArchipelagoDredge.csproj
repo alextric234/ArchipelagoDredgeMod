@@ -23,7 +23,7 @@
     <None Include="Assets\**\*.*">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="WinchModTemplate.csproj.user" />
+    <None Include="ArchipelagoDredge.csproj.user" />
   </ItemGroup>
 
   <ItemGroup>

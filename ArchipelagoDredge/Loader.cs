@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace WinchModTemplate
+namespace ArchipelagoDredge
 {
 	public class Loader
 	{
@@ -9,8 +9,8 @@ namespace WinchModTemplate
 		/// </summary>
 		public static void Initialize()
 		{
-			var gameObject = new GameObject(nameof(WinchModTemplate));
-			gameObject.AddComponent<WinchModTemplate>();
+			var gameObject = new GameObject(nameof(ArchipelagoDredge));
+			gameObject.AddComponent<ArchipelagoDredge>();
 			GameObject.DontDestroyOnLoad(gameObject);
 		}
 	}
