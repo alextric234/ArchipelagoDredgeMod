@@ -1,9 +1,9 @@
 {
 	"Author": "Alextric234",
-	"Name": "Winch Mod Template",
+	"Name": "Archipelago Dredge",
 	"ModGUID": "Alextric234.ArchipelagoDredge",
 	"Version": "0.0.1",
 	"ModAssembly": "ArchipelagoDredge.dll",
-	"MinWinchVersion": "0.4.0",
+	"MinWinchVersion": "0.6.0",
 	"Entrypoint": "ArchipelagoDredge.Loader/Initialize"
 }
