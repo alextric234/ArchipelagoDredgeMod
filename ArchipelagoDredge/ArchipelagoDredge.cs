@@ -32,6 +32,9 @@ namespace ArchipelagoDredge
             // Initialize managers
             LocationManager.Initialize();
 
+            // Initialize notification ui
+            ArchipelagoNotificationUi.Initialize();
+
             // Apply Harmony patches
             CorePatches.Apply();
 
@@ -39,6 +42,10 @@ namespace ArchipelagoDredge
 
         private async void Update()
         {
+            if (Input.GetKeyDown(KeyCode.F9))
+            {
+                ArchipelagoNotificationUi.ShowMessage("This is a test message!");
+            }
             if (Input.GetKeyDown(KeyCode.F10))
             {
                 var roomInfo = await theSession.ConnectAsync();
