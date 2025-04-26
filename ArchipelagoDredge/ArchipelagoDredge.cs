@@ -1,43 +1,44 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Threading.Tasks;
-using Archipelago.MultiClient.Net;
+﻿using Archipelago.MultiClient.Net;
 using Archipelago.MultiClient.Net.Enums;
-using Archipelago.MultiClient.Net.Helpers;
-using Archipelago.MultiClient.Net.Packets;
+using ArchipelagoDredge.Game.Managers;
+using ArchipelagoDredge.Game.Patches;
+using ArchipelagoDredge.Network.Models;
 using HarmonyLib;
+using InControl;
 using Newtonsoft.Json;
+using System.Threading.Tasks;
+using ArchipelagoDredge.UI;
+using InControl.NativeDeviceProfiles;
 using UnityEngine;
 using UnityEngine.Localization.Settings;
 using UnityEngine.Localization.Tables;
-using UnityEngine.ResourceManagement.AsyncOperations;
+using Winch.Config;
 using Winch.Core;
 
 namespace ArchipelagoDredge
 {
-	[HarmonyPatch]
+    [HarmonyPatch]
 	public class ArchipelagoDredge : MonoBehaviour
     {
         private ArchipelagoSession theSession;
+        private static ModConfig Config => ModConfig.GetConfig();
         public void Awake()
-		{
-			WinchCore.Log.Info($"{nameof(ArchipelagoDredge)} has loaded!");
-            new Harmony(nameof(ArchipelagoDredge)).PatchAll();
-            theSession = ArchipelagoSessionFactory.CreateSession("localhost", 62852);
+        {
+            WinchCore.Log.Info($"{nameof(ArchipelagoDredge)} has loaded!");
+
+            // Load configuration
+            ConnectionConfig.Load();
+
+            // Initialize managers
+            LocationManager.Initialize();
+
+            // Apply Harmony patches
+            CorePatches.Apply();
 
         }
 
         private async void Update()
         {
-
-            if (Input.GetKeyDown(KeyCode.F9))
-            {
-                var itemManager = GameManager.Instance.ItemManager;
-                itemManager.GetFishItems().ForEach(CreateLocation);
-            }
-
             if (Input.GetKeyDown(KeyCode.F10))
             {
                 var roomInfo = await theSession.ConnectAsync();
@@ -49,19 +50,6 @@ namespace ArchipelagoDredge
             {
                 await theSession.Locations.CompleteLocationChecksAsync(3459028911689314);
             }
-        }
-
-        private async void CreateLocation(FishItemData fish)
-        {
-            var fishName = await GetItemNameAsync(fish.itemNameKey.TableReference, fish.itemNameKey.TableEntryReference);
-            WinchCore.Log.Info($"\"{fishName}\": DredgeLocationData(\"{fish.id}\", \"Open Ocean\", \"Encyclopedia\"),");
-        }
-
-        public async Task<string> GetItemNameAsync(TableReference tableRef, TableEntryReference entryRef)
-        {
-            var op = LocalizationSettings.StringDatabase.GetLocalizedStringAsync(tableRef, entryRef);
-            await op.Task;
-            return op.Result;
         }
 
         [HarmonyPatch(typeof(HarvestMinigameView), nameof(HarvestMinigameView.SpawnItem))]

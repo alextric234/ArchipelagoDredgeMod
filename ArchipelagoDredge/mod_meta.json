@@ -1,7 +1,7 @@
 {
 	"Author": "Alextric234",
 	"Name": "Archipelago Dredge",
-	"ModGUID": "Alextric234.ArchipelagoDredge",
+	"ModGUID": "alextric234.archipelagodredge",
 	"Version": "0.0.1",
 	"ModAssembly": "ArchipelagoDredge.dll",
 	"MinWinchVersion": "0.6.0",

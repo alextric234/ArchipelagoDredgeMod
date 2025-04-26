@@ -1,0 +1,14 @@
+{
+  "apIpAddress": {
+    "type": "text",
+    "title": "alextric234.archipelagodredge.ip.title",
+    "tooltip": "alextric234.archipelagodredge.ip.tooltip",
+    "value": "archipelago.gg"
+  },
+  "apPort": {
+    "type": "integer",
+    "title": "alextric234.archipelagodredge.port.title",
+    "tooltip": "alextric234.archipelagodredge.port.tooltip",
+    "value": 12345
+  }
+}

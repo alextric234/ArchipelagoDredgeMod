@@ -17,6 +17,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Update="Assets\Localization\en.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="default_config.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="mod_meta.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -34,7 +40,14 @@
     <PackageReference Include="DredgeGameLibs" Version="1.5.3" />
     <PackageReference Include="HarmonyX" Version="2.10.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-    <PackageReference Include="Winch" Version="0.5.3" />
+    <PackageReference Include="Winch" Version="0.6.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Game\Patches\" />
+    <Folder Include="Network\Models\" />
+    <Folder Include="Properties\" />
+    <Folder Include="Utils\" />
   </ItemGroup>
 
 </Project>

@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using HarmonyLib;
+using UnityEngine;
 
 namespace ArchipelagoDredge
 {
@@ -12,6 +13,8 @@ namespace ArchipelagoDredge
 			var gameObject = new GameObject(nameof(ArchipelagoDredge));
 			gameObject.AddComponent<ArchipelagoDredge>();
 			GameObject.DontDestroyOnLoad(gameObject);
-		}
+
+            new Harmony("alextric234.archipelagodredge").PatchAll();
+        }
 	}
 }
