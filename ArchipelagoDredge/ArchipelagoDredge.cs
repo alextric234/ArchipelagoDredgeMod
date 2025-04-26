@@ -31,6 +31,7 @@ namespace ArchipelagoDredge
 
             // Initialize managers
             LocationManager.Initialize();
+            TerminalCommandManager.Initialize();
 
             // Initialize notification ui
             ArchipelagoNotificationUi.Initialize();

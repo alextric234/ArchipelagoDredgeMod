@@ -10,31 +10,33 @@ namespace ArchipelagoDredge.Network
     public static class ConnectionManager
     {
         public static ConnectionState State { get; private set; } = ConnectionState.Disconnected;
+        private static string _apHost;
+        private static int _apPort;
+        private static string _slotName;
+        private static string _password;
 
-        public static void Initialize()
+        public static void TryConnect(string apHost, string apPort, string slotName, string password)
         {
-            ConnectionConfig.Load();
-
-            if (ConnectionConfig.Current.AutoConnect)
-            {
-                TryConnect();
-            }
-        }
-
-        public static void TryConnect()
-        {
+            WinchCore.Log.Info("Calling tryconnect");
             if (State == ConnectionState.Connecting || State == ConnectionState.Connected)
                 return;
 
+            _apHost = apHost;
+            int.TryParse(apPort, out _apPort);
+            _slotName = slotName;
+            _password = password;
+
             State = ConnectionState.Connecting;
+            WinchCore.Log.Info("Connecting to Archipelago....");
             ArchipelagoNotificationUi.ShowMessage("Connecting to Archipelago...");
 
             try
             {
                 ArchipelagoClient.Connect(
-                    ConnectionConfig.Current.Host,
-                    ConnectionConfig.Current.SlotName,
-                    ConnectionConfig.Current.Password
+                    _apHost,
+                    _apPort,
+                    _slotName,
+                    _password
                 );
 
                 State = ConnectionState.Connected;

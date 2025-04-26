@@ -12,11 +12,11 @@ namespace ArchipelagoDredge.Network
     {
         public static ArchipelagoSession Session { get; private set; }
 
-        public static void Connect(string host, string slotName, string password)
+        public static void Connect(string apHost, int apPort, string slotName, string password)
         {
             Disconnect(); // Ensure clean state
 
-            Session = ArchipelagoSessionFactory.CreateSession(host);
+            Session = ArchipelagoSessionFactory.CreateSession(apHost, apPort);
             var loginResult = Session.TryConnectAndLogin(
                 "Dredge",
                 slotName,
@@ -29,10 +29,6 @@ namespace ArchipelagoDredge.Network
                 throw new Exception(loginResult.ToString());
             }
 
-            // Register handlers
-            PacketHandler.RegisterHandlers();
-
-            // Apply game settings from config
             ApplyGameSettings();
         }
 
