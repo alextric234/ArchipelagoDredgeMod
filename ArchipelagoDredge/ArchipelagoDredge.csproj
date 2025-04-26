@@ -24,9 +24,13 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="ArchipelagoDredge.csproj.user" />
+    <Content Include="$(NuGetPackageRoot)\archipelago.multiclient.net\6.6.0\lib\net45\Archipelago.MultiClient.Net.dll" Link="Archipelago.MultiClient.Net.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Archipelago.MultiClient.Net" Version="6.6.0" />
     <PackageReference Include="DredgeGameLibs" Version="1.5.3" />
     <PackageReference Include="HarmonyX" Version="2.10.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
