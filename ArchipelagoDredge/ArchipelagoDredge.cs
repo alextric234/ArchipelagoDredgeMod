@@ -1,4 +1,6 @@
-﻿using Archipelago.MultiClient.Net;
+﻿using System.Linq;
+using System.Reflection;
+using Archipelago.MultiClient.Net;
 using Archipelago.MultiClient.Net.Enums;
 using ArchipelagoDredge.Game.Managers;
 using ArchipelagoDredge.Game.Patches;
@@ -15,31 +17,30 @@ using UnityEngine.Localization.Settings;
 using UnityEngine.Localization.Tables;
 using Winch.Config;
 using Winch.Core;
+using Winch.Util;
+using System.Collections.Generic;
+using UnityAsyncAwaitUtil;
+using Winch.Core.API;
 
 namespace ArchipelagoDredge
 {
     [HarmonyPatch]
 	public class ArchipelagoDredge : MonoBehaviour
     {
-        private ArchipelagoSession theSession;
         private static ModConfig Config => ModConfig.GetConfig();
         public void Awake()
         {
             WinchCore.Log.Info($"{nameof(ArchipelagoDredge)} has loaded!");
 
-            // Load configuration
             ConnectionConfig.Load();
 
-            // Initialize managers
             LocationManager.Initialize();
             TerminalCommandManager.Initialize();
 
-            // Initialize notification ui
             ArchipelagoNotificationUi.Initialize();
 
             // Apply Harmony patches
             CorePatches.Apply();
-
         }
 
         public void Quit()
@@ -49,20 +50,27 @@ namespace ArchipelagoDredge
 
         private async void Update()
         {
+            if (ArchipelagoClient.Session.Items.Any())
+            {
+                var apItem = ArchipelagoClient.Session.Items.PeekItem();
+                ArchipelagoItemManager.GetItem(apItem);
+                ArchipelagoClient.Session.Items.DequeueItem();
+            }
+
             if (Input.GetKeyDown(KeyCode.F9))
             {
-                ArchipelagoNotificationUi.ShowMessage("This is a test message!");
-            }
-            if (Input.GetKeyDown(KeyCode.F10))
-            {
-                var roomInfo = await theSession.ConnectAsync();
-                var loginResult = await theSession.LoginAsync("Dredge", "dredgetester", ItemsHandlingFlags.AllItems, password:"");
-                WinchCore.Log.Info($"Hosted loginResult Successful: {loginResult.Successful}");
             }
 
             if (Input.GetKeyDown(KeyCode.F11))
             {
-                await theSession.Locations.CompleteLocationChecksAsync(3459028911689314);
+                if (!ArchipelagoClient.Session.Items.Any())
+                {
+                    WinchCore.Log.Info("No Items");
+                    return;
+                }
+                var apItem = ArchipelagoClient.Session.Items.PeekItem();
+                var dredgeItem = ArchipelagoItemManager.itemCache[apItem.ItemDisplayName];
+                WinchCore.Log.Info($"Got a {dredgeItem.id}!");
             }
         }
 
@@ -92,6 +100,6 @@ namespace ArchipelagoDredge
                     __result = __result.Replace("\"AllItems\"", "7");
                 }
             }
-        }
+        } 
     }
 }

@@ -1,5 +1,8 @@
-﻿using HarmonyLib;
+﻿using ArchipelagoDredge.Game.Managers;
+using ArchipelagoDredge.Network;
+using HarmonyLib;
 using UnityEngine;
+using Winch.Core;
 
 namespace ArchipelagoDredge
 {
@@ -15,6 +18,20 @@ namespace ArchipelagoDredge
 			GameObject.DontDestroyOnLoad(gameObject);
 
             new Harmony("alextric234.archipelagodredge").PatchAll();
+
+            GameManager.Instance.OnGameStarted += OnGameStarted;
+            GameManager.Instance.OnGameEnded += OnGameEnded;
+        }
+
+        private static void OnGameStarted()
+        {
+            ArchipelagoItemManager.Initialize();
+        }
+
+        private static void OnGameEnded()
+        {
+            ArchipelagoClient.Disconnect();
+            ArchipelagoClient.GameReady = false;
         }
 	}
 }

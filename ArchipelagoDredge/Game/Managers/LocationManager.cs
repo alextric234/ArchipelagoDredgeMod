@@ -9,13 +9,7 @@ namespace ArchipelagoDredge.Game.Managers
 
         public static void Initialize()
         {
-            // Create mapping between in-game locations and AP location IDs
-            locationMapping = new Dictionary<string, long>
-            {
-                {"Fish_Cod", 100001},
-                {"Relic_Ancient", 100002},
-                // etc.
-            };
+
         }
 
         public static void CheckLocation(string gameLocation)

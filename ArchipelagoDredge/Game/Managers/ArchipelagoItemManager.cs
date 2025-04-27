@@ -1,0 +1,69 @@
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Archipelago.MultiClient.Net.Models;
+using ArchipelagoDredge.Network;
+using InControl.UnityDeviceProfiles;
+using UnityAsyncAwaitUtil;
+using UnityEngine.Localization.Settings;
+using UnityEngine.Localization.Tables;
+using Winch.Core;
+using Winch.Util;
+
+namespace ArchipelagoDredge.Game.Managers;
+
+public class ArchipelagoItemManager
+{
+    public static Dictionary<string, ItemData> itemCache;
+    public static async void Initialize()
+    {
+        await BuildItemNameCache();
+        ArchipelagoClient.GameReady = true;
+    }
+
+    public static async Task BuildItemNameCache(int batchSize = 25)
+    {
+        var allItems = ItemUtil.GetAllItemData();
+        itemCache = new Dictionary<string, ItemData>();
+
+        for (int i = 0; i < allItems.Length; i += batchSize)
+        {
+            var batch = allItems.Skip(i).Take(batchSize);
+            var batchTasks = batch.Select(async item =>
+            {
+                string name = await GetItemNameAsync(
+                    item.itemNameKey.TableReference,
+                    item.itemNameKey.TableEntryReference
+                );
+                return (name, item);
+            });
+
+            var batchResults = await Task.WhenAll(batchTasks);
+            foreach (var (name, item) in batchResults)
+            {
+                if (!string.IsNullOrEmpty(name))
+                    itemCache[name] = item;
+            }
+        }
+    }
+
+    public static async void LogItemInformation(RelicItemData item)
+    {
+        var itemName =
+            await GetItemNameAsync(item.itemNameKey.TableReference, item.itemNameKey.TableEntryReference);
+        WinchCore.Log.Info($"RelicName: {itemName} RelicId: {item.id}");
+    }
+
+    private static async Task<string> GetItemNameAsync(TableReference tableRef, TableEntryReference entryRef)
+    {
+        var op = LocalizationSettings.StringDatabase.GetLocalizedStringAsync(tableRef, entryRef);
+        await op.Task;
+        return op.Result;
+    }
+
+    public static void GetItem(ItemInfo apItem)
+    {
+        var dredgeItem = itemCache[apItem.ItemName];
+        WinchCore.Log.Info($"Received a {apItem.ItemName} which has an dredge id of {dredgeItem.id}");
+    }
+}
