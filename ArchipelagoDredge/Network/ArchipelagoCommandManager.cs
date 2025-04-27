@@ -1,13 +1,15 @@
 ﻿using System;
+using ArchipelagoDredge.Game.Managers;
 using ArchipelagoDredge.Network.Models;
 using ArchipelagoDredge.UI;
+using CommandTerminal;
 using UnityEngine.Networking;
 using Winch.Core;
 using ConnectionConfig = ArchipelagoDredge.Network.Models.ConnectionConfig;
 
 namespace ArchipelagoDredge.Network
 {
-    public static class ConnectionManager
+    public static class ArchipelagoCommandManager
     {
         public static ConnectionState State { get; private set; } = ConnectionState.Disconnected;
         private static string _apHost;
@@ -17,7 +19,6 @@ namespace ArchipelagoDredge.Network
 
         public static void TryConnect(string apHost, string apPort, string slotName, string password)
         {
-            WinchCore.Log.Info("Calling tryconnect");
             if (State == ConnectionState.Connecting || State == ConnectionState.Connected)
                 return;
 
@@ -27,7 +28,7 @@ namespace ArchipelagoDredge.Network
             _password = password;
 
             State = ConnectionState.Connecting;
-            WinchCore.Log.Info("Connecting to Archipelago....");
+            TerminalCommandManager.LogMessage(TerminalLogType.Message, "Connecting to Archipelago...");
             ArchipelagoNotificationUi.ShowMessage("Connecting to Archipelago...");
 
             try
@@ -40,11 +41,13 @@ namespace ArchipelagoDredge.Network
                 );
 
                 State = ConnectionState.Connected;
+                TerminalCommandManager.LogMessage(TerminalLogType.Message, "Connected to Archipelago!");
                 ArchipelagoNotificationUi.ShowMessage("Connected to Archipelago!");
             }
             catch (Exception e)
             {
                 State = ConnectionState.Disconnected;
+                TerminalCommandManager.LogMessage(TerminalLogType.Error, $"Connection failed: {e.Message}");
                 ArchipelagoNotificationUi.ShowMessage($"Connection failed: {e.Message}");
                 WinchCore.Log.Error($"Connection failed: {e}");
             }
@@ -57,6 +60,7 @@ namespace ArchipelagoDredge.Network
 
             ArchipelagoClient.Disconnect();
             State = ConnectionState.Disconnected;
+            TerminalCommandManager.LogMessage(TerminalLogType.Message, "Disconnected from Archipelago");
             ArchipelagoNotificationUi.ShowMessage("Disconnected from Archipelago");
         }
 

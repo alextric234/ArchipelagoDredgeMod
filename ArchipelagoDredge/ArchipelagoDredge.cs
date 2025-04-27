@@ -7,6 +7,7 @@ using HarmonyLib;
 using InControl;
 using Newtonsoft.Json;
 using System.Threading.Tasks;
+using ArchipelagoDredge.Network;
 using ArchipelagoDredge.UI;
 using InControl.NativeDeviceProfiles;
 using UnityEngine;
@@ -39,6 +40,11 @@ namespace ArchipelagoDredge
             // Apply Harmony patches
             CorePatches.Apply();
 
+        }
+
+        public void Quit()
+        {
+            ArchipelagoClient.Disconnect();
         }
 
         private async void Update()
