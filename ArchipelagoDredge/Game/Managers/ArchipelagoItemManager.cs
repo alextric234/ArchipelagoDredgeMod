@@ -1,14 +1,9 @@
-﻿using System;
+﻿using ArchipelagoDredge.Network;
+using ArchipelagoDredge.Utils;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
-using Archipelago.MultiClient.Net.Helpers;
-using Archipelago.MultiClient.Net.Models;
-using ArchipelagoDredge.Network;
-using ArchipelagoDredge.Utils;
-using InControl.UnityDeviceProfiles;
-using UnityAsyncAwaitUtil;
 using UnityEngine;
 using UnityEngine.Localization.Settings;
 using UnityEngine.Localization.Tables;

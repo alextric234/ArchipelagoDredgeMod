@@ -1,15 +1,7 @@
 ﻿using Archipelago.MultiClient.Net;
 using Archipelago.MultiClient.Net.Enums;
-using Archipelago.MultiClient.Net.Models;
-using ArchipelagoDredge.Network.Models;
-using System;
-using Archipelago.MultiClient.Net.Helpers;
-using ArchipelagoDredge.Game.Managers;
-using UnityEngine.Networking;
-using Winch.Core;
-using Winch.Util;
-using ConnectionConfig = ArchipelagoDredge.Network.Models.ConnectionConfig;
 using ArchipelagoDredge.Utils;
+using System;
 
 namespace ArchipelagoDredge.Network
 {
@@ -37,7 +29,6 @@ namespace ArchipelagoDredge.Network
                 throw new Exception(loginResult.ToString());
             }
 
-            ApplyGameSettings();
             Connected = true;
         }
 
@@ -46,11 +37,6 @@ namespace ArchipelagoDredge.Network
             Connected = false;
             Session?.Socket?.DisconnectAsync();
             Session = null;
-        }
-
-        private static void ApplyGameSettings()
-        {
-            var config = ConnectionConfig.Current;
         }
 
         public static bool HasItemsToProcess()

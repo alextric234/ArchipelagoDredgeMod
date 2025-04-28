@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using ArchipelagoDredge.Network;
+using CommandTerminal;
 using System.Linq;
 using System.Text;
-using Archipelago.MultiClient.Net.Helpers;
-using ArchipelagoDredge.Network;
-using CommandTerminal;
-using Winch.Core;
 
 namespace ArchipelagoDredge.Game.Managers;
 

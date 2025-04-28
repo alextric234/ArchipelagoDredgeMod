@@ -1,11 +1,8 @@
-﻿using System;
-using ArchipelagoDredge.Game.Managers;
-using ArchipelagoDredge.Network.Models;
+﻿using ArchipelagoDredge.Game.Managers;
 using ArchipelagoDredge.UI;
 using CommandTerminal;
-using UnityEngine.Networking;
+using System;
 using Winch.Core;
-using ConnectionConfig = ArchipelagoDredge.Network.Models.ConnectionConfig;
 
 namespace ArchipelagoDredge.Network
 {

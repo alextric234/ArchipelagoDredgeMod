@@ -1,5 +1,4 @@
-﻿using Archipelago.MultiClient.Net.Models;
-using System;
+﻿using System;
 using System.IO;
 using UnityEngine;
 using Winch.Core;
@@ -8,11 +7,14 @@ namespace ArchipelagoDredge.Utils;
 
 public static class ArchipelagoStateManager
 {
-    private static readonly string SaveFilePath = Path.Combine(Application.persistentDataPath, "ArchipelagoState", "ArchipelagoStateData.json");
+    private static readonly string SaveFileFolder = "ArchipelagoState";
+    private static readonly string SaveFileName = "ArchipelagoState";
+    private static string SaveFilePath;
     public static ArchipelagoStateData StateData;
 
-    public static void Load()
+    public static void Load(int slot)
     {
+        SaveFilePath = Path.Combine(Application.persistentDataPath, SaveFileFolder, $"{SaveFileName}-{slot}.json");
         if (File.Exists(SaveFilePath))
         {
             string json = File.ReadAllText(SaveFilePath);
@@ -36,6 +38,11 @@ public static class ArchipelagoStateManager
         string updatedJson = JsonUtility.ToJson(StateData, true);
         WinchCore.Log.Info(updatedJson);
         File.WriteAllText(SaveFilePath, updatedJson);
+    }
+
+    public static void DeleteData()
+    {
+        File.Delete(SaveFilePath);
     }
 }
 
