@@ -25,11 +25,11 @@ public static class SaveManagerPatches
 
     [HarmonyPostfix]
     [HarmonyPatch(nameof(SaveManager.LoadIntoMemory))]
-    public static void LoadIntoMemoryPost(int slot)
+    public static void LoadIntoMemoryPost()
     {
         try
         {
-            ArchipelagoStateManager.Load(slot);
+            ArchipelagoStateManager.Load();
         }
         catch (System.Exception ex)
         {

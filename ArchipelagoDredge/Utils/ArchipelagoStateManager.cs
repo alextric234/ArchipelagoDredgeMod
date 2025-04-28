@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using ArchipelagoDredge.Network;
 using UnityEngine;
 using Winch.Core;
 
@@ -11,8 +12,9 @@ public static class ArchipelagoStateManager
     private static string SaveFilePath;
     public static ArchipelagoStateData StateData;
 
-    public static void Load(int slot)
+    public static void Load()
     {
+        var slot = ArchipelagoClient.Session.Players.ActivePlayer.Name;
         SaveFilePath = Path.Combine(Application.persistentDataPath, SaveFile, $"{SaveFile}-{slot}.json");
         if (File.Exists(SaveFilePath))
         {
