@@ -7,14 +7,13 @@ namespace ArchipelagoDredge.Utils;
 
 public static class ArchipelagoStateManager
 {
-    private static readonly string SaveFileFolder = "ArchipelagoState";
-    private static readonly string SaveFileName = "ArchipelagoState";
+    private static readonly string SaveFile = "ArchipelagoState";
     private static string SaveFilePath;
     public static ArchipelagoStateData StateData;
 
     public static void Load(int slot)
     {
-        SaveFilePath = Path.Combine(Application.persistentDataPath, SaveFileFolder, $"{SaveFileName}-{slot}.json");
+        SaveFilePath = Path.Combine(Application.persistentDataPath, SaveFile, $"{SaveFile}-{slot}.json");
         if (File.Exists(SaveFilePath))
         {
             string json = File.ReadAllText(SaveFilePath);
