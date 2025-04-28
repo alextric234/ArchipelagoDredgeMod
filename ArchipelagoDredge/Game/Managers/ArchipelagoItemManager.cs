@@ -1,10 +1,15 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using Archipelago.MultiClient.Net.Helpers;
 using Archipelago.MultiClient.Net.Models;
 using ArchipelagoDredge.Network;
+using ArchipelagoDredge.Utils;
 using InControl.UnityDeviceProfiles;
 using UnityAsyncAwaitUtil;
+using UnityEngine;
 using UnityEngine.Localization.Settings;
 using UnityEngine.Localization.Tables;
 using Winch.Core;
@@ -61,9 +66,35 @@ public class ArchipelagoItemManager
         return op.Result;
     }
 
-    public static void GetItem(ItemInfo apItem)
+    public static void GetItem()
     {
-        var dredgeItem = itemCache[apItem.ItemName];
-        WinchCore.Log.Info($"Received a {apItem.ItemName} which has an dredge id of {dredgeItem.id}");
+        try
+        {
+            var indexOfItemToProcess = ArchipelagoStateManager.StateData.LastProcessedIndex + 1;
+            var apItem = ArchipelagoClient.Session.Items.AllItemsReceived[indexOfItemToProcess];
+            if (apItem.ItemGame != "Dredge")
+            {
+                ArchipelagoStateManager.StateData.LastProcessedIndex = indexOfItemToProcess;
+                ArchipelagoStateManager.SaveData();
+                return;
+            }
+
+            var dredgeItem = itemCache[apItem.ItemName];
+            Vector3Int foundPosition = Vector3Int.zero;
+            if (!GameManager.Instance.SaveData.Inventory.FindPositionForObject((SpatialItemData)dredgeItem,
+                    out foundPosition))
+            {
+                return;
+            }
+            var spatialItemInstance = GameManager.Instance.ItemManager.CreateItem<SpatialItemInstance>(dredgeItem);
+            GameManager.Instance.SaveData.Inventory.AddObjectToGridData(spatialItemInstance, foundPosition, true);
+            ArchipelagoStateManager.StateData.LastProcessedIndex = indexOfItemToProcess;
+            ArchipelagoStateManager.SaveData();
+        }
+        catch (Exception e)
+        {
+            WinchCore.Log.Error("Error getting item from multiworld");
+            WinchCore.Log.Error(e);
+        }
     }
 }

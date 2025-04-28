@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Reflection;
 using Archipelago.MultiClient.Net;
 using Archipelago.MultiClient.Net.Enums;
@@ -21,6 +22,9 @@ using Winch.Util;
 using System.Collections.Generic;
 using UnityAsyncAwaitUtil;
 using Winch.Core.API;
+using Winch.Data.POI.Dock.Destinations;
+using Winch.Data;
+using ArchipelagoDredge.Utils;
 
 namespace ArchipelagoDredge
 {
@@ -32,6 +36,10 @@ namespace ArchipelagoDredge
         {
             WinchCore.Log.Info($"{nameof(ArchipelagoDredge)} has loaded!");
 
+            ArchipelagoClient.GameReady = false;
+
+            ArchipelagoStateManager.Load();
+
             ConnectionConfig.Load();
 
             LocationManager.Initialize();
@@ -41,6 +49,7 @@ namespace ArchipelagoDredge
 
             // Apply Harmony patches
             CorePatches.Apply();
+
         }
 
         public void Quit()
@@ -50,11 +59,11 @@ namespace ArchipelagoDredge
 
         private async void Update()
         {
-            if (ArchipelagoClient.Session.Items.Any())
+            if (ArchipelagoClient.GameReady &&
+                ArchipelagoClient.Connected &&
+                ArchipelagoClient.HasItemsToProcess())
             {
-                var apItem = ArchipelagoClient.Session.Items.PeekItem();
-                ArchipelagoItemManager.GetItem(apItem);
-                ArchipelagoClient.Session.Items.DequeueItem();
+                ArchipelagoItemManager.GetItem();
             }
 
             if (Input.GetKeyDown(KeyCode.F9))
@@ -100,6 +109,23 @@ namespace ArchipelagoDredge
                     __result = __result.Replace("\"AllItems\"", "7");
                 }
             }
-        } 
+        }
+        
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(SaveManager), nameof(SaveManager.SaveGameFile))]
+        public static void SaveGameFilePost(SaveManager __instance, bool useBackupHistory)
+        {
+            WinchCore.Log.Debug($"SaveGameFilePost({useBackupHistory})");
+            try
+            {
+                ArchipelagoStateManager.StateData.LastProcessedIndexSinceSave =
+                    ArchipelagoStateManager.StateData.LastProcessedIndex;
+                ArchipelagoStateManager.SaveData();
+            }
+            catch (System.Exception ex)
+            {
+                WinchCore.Log.Error(ex);
+            }
+        }
     }
 }
