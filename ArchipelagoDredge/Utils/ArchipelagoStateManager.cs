@@ -12,14 +12,12 @@ public static class ArchipelagoStateManager
     private static string SaveFilePath;
     public static ArchipelagoStateData StateData;
 
-    public static void Load()
+    public static void Load(int slot)
     {
-        var slot = ArchipelagoClient.Session.Players.ActivePlayer.Name;
         SaveFilePath = Path.Combine(Application.persistentDataPath, SaveFile, $"{SaveFile}-{slot}.json");
         if (File.Exists(SaveFilePath))
         {
             string json = File.ReadAllText(SaveFilePath);
-            WinchCore.Log.Info(json);
             StateData = JsonUtility.FromJson<ArchipelagoStateData>(json);
             StateData.LastProcessedIndex = StateData.LastProcessedIndexSinceSave;
         }
@@ -37,7 +35,6 @@ public static class ArchipelagoStateManager
     public static void SaveData()
     {
         string updatedJson = JsonUtility.ToJson(StateData, true);
-        WinchCore.Log.Info(updatedJson);
         File.WriteAllText(SaveFilePath, updatedJson);
     }
 

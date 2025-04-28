@@ -18,8 +18,6 @@ namespace ArchipelagoDredge
 
             ArchipelagoClient.GameReady = false;
 
-            ArchipelagoStateManager.Load();
-
             LocationManager.Initialize();
             TerminalCommandManager.Initialize();
 
@@ -29,8 +27,14 @@ namespace ArchipelagoDredge
             _harmony.PatchAll();
         }
 
+        public void OnGameUnloaded()
+        {
+            ArchipelagoClient.Disconnect();
+        }
+
         public void Quit()
         {
+            WinchCore.Log.Info("Game quit");
             ArchipelagoClient.Disconnect();
         }
 

@@ -29,7 +29,6 @@ namespace ArchipelagoDredge.Network
                 throw new Exception(loginResult.ToString());
             }
 
-            ArchipelagoStateManager.Load();
             Connected = true;
         }
 
