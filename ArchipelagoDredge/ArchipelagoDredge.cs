@@ -33,7 +33,6 @@ namespace ArchipelagoDredge
 
         public void Quit()
         {
-            WinchCore.Log.Info("Game quit");
             ArchipelagoClient.Disconnect();
         }
 

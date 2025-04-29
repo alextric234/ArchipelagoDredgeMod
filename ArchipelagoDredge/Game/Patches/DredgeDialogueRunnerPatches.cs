@@ -12,7 +12,6 @@ public class DredgeDialogueRunnerPatches
     [HarmonyPatch(nameof(DredgeDialogueRunner.DoFinalePreparations))]
     public static void DoFinalePreparationsPost()
     {
-        WinchCore.Log.Info("Finale prepared. Sending goal");
         try
         {
             ArchipelagoClient.Session.SetGoalAchieved();

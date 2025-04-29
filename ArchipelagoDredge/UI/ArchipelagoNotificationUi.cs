@@ -36,8 +36,6 @@ namespace ArchipelagoDredge.UI
         {
             if (_instance != null) return;
 
-            WinchCore.Log.Info("Initializing ArchipelagoNotificationUi...");
-
             var obj = new GameObject("ArchipelagoNotificationManager");
             _instance = obj.AddComponent<ArchipelagoNotificationUi>();
             DontDestroyOnLoad(obj);
@@ -107,8 +105,6 @@ namespace ArchipelagoDredge.UI
                 WinchCore.Log.Error("NotificationUI not initialized!");
                 return;
             }
-
-            WinchCore.Log.Info($"Showing notification: {message}");
 
             // Fade in panel if first message
             if (_activeMessages.Count == 0)
