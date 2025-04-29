@@ -6,9 +6,8 @@
 
 ## Features
 
-- **Archipelago Integration**: Connects *DREDGE* to the Archipelago multiworld system, allowing for shared objectives and synchronized gameplay.
-- **Goal Tracking**: Automatically reports goal completion to the Archipelago server upon finishing in-game milestones.
-- **Winch Mod Loader Compatible**: Built using the Winch mod loader framework for seamless integration and management.
+- **Archipelago Integration**: Connects *DREDGE* to the Archipelago multiworld system.
+- **Goal Tracking**: Automatically reports goal completion to the Archipelago server upon returning all relics to The Collector.
 
 
 ## How to Install
