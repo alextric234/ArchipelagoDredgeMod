@@ -11,8 +11,8 @@ on:
           type: boolean
 
 env:
-    PROJ_USERNAME: YourName
-    PROJ_NAME: WinchModTemplate
+    PROJ_USERNAME: Alextric234
+    PROJ_NAME: ArchipelagoDredge
 
 permissions:
   contents: write
