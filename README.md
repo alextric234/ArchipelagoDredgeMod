@@ -1,8 +1,8 @@
-# ArchipelagoDredgeMod
+# ArchipelagoDredge
 
-**ArchipelagoDredgeMod** is a mod for the game *DREDGE* that integrates Archipelago multiworld support, enabling synchronized progression and goal tracking across multiple players' games.
+**ArchipelagoDredge** is a mod for the game *DREDGE* that integrates Archipelago multiworld support, enabling synchronized progression and goal tracking across multiple players' games.
 
-![Dredge gameplay](https://tse2.mm.bing.net/th?id=OIP.bD0JGhEZ4iG0vbr_P02e_wHaEK&pid=Api)
+![Archipelago Dredge](https://github.com/alextric234/ArchipelagoDredgeMod/blob/main/ArchipelagoDredge/Assets/ArchipelagoDredge.jpg)
 
 ## 🎮 Features
 
