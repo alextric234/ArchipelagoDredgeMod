@@ -1,6 +1,4 @@
 ﻿using ArchipelagoDredge.Network;
-using System.Collections.Generic;
-using Winch.Core;
 
 namespace ArchipelagoDredge.Game.Managers
 {

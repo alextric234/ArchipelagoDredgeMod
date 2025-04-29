@@ -1,6 +1,4 @@
 ﻿using ArchipelagoDredge.Game.Managers;
-using ArchipelagoDredge.Network;
-using HarmonyLib;
 using UnityEngine;
 
 namespace ArchipelagoDredge

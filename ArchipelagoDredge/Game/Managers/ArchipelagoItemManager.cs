@@ -48,7 +48,7 @@ public class ArchipelagoItemManager
                     NameToItemCache[name] = item;
                     ItemIdToNameCache[item.id] = name;
                 }
-                
+
             }
         }
     }

@@ -1,8 +1,6 @@
 ﻿using System;
 using System.IO;
-using ArchipelagoDredge.Network;
 using UnityEngine;
-using Winch.Core;
 
 namespace ArchipelagoDredge.Utils;
 

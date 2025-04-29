@@ -2,7 +2,6 @@
 using Archipelago.MultiClient.Net.Enums;
 using ArchipelagoDredge.Utils;
 using System;
-using ArchipelagoDredge.Game.Managers;
 
 namespace ArchipelagoDredge.Network
 {
