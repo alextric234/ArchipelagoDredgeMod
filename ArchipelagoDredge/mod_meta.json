@@ -2,7 +2,7 @@
 	"Author": "Alextric234",
 	"Name": "Archipelago Dredge",
 	"ModGUID": "alextric234.archipelagodredge",
-	"Version": "0.0.1",
+	"Version": "0.1.0",
 	"ModAssembly": "ArchipelagoDredge.dll",
 	"MinWinchVersion": "0.6.0",
 	"Entrypoint": "ArchipelagoDredge.Loader/Initialize"
