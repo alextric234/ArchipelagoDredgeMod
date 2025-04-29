@@ -79,7 +79,6 @@ public class ArchipelagoItemManager
                 ArchipelagoStateManager.SaveData();
                 return;
             }
-
             var dredgeItem = NameToItemCache[apItem.ItemName];
             Vector3Int foundPosition = Vector3Int.zero;
             if (!GameManager.Instance.SaveData.Inventory.FindPositionForObject((SpatialItemData)dredgeItem,

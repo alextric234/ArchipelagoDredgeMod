@@ -1,5 +1,5 @@
 ﻿using ArchipelagoDredge.Game.Managers;
-using ArchipelagoDredge.UI;
+using ArchipelagoDredge.Ui;
 using CommandTerminal;
 using System;
 using Winch.Core;
@@ -44,8 +44,8 @@ namespace ArchipelagoDredge.Network
             catch (Exception e)
             {
                 State = ConnectionState.Disconnected;
-                TerminalCommandManager.LogMessage(TerminalLogType.Error, $"Connection failed: {e.Message}");
-                ArchipelagoNotificationUi.ShowMessage($"Connection failed: {e.Message}");
+                TerminalCommandManager.LogMessage(TerminalLogType.Error, $"Connection failed.");
+                ArchipelagoNotificationUi.ShowMessage($"Connection failed.");
                 WinchCore.Log.Error($"Connection failed: {e}");
             }
         }

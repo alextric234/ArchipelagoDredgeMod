@@ -2,6 +2,11 @@
 using Archipelago.MultiClient.Net.Enums;
 using ArchipelagoDredge.Utils;
 using System;
+using Archipelago.MultiClient.Net.MessageLog.Messages;
+using ArchipelagoDredge.Ui;
+using CommandTerminal;
+using Winch.Core;
+using ArchipelagoDredge.Game.Managers;
 
 namespace ArchipelagoDredge.Network
 {
@@ -16,6 +21,8 @@ namespace ArchipelagoDredge.Network
 
             Session = ArchipelagoSessionFactory.CreateSession(apHost, apPort);
 
+            Session.MessageLog.OnMessageReceived += OnMessageReceived;
+
             var loginResult = Session.TryConnectAndLogin(
                 "Dredge",
                 slotName,
@@ -26,6 +33,19 @@ namespace ArchipelagoDredge.Network
             if (!loginResult.Successful)
             {
                 throw new Exception(loginResult.ToString());
+            }
+        }
+
+        private static void OnMessageReceived(LogMessage message)
+        {
+            try
+            {
+                ArchipelagoNotificationUi.ShowMessage(message.ToString());
+                TerminalCommandManager.LogMessage(TerminalLogType.Message, message.ToString());
+            }
+            catch (Exception e)
+            {
+                WinchCore.Log.Error(e);
             }
         }
 
