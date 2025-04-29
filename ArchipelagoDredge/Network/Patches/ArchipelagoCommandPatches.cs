@@ -14,5 +14,10 @@ public class ArchipelagoCommandPatches
         {
             __result = __result.Replace("\"AllItems\"", "7");
         }
+
+        if (__result.Contains("ClientGoal"))
+        {
+            __result = __result.Replace("\"ClientGoal\"", "30");
+        }
     }
 }

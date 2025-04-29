@@ -10,7 +10,6 @@ namespace ArchipelagoDredge.Network
     {
         public static ArchipelagoSession Session { get; private set; }
         public static bool GameReady { get; set; }
-        public static bool Connected { get; set; }
 
         public static void Connect(string apHost, int apPort, string slotName, string password)
         {
@@ -29,20 +28,10 @@ namespace ArchipelagoDredge.Network
             {
                 throw new Exception(loginResult.ToString());
             }
-
-            Connected = true;
-        }
-
-        public static void SendEncyclopediaLocationCheck(SpatialItemInstance spatialItemInstance)
-        {
-            var apLocationName = ArchipelagoItemManager.ItemIdToNameCache[spatialItemInstance._itemData.id];
-            var apLocationId = Session.Locations.GetLocationIdFromName("Dredge", apLocationName);
-            Session.Locations.CompleteLocationChecksAsync(apLocationId);
         }
 
         public static void Disconnect()
         {
-            Connected = false;
             Session?.Socket?.DisconnectAsync();
             Session = null;
         }

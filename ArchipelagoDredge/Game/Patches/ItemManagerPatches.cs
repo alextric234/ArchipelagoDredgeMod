@@ -25,7 +25,7 @@ public class ItemManagerPatches
             }
             else
             {
-                ArchipelagoClient.SendEncyclopediaLocationCheck(spatialItemInstance);
+                ArchipelagoLocationManager.SendEncyclopediaLocationCheck(spatialItemInstance);
             }
         }
 

@@ -18,7 +18,6 @@ namespace ArchipelagoDredge
 
             ArchipelagoClient.GameReady = false;
 
-            LocationManager.Initialize();
             TerminalCommandManager.Initialize();
 
             ArchipelagoNotificationUi.Initialize();
@@ -42,7 +41,7 @@ namespace ArchipelagoDredge
         private async void Update()
         {
             if (ArchipelagoClient.GameReady &&
-                ArchipelagoClient.Connected &&
+                ArchipelagoClient.Session.Socket.Connected &&
                 ArchipelagoClient.HasItemsToProcess())
             {
                 ArchipelagoItemManager.GetItem();
