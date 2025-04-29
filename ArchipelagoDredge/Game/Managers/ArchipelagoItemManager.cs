@@ -14,7 +14,8 @@ namespace ArchipelagoDredge.Game.Managers;
 
 public class ArchipelagoItemManager
 {
-    public static Dictionary<string, ItemData> itemCache;
+    public static Dictionary<string, ItemData> NameToItemCache;
+    public static Dictionary<string, string> ItemIdToNameCache;
     public static async void Initialize()
     {
         await BuildItemNameCache();
@@ -24,7 +25,8 @@ public class ArchipelagoItemManager
     public static async Task BuildItemNameCache(int batchSize = 25)
     {
         var allItems = ItemUtil.GetAllItemData();
-        itemCache = new Dictionary<string, ItemData>();
+        NameToItemCache = new Dictionary<string, ItemData>();
+        ItemIdToNameCache = new Dictionary<string, string>();
 
         for (int i = 0; i < allItems.Length; i += batchSize)
         {
@@ -42,7 +44,11 @@ public class ArchipelagoItemManager
             foreach (var (name, item) in batchResults)
             {
                 if (!string.IsNullOrEmpty(name))
-                    itemCache[name] = item;
+                {
+                    NameToItemCache[name] = item;
+                    ItemIdToNameCache[item.id] = name;
+                }
+                
             }
         }
     }
@@ -74,7 +80,7 @@ public class ArchipelagoItemManager
                 return;
             }
 
-            var dredgeItem = itemCache[apItem.ItemName];
+            var dredgeItem = NameToItemCache[apItem.ItemName];
             Vector3Int foundPosition = Vector3Int.zero;
             if (!GameManager.Instance.SaveData.Inventory.FindPositionForObject((SpatialItemData)dredgeItem,
                     out foundPosition))

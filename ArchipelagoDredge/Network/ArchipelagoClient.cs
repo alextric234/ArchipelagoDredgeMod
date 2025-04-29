@@ -2,6 +2,7 @@
 using Archipelago.MultiClient.Net.Enums;
 using ArchipelagoDredge.Utils;
 using System;
+using ArchipelagoDredge.Game.Managers;
 
 namespace ArchipelagoDredge.Network
 {
@@ -30,6 +31,13 @@ namespace ArchipelagoDredge.Network
             }
 
             Connected = true;
+        }
+
+        public static void SendEncyclopediaLocationCheck(SpatialItemInstance spatialItemInstance)
+        {
+            var apLocationName = ArchipelagoItemManager.ItemIdToNameCache[spatialItemInstance._itemData.id];
+            var apLocationId = Session.Locations.GetLocationIdFromName("Dredge", apLocationName);
+            Session.Locations.CompleteLocationChecksAsync(apLocationId);
         }
 
         public static void Disconnect()

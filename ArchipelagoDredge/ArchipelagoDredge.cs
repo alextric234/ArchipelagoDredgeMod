@@ -25,6 +25,7 @@ namespace ArchipelagoDredge
 
             _harmony = new Harmony("com.alextric234.archipelago.dredge");
             _harmony.PatchAll();
+
         }
 
         public void OnGameUnloaded()
@@ -45,22 +46,6 @@ namespace ArchipelagoDredge
                 ArchipelagoClient.HasItemsToProcess())
             {
                 ArchipelagoItemManager.GetItem();
-            }
-
-            if (Input.GetKeyDown(KeyCode.F9))
-            {
-            }
-
-            if (Input.GetKeyDown(KeyCode.F11))
-            {
-                if (!ArchipelagoClient.Session.Items.Any())
-                {
-                    WinchCore.Log.Info("No Items");
-                    return;
-                }
-                var apItem = ArchipelagoClient.Session.Items.PeekItem();
-                var dredgeItem = ArchipelagoItemManager.itemCache[apItem.ItemDisplayName];
-                WinchCore.Log.Info($"Got a {dredgeItem.id}!");
             }
         }
     }

@@ -1,4 +1,6 @@
-﻿using HarmonyLib;
+﻿using ArchipelagoDredge.Game.Managers;
+using ArchipelagoDredge.Network;
+using HarmonyLib;
 
 namespace ArchipelagoDredge.Game.Patches;
 
@@ -20,6 +22,10 @@ public class ItemManagerPatches
             if (caller == "GridUI" || caller == "SellModeActionHandler")
             {
                 return false;
+            }
+            else
+            {
+                ArchipelagoClient.SendEncyclopediaLocationCheck(spatialItemInstance);
             }
         }
 
