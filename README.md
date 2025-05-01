@@ -12,3 +12,10 @@
 
 ## How to Install
 Download the DREDGE Mod Manager from [dredgemods.com](https://dredgemods.com/)!
+
+### Hosting a Multiworld
+Visit [Archipelago.gg/Setup](https://archipelago.gg/tutorial) for steps on setting up the Archipelago software to generate a multiworld 
+
+### Joining a multiworld
+Once your save is loaded in DREDGE open the terminal (by pressing `~`)
+Type the command `ap connect <hostname> <port> <slotname> <password(is optional)>`
