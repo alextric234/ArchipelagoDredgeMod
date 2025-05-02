@@ -9,7 +9,7 @@ public class TerminalCommandManager
 {
     public static void Initialize()
     {
-        Terminal.Shell.AddCommand("ap", ConnectToArchipelago, 1, int.MaxValue, "commands for archipelago multiworld");
+        Terminal.Shell.AddCommand("ap", ArchipelagoCommands, 1, int.MaxValue, "commands for archipelago multiworld");
     }
 
     public static void LogMessage(TerminalLogType logType, string message)
@@ -17,7 +17,7 @@ public class TerminalCommandManager
         Terminal.Log(logType, message);
     }
 
-    private static void ConnectToArchipelago(CommandArg[] args)
+    private static void ArchipelagoCommands(CommandArg[] args)
     {
         var commandArgs = args.Skip(1).ToArray();
         switch (args[0].ToString().ToLower())

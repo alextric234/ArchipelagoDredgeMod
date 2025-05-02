@@ -37,9 +37,18 @@ namespace ArchipelagoDredge.Network
                     _password
                 );
 
-                State = ConnectionState.Connected;
-                TerminalCommandManager.LogMessage(TerminalLogType.Message, "Connected to Archipelago!");
-                ArchipelagoNotificationUi.ShowMessage("Connected to Archipelago!");
+                if (ArchipelagoClient.Session != null &&
+                    ArchipelagoClient.Session.Socket != null &&
+                    ArchipelagoClient.Session.Socket.Connected)
+                {
+                    State = ConnectionState.Connected;
+                    TerminalCommandManager.LogMessage(TerminalLogType.Message, "Connected to Archipelago!");
+                    ArchipelagoNotificationUi.ShowMessage("Connected to Archipelago!");
+                }
+                else
+                {
+                    State = ConnectionState.Disconnected;
+                }
             }
             catch (Exception e)
             {

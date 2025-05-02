@@ -17,6 +17,11 @@ namespace ArchipelagoDredge.Network
 
         public static void Connect(string apHost, int apPort, string slotName, string password)
         {
+            if (!GameReady)
+            {
+                TerminalCommandManager.LogMessage(TerminalLogType.Error, "Please load a save before connecting to a multiworld");
+                return;
+            }
             Disconnect(); // Ensure clean state
 
             Session = ArchipelagoSessionFactory.CreateSession(apHost, apPort);
