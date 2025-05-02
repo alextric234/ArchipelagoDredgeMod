@@ -106,15 +106,15 @@ public class ArchipelagoItemManager
         {
             return GameManager.Instance.SaveData.Storage;
         }
-        if (GameManager.Instance.SaveData.OverflowStorage.FindPositionForObject((SpatialItemData)dredgeItem,
-                out foundPosition))
-        {
-            return GameManager.Instance.SaveData.OverflowStorage;
-        }
         if (GameManager.Instance.SaveData.Inventory.FindPositionForObject((SpatialItemData)dredgeItem,
                 out foundPosition))
         {
             return GameManager.Instance.SaveData.Inventory;
+        }
+        if (GameManager.Instance.SaveData.OverflowStorage.FindPositionForObject((SpatialItemData)dredgeItem,
+                out foundPosition))
+        {
+            return GameManager.Instance.SaveData.OverflowStorage;
         }
         return null;
     }
