@@ -1,5 +1,6 @@
 ﻿using ArchipelagoDredge.Network;
 using ArchipelagoDredge.Utils;
+using HarmonyLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -81,13 +82,13 @@ public class ArchipelagoItemManager
             }
             var dredgeItem = NameToItemCache[apItem.ItemName];
             Vector3Int foundPosition = Vector3Int.zero;
-            if (!GameManager.Instance.SaveData.Inventory.FindPositionForObject((SpatialItemData)dredgeItem,
-                    out foundPosition))
+            var inventoryTarget = GetInventoryTarget(dredgeItem, out foundPosition);
+            if (inventoryTarget == null)
             {
                 return;
             }
             var spatialItemInstance = GameManager.Instance.ItemManager.CreateItem<SpatialItemInstance>(dredgeItem);
-            GameManager.Instance.SaveData.Inventory.AddObjectToGridData(spatialItemInstance, foundPosition, true);
+            inventoryTarget.AddObjectToGridData(spatialItemInstance, foundPosition, true);
             ArchipelagoStateManager.StateData.LastProcessedIndex = indexOfItemToProcess;
             ArchipelagoStateManager.SaveData();
         }
@@ -95,6 +96,36 @@ public class ArchipelagoItemManager
         {
             WinchCore.Log.Error("Error getting item from multiworld");
             WinchCore.Log.Error(e);
+        }
+    }
+
+    private static SerializableGrid GetInventoryTarget(ItemData dredgeItem, out Vector3Int foundPosition)
+    {
+        if (GameManager.Instance.SaveData.Storage.FindPositionForObject((SpatialItemData)dredgeItem,
+                out foundPosition))
+        {
+            return GameManager.Instance.SaveData.Storage;
+        }
+        if (GameManager.Instance.SaveData.OverflowStorage.FindPositionForObject((SpatialItemData)dredgeItem,
+                out foundPosition))
+        {
+            return GameManager.Instance.SaveData.OverflowStorage;
+        }
+        if (GameManager.Instance.SaveData.Inventory.FindPositionForObject((SpatialItemData)dredgeItem,
+                out foundPosition))
+        {
+            return GameManager.Instance.SaveData.Inventory;
+        }
+        return null;
+    }
+
+    public static void RestockShops()
+    {
+        var shopRestocker = GameObject.FindObjectOfType<ShopRestocker>();
+        if (shopRestocker != null)
+        {
+            AccessTools.Method(typeof(ShopRestocker), "TryRefreshShops")
+                .Invoke(shopRestocker, null);
         }
     }
 }

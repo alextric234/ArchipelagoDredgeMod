@@ -39,6 +39,8 @@ namespace ArchipelagoDredge.Network
             {
                 throw new Exception(loginResult.ToString());
             }
+
+            ArchipelagoItemManager.RestockShops();
         }
 
         private static void OnMessageReceived(LogMessage message)
