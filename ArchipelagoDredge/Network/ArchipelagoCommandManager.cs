@@ -1,7 +1,7 @@
 ﻿using ArchipelagoDredge.Game.Managers;
-using ArchipelagoDredge.Ui;
 using CommandTerminal;
 using System;
+using ArchipelagoDredge.Game.Helpers;
 using Winch.Core;
 
 namespace ArchipelagoDredge.Network
@@ -26,7 +26,6 @@ namespace ArchipelagoDredge.Network
 
             State = ConnectionState.Connecting;
             TerminalCommandManager.LogMessage(TerminalLogType.Message, "Connecting to Archipelago...");
-            ArchipelagoNotificationUi.ShowMessage("Connecting to Archipelago...");
 
             try
             {
@@ -43,7 +42,7 @@ namespace ArchipelagoDredge.Network
                 {
                     State = ConnectionState.Connected;
                     TerminalCommandManager.LogMessage(TerminalLogType.Message, "Connected to Archipelago!");
-                    ArchipelagoNotificationUi.ShowMessage("Connected to Archipelago!");
+                    NotificationHelper.ShowNotificationWithColour(NotificationType.NONE, "Connected to Archipelago!", DredgeColorTypeEnum.POSITIVE);
                 }
                 else
                 {
@@ -54,7 +53,7 @@ namespace ArchipelagoDredge.Network
             {
                 State = ConnectionState.Disconnected;
                 TerminalCommandManager.LogMessage(TerminalLogType.Error, $"Connection failed.");
-                ArchipelagoNotificationUi.ShowMessage($"Connection failed.");
+                NotificationHelper.ShowNotificationWithColour(NotificationType.NONE, "Connection failed.", DredgeColorTypeEnum.NEGATIVE);
                 WinchCore.Log.Error($"Connection failed: {e}");
             }
         }
@@ -67,7 +66,7 @@ namespace ArchipelagoDredge.Network
             ArchipelagoClient.Disconnect();
             State = ConnectionState.Disconnected;
             TerminalCommandManager.LogMessage(TerminalLogType.Message, "Disconnected from Archipelago");
-            ArchipelagoNotificationUi.ShowMessage("Disconnected from Archipelago");
+            NotificationHelper.ShowNotificationWithColour(NotificationType.NONE, "Disconnected from Archipelago", DredgeColorTypeEnum.NEUTRAL);
         }
 
         public enum ConnectionState

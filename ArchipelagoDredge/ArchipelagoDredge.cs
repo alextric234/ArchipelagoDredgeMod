@@ -1,6 +1,6 @@
-﻿using ArchipelagoDredge.Game.Managers;
+﻿using ArchipelagoDredge.Game.Helpers;
+using ArchipelagoDredge.Game.Managers;
 using ArchipelagoDredge.Network;
-using ArchipelagoDredge.Ui;
 using HarmonyLib;
 using UnityEngine;
 using Winch.Core;
@@ -18,8 +18,6 @@ namespace ArchipelagoDredge
             ArchipelagoClient.GameReady = false;
 
             TerminalCommandManager.Initialize();
-
-            ArchipelagoNotificationUi.Initialize();
 
             _harmony = new Harmony("com.alextric234.archipelago.dredge");
             _harmony.PatchAll();

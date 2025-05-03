@@ -1,4 +1,5 @@
 ﻿using ArchipelagoDredge.Game.Managers;
+using ArchipelagoDredge.Utils;
 using UnityEngine;
 
 namespace ArchipelagoDredge
@@ -15,6 +16,14 @@ namespace ArchipelagoDredge
             GameObject.DontDestroyOnLoad(gameObject);
 
             GameManager.Instance.OnGameStarted += OnGameStarted;
+
+            if (GameObject.Find("MainThreadDispatcher") == null)
+            {
+                GameObject dispatcherObj = new GameObject("MainThreadDispatcher");
+                dispatcherObj.AddComponent<MainThreadDispatcher>();
+                UnityEngine.Object.DontDestroyOnLoad(dispatcherObj);
+            }
+
         }
 
         private static void OnGameStarted()

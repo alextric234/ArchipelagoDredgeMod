@@ -2,11 +2,16 @@
 using Archipelago.MultiClient.Net.Enums;
 using ArchipelagoDredge.Utils;
 using System;
+using System.Linq;
+using Archipelago.MultiClient.Net.Colors;
 using Archipelago.MultiClient.Net.MessageLog.Messages;
-using ArchipelagoDredge.Ui;
+using Archipelago.MultiClient.Net.MessageLog.Parts;
+using Archipelago.MultiClient.Net.Models;
+using ArchipelagoDredge.Game.Helpers;
 using CommandTerminal;
 using Winch.Core;
 using ArchipelagoDredge.Game.Managers;
+using Yarn.Compiler;
 
 namespace ArchipelagoDredge.Network
 {
@@ -45,15 +50,8 @@ namespace ArchipelagoDredge.Network
 
         private static void OnMessageReceived(LogMessage message)
         {
-            try
-            {
-                ArchipelagoNotificationUi.ShowMessage(message.ToString());
-                TerminalCommandManager.LogMessage(TerminalLogType.Message, message.ToString());
-            }
-            catch (Exception e)
-            {
-                WinchCore.Log.Error(e);
-            }
+            TerminalCommandManager.LogMessage(TerminalLogType.Message, message.ToString());
+            NotificationHelper.TryToSendNotification(message);
         }
 
         public static void Disconnect()
