@@ -21,7 +21,7 @@ public class ItemManagerPatches
 
             if (caller == "HarvestMinigameView")
             {
-                ArchipelagoLocationManager.SendEncyclopediaLocationCheck(spatialItemInstance);
+                ArchipelagoLocationManager.SendLocationCheck("Encyclopedia", spatialItemInstance.id);
             }
             else
             {

@@ -4,10 +4,10 @@ namespace ArchipelagoDredge.Game.Managers
 {
     public static class ArchipelagoLocationManager
     {
-        public static void SendEncyclopediaLocationCheck(SpatialItemInstance spatialItemInstance)
+        public static void SendLocationCheck(string category, string itemId)
         {
-            var apLocationName = ArchipelagoItemManager.ItemIdToNameCache[spatialItemInstance._itemData.id];
-            var apLocationId = ArchipelagoClient.Session.Locations.GetLocationIdFromName("Dredge", apLocationName);
+            var apLocationName = ArchipelagoItemManager.ItemIdToNameCache[itemId];
+            var apLocationId = ArchipelagoClient.Session.Locations.GetLocationIdFromName("Dredge", $"{category} - {apLocationName}");
             ArchipelagoClient.Session.Locations.CompleteLocationChecksAsync(apLocationId);
         }
     }
