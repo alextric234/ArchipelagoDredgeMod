@@ -1,5 +1,6 @@
 ﻿using ArchipelagoDredge.Game.Managers;
 using HarmonyLib;
+using Winch.Core;
 
 namespace ArchipelagoDredge.Game.Patches;
 
@@ -15,16 +16,18 @@ public class ItemManagerPatches
 
         if (spatialItemInstance._itemData.itemSubtype == ItemSubtype.FISH)
         {
+            WinchCore.Log.Info($"");
             var stackTrace = new System.Diagnostics.StackTrace();
             var caller = stackTrace.GetFrame(2)?.GetMethod()?.DeclaringType?.Name;
+            WinchCore.Log.Info($"Caller: {caller}");
 
-            if (caller == "GridUI" || caller == "SellModeActionHandler")
+            if (caller == "HarvestMinigameView")
             {
-                return false;
+                ArchipelagoLocationManager.SendEncyclopediaLocationCheck(spatialItemInstance);
             }
             else
             {
-                ArchipelagoLocationManager.SendEncyclopediaLocationCheck(spatialItemInstance);
+                return false;
             }
         }
 
