@@ -36,9 +36,13 @@ public static class ArchipelagoStateManager
         File.WriteAllText(SaveFilePath, updatedJson);
     }
 
-    public static void DeleteData()
+    public static void Delete(int slot)
     {
-        File.Delete(SaveFilePath);
+        SaveFilePath = Path.Combine(Application.persistentDataPath, SaveFile, $"{SaveFile}-{slot}.json");
+        if (File.Exists(SaveFilePath))
+        {
+            File.Delete(SaveFilePath);
+        }
     }
 }
 

@@ -36,4 +36,18 @@ public static class SaveManagerPatches
             WinchCore.Log.Error(ex);
         }
     }
+
+    [HarmonyPostfix]
+    [HarmonyPatch(nameof(SaveManager.DeleteSaveFile))]
+    public static void DeleteSaveFilePost(int slot)
+    {
+        try
+        {
+            ArchipelagoStateManager.Delete(slot);
+        }
+        catch (System.Exception ex)
+        {
+            WinchCore.Log.Error(ex);
+        }
+    }
 }
