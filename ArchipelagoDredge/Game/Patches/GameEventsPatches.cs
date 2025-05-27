@@ -3,7 +3,7 @@ using HarmonyLib;
 
 namespace ArchipelagoDredge.Game.Patches;
 
-[HarmonyPatch(nameof(GameEvents))]
+[HarmonyPatch(typeof(GameEvents))]
 public static class GameEventsPatches
 {
     [HarmonyPrefix]
