@@ -12,6 +12,8 @@
 
 ## How to Install
 Download the DREDGE Mod Manager from [dredgemods.com](https://dredgemods.com/)!
+Install Winch
+Install Archipelago Dredge
 
 ### Hosting a Multiworld
 Visit [Archipelago.gg/Setup](https://archipelago.gg/tutorial) for steps on setting up the Archipelago software to generate a multiworld 
