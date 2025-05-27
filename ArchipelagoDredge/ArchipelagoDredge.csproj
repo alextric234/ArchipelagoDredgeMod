@@ -40,7 +40,7 @@
     <PackageReference Include="DredgeGameLibs" Version="1.5.3" />
     <PackageReference Include="HarmonyX" Version="2.10.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-    <PackageReference Include="Winch" Version="0.6.0" />
+    <PackageReference Include="Winch" Version="0.6.1" />
   </ItemGroup>
 
   <ItemGroup>
