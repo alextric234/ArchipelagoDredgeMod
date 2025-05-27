@@ -80,12 +80,10 @@ namespace ArchipelagoDredge.Game.Helpers
             while (_messageQueue.Count > 0)
             {
                 var message = _messageQueue.Dequeue();
-                WinchCore.Log.Info("Got a message to notify");
                 try
                 {
                     if (message.Parts.All(p => p.Type != MessagePartType.Player))
                     {
-                        WinchCore.Log.Info("Message doesn't contain a player");
                         continue;
                     }
 
@@ -95,18 +93,15 @@ namespace ArchipelagoDredge.Game.Helpers
                         var messagePlayer = message.Parts.FirstOrDefault(m => m.Type == MessagePartType.Player)?.Text;
                         if (messagePlayer != currentPlayer)
                         {
-                            WinchCore.Log.Info("Message doesn't pertain to current player");
                             continue;
                         }
 
                         var messageItem = message.Parts.FirstOrDefault(m => m.Type == MessagePartType.Item);
                         if (messageItem == null)
                         {
-                            WinchCore.Log.Info("Message doesn't contain an item");
                             continue;
                         }
 
-                        WinchCore.Log.Info("Player found their item");
                         MainThreadDispatcher.Enqueue(() => BuildAndSendNotification("Found", messageItem));
                         continue;
                     }
@@ -115,21 +110,18 @@ namespace ArchipelagoDredge.Game.Helpers
                     {
                         if (message.Parts.Any(p => p.Type == MessagePartType.HintStatus))
                         {
-                            WinchCore.Log.Info("Message is about a hint");
                             continue;
                         }
 
                         var messageItem = message.Parts.FirstOrDefault(m => m.Type == MessagePartType.Item);
                         if (message.Parts.FirstOrDefault()!.Text == currentPlayer)
                         {
-                            WinchCore.Log.Info("Current player found an item");
                             var receivingPlayer = message.Parts.Where(p => p.Type == MessagePartType.Player)
                                 .ElementAtOrDefault(1);
                             MainThreadDispatcher.Enqueue(() => BuildAndSendNotification($"Found {receivingPlayer}'s", messageItem));
                         }
                         else
                         {
-                            WinchCore.Log.Info("Current player received an item");
                             MainThreadDispatcher.Enqueue(() => BuildAndSendNotification("Received", messageItem));
                         }
                     }

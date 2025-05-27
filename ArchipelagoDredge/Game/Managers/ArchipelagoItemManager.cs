@@ -54,13 +54,6 @@ public class ArchipelagoItemManager
         }
     }
 
-    public static async void LogItemInformation(RelicItemData item)
-    {
-        var itemName =
-            await GetItemNameAsync(item.itemNameKey.TableReference, item.itemNameKey.TableEntryReference);
-        WinchCore.Log.Info($"RelicName: {itemName} RelicId: {item.id}");
-    }
-
     private static async Task<string> GetItemNameAsync(TableReference tableRef, TableEntryReference entryRef)
     {
         var op = LocalizationSettings.StringDatabase.GetLocalizedStringAsync(tableRef, entryRef);
