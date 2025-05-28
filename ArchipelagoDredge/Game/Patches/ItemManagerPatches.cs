@@ -1,5 +1,7 @@
 ﻿using ArchipelagoDredge.Game.Managers;
+using ArchipelagoDredge.Game.Patches.Helpers;
 using HarmonyLib;
+using UnityEngine.Timeline;
 using Winch.Core;
 
 namespace ArchipelagoDredge.Game.Patches;
@@ -11,24 +13,16 @@ public class ItemManagerPatches
     [HarmonyPatch(nameof(ItemManager.SetItemSeen))]
     public static bool Prefix(SpatialItemInstance spatialItemInstance)
     {
-        if (spatialItemInstance?._itemData == null)
-            return true;
-
-        if (spatialItemInstance._itemData.itemSubtype == ItemSubtype.FISH)
+        var context = HarvestContext.GetContext(spatialItemInstance);
+        if (context == "Harvester" || context == "HarvestMinigame")
         {
-            var stackTrace = new System.Diagnostics.StackTrace();
-            var caller = stackTrace.GetFrame(2)?.GetMethod()?.DeclaringType?.Name;
-
-            if (caller == "HarvestMinigameView")
-            {
-                ArchipelagoLocationManager.SendLocationCheck("Fish", spatialItemInstance.id);
-            }
-            else
-            {
-                return false;
-            }
+            ArchipelagoLocationManager.SendLocationCheck("Fish", spatialItemInstance.id);
+            HarvestContext.RemoveContext(spatialItemInstance);
         }
-
+        else
+        {
+            return false;
+        }
         return true;
     }
 }

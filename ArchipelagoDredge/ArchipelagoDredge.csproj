@@ -44,7 +44,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Game\Patches\" />
+    <Folder Include="Game\Patches\Helpers\" />
     <Folder Include="Network\Patches\" />
     <Folder Include="Properties\" />
     <Folder Include="Utils\" />
