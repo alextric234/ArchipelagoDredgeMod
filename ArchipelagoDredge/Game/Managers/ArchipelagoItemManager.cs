@@ -67,7 +67,7 @@ public class ArchipelagoItemManager
         {
             var indexOfItemToProcess = ArchipelagoStateManager.StateData.LastProcessedIndex + 1;
             var apItem = ArchipelagoClient.Session.Items.AllItemsReceived[indexOfItemToProcess];
-            if (apItem.ItemGame != "Dredge")
+            if (apItem.ItemGame != "Dredge" || apItem.ItemName.Contains("Starting Gear"))
             {
                 ArchipelagoStateManager.StateData.LastProcessedIndex = indexOfItemToProcess;
                 ArchipelagoStateManager.SaveData();
