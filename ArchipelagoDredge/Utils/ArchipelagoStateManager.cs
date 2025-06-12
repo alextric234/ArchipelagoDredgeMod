@@ -51,4 +51,6 @@ public class ArchipelagoStateData
 {
     public int LastProcessedIndexSinceSave = -1;
     public int LastProcessedIndex = -1;
+    public int CurrentHullUpgrade = 0;
+    public int HullUpgradeSinceSave = 0;
 }

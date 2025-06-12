@@ -1,5 +1,4 @@
-﻿using ArchipelagoDredge.Game.Helpers;
-using ArchipelagoDredge.Game.Managers;
+﻿using ArchipelagoDredge.Game.Managers;
 using ArchipelagoDredge.Network;
 using HarmonyLib;
 using UnityEngine;

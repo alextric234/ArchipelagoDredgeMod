@@ -15,6 +15,8 @@ public static class SaveManagerPatches
         {
             ArchipelagoStateManager.StateData.LastProcessedIndexSinceSave =
                 ArchipelagoStateManager.StateData.LastProcessedIndex;
+            ArchipelagoStateManager.StateData.HullUpgradeSinceSave =
+                ArchipelagoStateManager.StateData.CurrentHullUpgrade;
             ArchipelagoStateManager.SaveData();
         }
         catch (System.Exception ex)

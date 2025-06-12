@@ -5,8 +5,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Archipelago.MultiClient.Net.Enums;
+using ArchipelagoDredge.Game.Helpers;
 using UnityEngine;
 using UnityEngine.Localization.Settings;
+using UnityEngine.Localization.SmartFormat.Utilities;
 using UnityEngine.Localization.Tables;
 using Winch.Core;
 using Winch.Util;
@@ -67,14 +70,23 @@ public class ArchipelagoItemManager
         {
             var indexOfItemToProcess = ArchipelagoStateManager.StateData.LastProcessedIndex + 1;
             var apItem = ArchipelagoClient.Session.Items.AllItemsReceived[indexOfItemToProcess];
-            if (apItem.ItemGame != "Dredge" || apItem.ItemName.Contains("Starting Gear"))
+            WinchCore.Log.Info($"Item Player: {apItem.Player}");
+            WinchCore.Log.Info($"Item Name: {apItem.ItemName}");
+            if (apItem.ItemGame != "Dredge" || 
+                apItem.ItemName.Contains("Starting Gear"))
             {
-                ArchipelagoStateManager.StateData.LastProcessedIndex = indexOfItemToProcess;
-                ArchipelagoStateManager.SaveData();
+                UpdateStateData(indexOfItemToProcess);
                 return;
             }
-            var dredgeItem = NameToItemCache[apItem.ItemName];
+            if (apItem.ItemName.StartsWith("Progressive"))
+            {
+                UpgradeHelper.UpgradeItem(apItem.ItemName);
+                UpdateStateData(indexOfItemToProcess);
+                return;
+            }
+
             Vector3Int foundPosition = Vector3Int.zero;
+            var dredgeItem = NameToItemCache[apItem.ItemName];
             var inventoryTarget = GetInventoryTarget(dredgeItem, out foundPosition);
             if (inventoryTarget == null)
             {
@@ -82,8 +94,7 @@ public class ArchipelagoItemManager
             }
             var spatialItemInstance = GameManager.Instance.ItemManager.CreateItem<SpatialItemInstance>(dredgeItem);
             inventoryTarget.AddObjectToGridData(spatialItemInstance, foundPosition, true);
-            ArchipelagoStateManager.StateData.LastProcessedIndex = indexOfItemToProcess;
-            ArchipelagoStateManager.SaveData();
+            UpdateStateData(indexOfItemToProcess);
         }
         catch (Exception e)
         {
@@ -110,6 +121,12 @@ public class ArchipelagoItemManager
             return GameManager.Instance.SaveData.OverflowStorage;
         }
         return null;
+    }
+
+    private static void UpdateStateData(int indexOfItemToProcess)
+    {
+        ArchipelagoStateManager.StateData.LastProcessedIndex = indexOfItemToProcess;
+        ArchipelagoStateManager.SaveData();
     }
 
     public static void RestockShops()
