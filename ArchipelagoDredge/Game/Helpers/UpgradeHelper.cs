@@ -22,7 +22,6 @@ namespace ArchipelagoDredge.Game.Helpers
 
         public static void UpgradeItem(string itemName)
         {
-            WinchCore.Log.Info($"Item Name: {itemName}");
             switch (itemName)
             {
                 case "Progressive Hull":

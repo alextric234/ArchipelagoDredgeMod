@@ -1,15 +1,13 @@
-﻿using ArchipelagoDredge.Network;
+﻿using ArchipelagoDredge.Game.Helpers;
+using ArchipelagoDredge.Network;
 using ArchipelagoDredge.Utils;
 using HarmonyLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Archipelago.MultiClient.Net.Enums;
-using ArchipelagoDredge.Game.Helpers;
 using UnityEngine;
 using UnityEngine.Localization.Settings;
-using UnityEngine.Localization.SmartFormat.Utilities;
 using UnityEngine.Localization.Tables;
 using Winch.Core;
 using Winch.Util;
@@ -70,8 +68,6 @@ public class ArchipelagoItemManager
         {
             var indexOfItemToProcess = ArchipelagoStateManager.StateData.LastProcessedIndex + 1;
             var apItem = ArchipelagoClient.Session.Items.AllItemsReceived[indexOfItemToProcess];
-            WinchCore.Log.Info($"Item Player: {apItem.Player}");
-            WinchCore.Log.Info($"Item Name: {apItem.ItemName}");
             if (apItem.ItemGame != "Dredge" || 
                 apItem.ItemName.Contains("Starting Gear"))
             {
@@ -94,6 +90,7 @@ public class ArchipelagoItemManager
             }
             var spatialItemInstance = GameManager.Instance.ItemManager.CreateItem<SpatialItemInstance>(dredgeItem);
             inventoryTarget.AddObjectToGridData(spatialItemInstance, foundPosition, true);
+            RestockShops();
             UpdateStateData(indexOfItemToProcess);
         }
         catch (Exception e)
@@ -101,6 +98,24 @@ public class ArchipelagoItemManager
             WinchCore.Log.Error("Error getting item from multiworld");
             WinchCore.Log.Error(e);
         }
+    }
+
+    public static List<SpatialItemData> GetItemsForShops()
+    {
+        var gearSubTypes = new HashSet<ItemSubtype>
+        {
+            ItemSubtype.ENGINE,
+            ItemSubtype.LIGHT,
+            ItemSubtype.NET,
+            ItemSubtype.POT,
+            ItemSubtype.ROD
+        };
+        var apItemNames = ArchipelagoClient.Session.Items.AllItemsReceived.Where(item => item.ItemGame == "Dredge").Select(item => item.ItemName).ToList();
+        var collectedItems = NameToItemCache.Where(entry => apItemNames.Contains(entry.Key))
+            .Where(entry => gearSubTypes.Contains(entry.Value.itemSubtype))
+            .Select(entry => entry.Value)
+            .OfType<SpatialItemData>().ToList();
+        return collectedItems;
     }
 
     private static SerializableGrid GetInventoryTarget(ItemData dredgeItem, out Vector3Int foundPosition)

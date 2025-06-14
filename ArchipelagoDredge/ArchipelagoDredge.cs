@@ -41,6 +41,10 @@ namespace ArchipelagoDredge
             {
                 ArchipelagoItemManager.GetItem();
             }
+
+            if (Input.GetKeyDown(KeyCode.F5))
+            {
+            }
         }
     }
 }
