@@ -1,13 +1,5 @@
-﻿using ArchipelagoDredge.Game.Managers;
-using ArchipelagoDredge.Game.Patches.Helpers;
+﻿using ArchipelagoDredge.Network;
 using HarmonyLib;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ArchipelagoDredge.Network;
-using Winch.Core;
 
 namespace ArchipelagoDredge.Game.Patches;
 
