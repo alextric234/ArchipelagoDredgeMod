@@ -19,7 +19,7 @@ public class DredgeDialogueRunnerPatches
         catch (Exception e)
         {
             WinchCore.Log.Error("Failed to set goal");
-            WinchCore.Log.Info(e);
+            WinchCore.Log.Error(e);
         }
     }
 }

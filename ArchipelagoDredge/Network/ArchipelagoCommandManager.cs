@@ -1,7 +1,7 @@
-﻿using ArchipelagoDredge.Game.Managers;
+﻿using ArchipelagoDredge.Game.Helpers;
+using ArchipelagoDredge.Game.Managers;
 using CommandTerminal;
 using System;
-using ArchipelagoDredge.Game.Helpers;
 using Winch.Core;
 
 namespace ArchipelagoDredge.Network

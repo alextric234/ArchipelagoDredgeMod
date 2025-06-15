@@ -1,20 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Archipelago.MultiClient.Net.Colors;
-using Archipelago.MultiClient.Net.MessageLog.Messages;
-using Archipelago.MultiClient.Net.MessageLog.Parts;
-using ArchipelagoDredge.Network;
+﻿using Archipelago.MultiClient.Net.Colors;
+using ArchipelagoDredge.Game.Models;
 using ArchipelagoDredge.Utils;
-using UnityEngine;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using Winch.Core;
 
 namespace ArchipelagoDredge.Game.Helpers
 {
     internal static class NotificationHelper
     {
-        private static readonly Queue<LogMessage> _messageQueue = new();
+        private static readonly Queue<DredgeNotification> _messageQueue = new();
         private static bool _isProcessing = false;
 
         public static void ShowNotificationWithColour(NotificationType notificationType, string text, DredgeColorTypeEnum colour)
@@ -32,15 +28,15 @@ namespace ArchipelagoDredge.Game.Helpers
             GameEvents.Instance.TriggerNotification(notificationType, text);
         }
 
-        public static void BuildAndSendNotification(string beginningOfString, MessagePart messageItem)
+        public static void BuildAndSendNotification(DredgeNotification notification)
         {
             try
             {
-                string fullText = $"{beginningOfString} {messageItem.Text}";
                 NotificationType type = NotificationType.ITEM_ADDED;
                 DredgeColorTypeEnum color = DredgeColorTypeEnum.NEUTRAL;
 
-                switch (messageItem.PaletteColor)
+
+                switch (notification.MessageColor)
                 {
                     case PaletteColor.Plum:
                         color = DredgeColorTypeEnum.POSITIVE;
@@ -57,7 +53,7 @@ namespace ArchipelagoDredge.Game.Helpers
                         break;
                 }
 
-                MainThreadDispatcher.Enqueue(() => ShowNotificationWithColour(type, fullText, color));
+                MainThreadDispatcher.Enqueue(() => ShowNotificationWithColour(type, notification.Message, color));
             }
             catch (Exception e)
             {
@@ -65,9 +61,9 @@ namespace ArchipelagoDredge.Game.Helpers
             }
         }
 
-        public static void TryToSendNotification(LogMessage message)
+        public static void TryToSendNotification(DredgeNotification notification)
         {
-            _messageQueue.Enqueue(message);
+            _messageQueue.Enqueue(notification);
             if (!_isProcessing)
             {
                 _ = ProcessQueue();
@@ -79,52 +75,10 @@ namespace ArchipelagoDredge.Game.Helpers
             _isProcessing = true;
             while (_messageQueue.Count > 0)
             {
-                var message = _messageQueue.Dequeue();
+                var notification = _messageQueue.Dequeue();
                 try
                 {
-                    if (message.Parts.All(p => p.Type != MessagePartType.Player))
-                    {
-                        continue;
-                    }
-
-                    var currentPlayer = ArchipelagoClient.Session.Players.ActivePlayer.Name;
-                    if (message.Parts.Count(p => p.Type == MessagePartType.Player) == 1)
-                    {
-                        var messagePlayer = message.Parts.FirstOrDefault(m => m.Type == MessagePartType.Player)?.Text;
-                        if (messagePlayer != currentPlayer)
-                        {
-                            continue;
-                        }
-
-                        var messageItem = message.Parts.FirstOrDefault(m => m.Type == MessagePartType.Item);
-                        if (messageItem == null)
-                        {
-                            continue;
-                        }
-
-                        MainThreadDispatcher.Enqueue(() => BuildAndSendNotification("Found", messageItem));
-                        continue;
-                    }
-
-                    if (message.Parts.Count(p => p.Type == MessagePartType.Player) == 2)
-                    {
-                        if (message.Parts.Any(p => p.Type == MessagePartType.HintStatus))
-                        {
-                            continue;
-                        }
-
-                        var messageItem = message.Parts.FirstOrDefault(m => m.Type == MessagePartType.Item);
-                        if (message.Parts.FirstOrDefault()!.Text == currentPlayer)
-                        {
-                            var receivingPlayer = message.Parts.Where(p => p.Type == MessagePartType.Player)
-                                .ElementAtOrDefault(1);
-                            MainThreadDispatcher.Enqueue(() => BuildAndSendNotification($"Found {receivingPlayer}'s", messageItem));
-                        }
-                        else
-                        {
-                            MainThreadDispatcher.Enqueue(() => BuildAndSendNotification("Received", messageItem));
-                        }
-                    }
+                    MainThreadDispatcher.Enqueue(() => BuildAndSendNotification(notification));
                 }
                 catch (Exception e)
                 {

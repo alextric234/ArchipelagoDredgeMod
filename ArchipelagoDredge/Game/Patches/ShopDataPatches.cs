@@ -1,8 +1,7 @@
-﻿using ArchipelagoDredge.Network;
+﻿using ArchipelagoDredge.Game.Managers;
+using ArchipelagoDredge.Network;
 using HarmonyLib;
 using System.Collections.Generic;
-using ArchipelagoDredge.Game.Managers;
-using Winch.Core;
 
 namespace ArchipelagoDredge.Game.Patches;
 
@@ -13,7 +12,7 @@ public class ShopDataPatches
     [HarmonyPatch(nameof(ShopData.GetNewStock))]
     public static void PostFix(ref List<SpatialItemData> __result)
     {
-        if (ArchipelagoClient.GameReady && 
+        if (ArchipelagoClient.GameReady &&
             ArchipelagoClient.Session.Socket.Connected)
         {
             var items = ArchipelagoItemManager.GetItemsForShops();

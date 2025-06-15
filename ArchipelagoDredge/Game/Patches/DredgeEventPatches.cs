@@ -1,6 +1,5 @@
 ﻿using ArchipelagoDredge.Game.Managers;
 using HarmonyLib;
-using Winch.Core;
 using Winch.Core.API;
 
 namespace ArchipelagoDredge.Game.Patches;

@@ -1,6 +1,6 @@
 ﻿using Archipelago.MultiClient.Net;
 using Archipelago.MultiClient.Net.Enums;
-using Archipelago.MultiClient.Net.MessageLog.Messages;
+using Archipelago.MultiClient.Net.Packets;
 using ArchipelagoDredge.Game.Helpers;
 using ArchipelagoDredge.Game.Managers;
 using ArchipelagoDredge.Utils;
@@ -25,7 +25,7 @@ namespace ArchipelagoDredge.Network
 
             Session = ArchipelagoSessionFactory.CreateSession(apHost, apPort);
 
-            Session.MessageLog.OnMessageReceived += OnMessageReceived;
+            Session.Socket.PacketReceived += OnPacketReceived;
 
             var loginResult = Session.TryConnectAndLogin(
                 "Dredge",
@@ -42,10 +42,16 @@ namespace ArchipelagoDredge.Network
             ArchipelagoItemManager.RestockShops();
         }
 
-        private static void OnMessageReceived(LogMessage message)
+        private static void OnPacketReceived(ArchipelagoPacketBase packet)
         {
-            TerminalCommandManager.LogMessage(TerminalLogType.Message, message.ToString());
-            NotificationHelper.TryToSendNotification(message);
+            switch (packet.PacketType)
+            {
+                case ArchipelagoPacketType.PrintJSON:
+                    PrintJsonHelper.ShowPrintJsonMessage((ItemPrintJsonPacket)packet);
+                    break;
+                default:
+                    return;
+            }
         }
 
         public static void Disconnect()
