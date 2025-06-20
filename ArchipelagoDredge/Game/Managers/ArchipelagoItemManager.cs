@@ -102,6 +102,28 @@ public class ArchipelagoItemManager
 
     public static List<SpatialItemData> GetItemsForShops()
     {
+        var apItemNames = ArchipelagoClient.Session.Items.AllItemsReceived.Where(item => item.ItemGame == "Dredge").Select(item => item.ItemName).ToList();
+        var collectedItems = NameToItemCache.Where(entry => apItemNames.Contains(entry.Key))
+            .Where(entry => CheckIfValidShopItem(entry.Value))
+            .Select(entry => entry.Value)
+            .OfType<SpatialItemData>().ToList();
+
+        return collectedItems;
+    }
+
+    private static bool CheckIfValidShopItem(ItemData item)
+    {
+
+        var invalidShopItems = new List<string> {
+            "rod19",
+            "rod8",
+            "rod16",
+            "rod17",
+            "rod20",
+            "pot8",
+            "engine10",
+            "net7"
+        };
         var gearSubTypes = new HashSet<ItemSubtype>
         {
             ItemSubtype.ENGINE,
@@ -110,12 +132,23 @@ public class ArchipelagoItemManager
             ItemSubtype.POT,
             ItemSubtype.ROD
         };
-        var apItemNames = ArchipelagoClient.Session.Items.AllItemsReceived.Where(item => item.ItemGame == "Dredge").Select(item => item.ItemName).ToList();
-        var collectedItems = NameToItemCache.Where(entry => apItemNames.Contains(entry.Key))
-            .Where(entry => gearSubTypes.Contains(entry.Value.itemSubtype))
-            .Select(entry => entry.Value)
-            .OfType<SpatialItemData>().ToList();
-        return collectedItems;
+
+        if (item.id.StartsWith("tir"))
+        {
+            return false;
+        }
+
+        if (invalidShopItems.Contains(item.id))
+        {
+            return false;
+        }
+
+        if (!gearSubTypes.Contains(item.itemSubtype))
+        {
+            return false;
+        }
+
+        return true;
     }
 
     private static SerializableGrid GetInventoryTarget(ItemData dredgeItem, out Vector3Int foundPosition)
