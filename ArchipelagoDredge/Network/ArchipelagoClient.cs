@@ -62,6 +62,9 @@ namespace ArchipelagoDredge.Network
 
         public static bool HasItemsToProcess()
         {
+            if (Session == null || Session.Socket == null || !Session.Socket.Connected)
+                return false;
+
             var latestItemIndex = Session.Items.AllItemsReceived.Count - 1;
             return ArchipelagoStateManager.StateData.LastProcessedIndex < latestItemIndex;
         }

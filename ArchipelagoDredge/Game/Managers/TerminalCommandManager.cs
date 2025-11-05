@@ -2,6 +2,7 @@
 using CommandTerminal;
 using System.Linq;
 using System.Text;
+using Winch.Core;
 
 namespace ArchipelagoDredge.Game.Managers;
 
@@ -106,11 +107,63 @@ public class TerminalCommandManager
 
     private static void ConnectCommand(CommandArg[] args)
     {
-        var apHost = args[0].ToString();
-        var apPort = args[1].ToString();
-        var slotName = args[2].ToString();
-        var password = args.ElementAtOrDefault(3).ToString() ?? "";
-        ArchipelagoCommandManager.TryConnect(apHost, apPort, slotName, password);
+        if (args.Length == 0)
+        {
+            ArchipelagoCommandManager.ConfigConnect();
+            return;
+        }
+
+        if (args.Length < 3)
+        {
+            WinchCore.Log.Error("Usage: /ap connect <ip> <port> <slotName> [password]");
+            return;
+        }
+
+        if (!int.TryParse(args[1].ToString(), out var port) || port <= 0 || port > 65535)
+        {
+            WinchCore.Log.Error("Invalid port number");
+        }
+
+        var host = args[0].ToString();
+
+        string password = "";
+        var slotParts = new System.Collections.Generic.List<string>();
+
+        for (int i = 2; i < args.Length; i++)
+        {
+            var token = args[i].ToString();
+
+            if (token == "-p" || token == "--password")
+            {
+                if (i + 1 < args.Length)
+                {
+                    password = args[i + 1].ToString();
+                }
+                else
+                {
+                    password = "";
+                }
+                break;
+            }
+
+            if (token.StartsWith("password=", System.StringComparison.OrdinalIgnoreCase))
+            {
+                password = token.Substring("password=".Length);
+                break;
+            }
+
+            slotParts.Add(token);
+        }
+
+        var slot = string.Join(" ", slotParts).Trim();
+
+        if (string.IsNullOrEmpty(slot))
+        {
+            WinchCore.Log.Error("Slot name is required. Usage: /ap connect <host> <port> <slot name...> [-p <password>]");
+            return;
+        }
+
+        ArchipelagoCommandManager.TryConnect(host, port, slot, password);
     }
 
     private static void HelpCommand(CommandArg[] args)

@@ -1,6 +1,10 @@
 {
-  "alextric234.archipelagodredge.ip.title": "ApWorld Ip Address",
-  "alextric234.archipelagodredge.ip.tooltip": "Input the the ip of the archipelago room you're connecting to",
-  "alextric234.archipelagodredge.port.title": "ApWorld Port",
-  "alextric234.archipelagodredge.port.tooltip": "Input the the port of the archipelago room you're connecting to"
+  "alextric234.archipelagodredge.ip.title": "Server Address",
+  "alextric234.archipelagodredge.ip.tooltip": "The Archipelago server hostname or IP address.",
+  "alextric234.archipelagodredge.port.title": "Port",
+  "alextric234.archipelagodredge.port.tooltip": "The Archipelago server port.",
+  "alextric234.archipelagodredge.slot.title": "Slot Name",
+  "alextric234.archipelagodredge.slot.tooltip": "Your Archipelago slot (spaces allowed).",
+  "alextric234.archipelagodredge.password.title": "Password",
+  "alextric234.archipelagodredge.password.tooltip": "Optional password if the server requires one."
 }

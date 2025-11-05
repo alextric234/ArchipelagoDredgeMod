@@ -14,13 +14,26 @@ namespace ArchipelagoDredge.Network
         private static string _slotName;
         private static string _password;
 
-        public static void TryConnect(string apHost, string apPort, string slotName, string password)
+        public static void ConfigConnect()
+        {
+            var (host, port, slot, password) = ApConfigHelper.Read();
+
+            if (string.IsNullOrWhiteSpace(host) || port <= 0 || port > 65535)
+            {
+                WinchCore.Log.Error("[AP] Host and Port are required.");
+                return;
+            }
+
+            TryConnect(host, port, slot, password);
+        }
+
+        public static void TryConnect(string apHost, int apPort, string slotName, string password)
         {
             if (State == ConnectionState.Connecting || State == ConnectionState.Connected)
                 return;
 
             _apHost = apHost;
-            int.TryParse(apPort, out _apPort);
+            _apPort = apPort;
             _slotName = slotName;
             _password = password;
 

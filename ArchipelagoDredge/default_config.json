@@ -9,6 +9,19 @@
     "type": "integer",
     "title": "alextric234.archipelagodredge.port.title",
     "tooltip": "alextric234.archipelagodredge.port.tooltip",
-    "value": 12345
+    "value": 38281
+  },
+  "apSlotName": {
+    "type": "text",
+    "title": "alextric234.archipelagodredge.slot.title",
+    "tooltip": "alextric234.archipelagodredge.slot.tooltip",
+    "value": ""
+  },
+  "apPassword": {
+    "type": "text",
+    "title": "alextric234.archipelagodredge.password.title",
+    "tooltip": "alextric234.archipelagodredge.password.tooltip",
+    "value": "",
+    "secret": true
   }
 }
