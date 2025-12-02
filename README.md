@@ -71,3 +71,16 @@ _(You can also open the terminal and simply type `ap connect` to connect using y
 - If connection fails, check your **host, port, and slot name** carefully.
 - You can safely disconnect and reconnect at any time without restarting DREDGE.
 
+
+
+## ❗ Known Issues
+
+### ⚠️ Mod Compatibility
+ArchipelagoDredge has **not been tested with other DREDGE mods installed**.  
+Some mods modify core systems that this mod depends on.
+
+Confirmed conflicts:
+- **Discord Rich Presence**
+- **Tweaks**
+
+If something is not working, please disable other mods and try again before reporting an issue.
