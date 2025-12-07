@@ -136,7 +136,11 @@ public class ArchipelagoItemManager
 
         var validGeneralItems = new List<string>
         {
-            "explosives"
+            "explosives",
+            "bait",
+            "bait-ab",
+            "bait-crab",
+            "bait-exotic"
         };
 
         if (item.id.StartsWith("tir"))
