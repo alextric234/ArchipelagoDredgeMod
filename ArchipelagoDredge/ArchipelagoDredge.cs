@@ -4,6 +4,7 @@ using ArchipelagoDredge.Network;
 using HarmonyLib;
 using UnityEngine;
 using Winch.Core;
+using Winch.Util;
 
 namespace ArchipelagoDredge
 {
@@ -13,16 +14,23 @@ namespace ArchipelagoDredge
         private static Harmony _harmony;
         public void Awake()
         {
-            WinchCore.Log.Info($"{nameof(ArchipelagoDredge)} has loaded!");
+            try
+            {
+                WinchCore.Log.Info($"{nameof(ArchipelagoDredge)} has loaded!");
 
-            ArchipelagoClient.GameReady = false;
+                ArchipelagoClient.GameReady = false;
 
-            TerminalCommandManager.Initialize();
+                TerminalCommandManager.Initialize();
 
-            _harmony = new Harmony("com.alextric234.archipelago.dredge");
-            _harmony.PatchAll();
+                _harmony = new Harmony("com.alextric234.archipelago.dredge");
+                _harmony.PatchAll();
 
-            GetConnectionConfigPanel();
+                GetConnectionConfigPanel();
+            }
+            catch(System.Exception ex)
+            {
+                WinchCore.Log.Error($"[AP] Error in awake: {ex}");
+            }
         }
 
         public void OnGameUnloaded()
@@ -37,24 +45,27 @@ namespace ArchipelagoDredge
 
         private void Update()
         {
-
-            if (Input.GetKeyDown(KeyCode.F5))
-            {
-                //For debugging
-            }
-
-            if (Input.GetKeyDown(KeyCode.F8))
-            {
-                ArchipelagoCommandManager.ConfigConnect();
-            }
-
-            if (Input.GetKeyDown(KeyCode.F10))
-            {
-                ArchipelagoCommandManager.Disconnect();
-            }
-
             try
             {
+                if (Input.GetKeyDown(KeyCode.F5))
+                {
+                    WinchCore.Log.Info("Debug key pressed...");
+                    
+                    //Debugging code here
+                    
+                    WinchCore.Log.Info("Debug complete.");
+                }
+
+                if (Input.GetKeyDown(KeyCode.F8))
+                {
+                    ArchipelagoCommandManager.ConfigConnect();
+                }
+
+                if (Input.GetKeyDown(KeyCode.F10))
+                {
+                    ArchipelagoCommandManager.Disconnect();
+                }
+
                 bool connected = ArchipelagoClient.Session?.Socket?.Connected == true;
                 bool ready = ArchipelagoClient.GameReady == true;
                 bool hasItems = ArchipelagoClient.HasItemsToProcess() == true;

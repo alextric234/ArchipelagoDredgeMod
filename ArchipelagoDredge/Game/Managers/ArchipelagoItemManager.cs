@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ArchipelagoDredge.Game.Patches;
 using UnityEngine;
 using UnityEngine.Localization.Settings;
 using UnityEngine.Localization.Tables;
@@ -81,15 +82,21 @@ public class ArchipelagoItemManager
                 return;
             }
 
-            Vector3Int foundPosition = Vector3Int.zero;
+            SerializableGrid validGrid = null;
             var dredgeItem = NameToItemCache[apItem.ItemName];
-            var inventoryTarget = GetInventoryTarget(dredgeItem, out foundPosition);
-            if (inventoryTarget == null)
-            {
-                return;
+            if (dredgeItem is SpatialItemData){
+                validGrid = GetValidGrid(dredgeItem);
+            
+                if (validGrid == null)
+                {
+                    return;
+                }
             }
-            var spatialItemInstance = GameManager.Instance.ItemManager.CreateItem<SpatialItemInstance>(dredgeItem);
-            inventoryTarget.AddObjectToGridData(spatialItemInstance, foundPosition, true);
+
+            ArchipelagoDredgeCallFlag.Allow = true;
+            GameManager.Instance.ItemManager.AddItemById(dredgeItem.id, validGrid, false);
+            ArchipelagoDredgeCallFlag.Allow = false;
+            
             RestockShops();
             UpdateStateData(indexOfItemToProcess);
         }
@@ -166,10 +173,10 @@ public class ArchipelagoItemManager
         return true;
     }
 
-    private static SerializableGrid GetInventoryTarget(ItemData dredgeItem, out Vector3Int foundPosition)
+    private static SerializableGrid GetValidGrid(ItemData dredgeItem)
     {
-        if (GameManager.Instance.SaveData.Storage.FindPositionForObject((SpatialItemData)dredgeItem,
-                out foundPosition))
+        Vector3Int foundPosition;
+        if (GameManager.Instance.SaveData.Storage.FindPositionForObject((SpatialItemData)dredgeItem, out foundPosition))
         {
             return GameManager.Instance.SaveData.Storage;
         }
