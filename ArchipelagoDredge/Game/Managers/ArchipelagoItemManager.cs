@@ -130,7 +130,13 @@ public class ArchipelagoItemManager
             ItemSubtype.LIGHT,
             ItemSubtype.NET,
             ItemSubtype.POT,
-            ItemSubtype.ROD
+            ItemSubtype.ROD,
+            ItemSubtype.GENERAL
+        };
+
+        var validGeneralItems = new List<string>
+        {
+            "explosives"
         };
 
         if (item.id.StartsWith("tir"))
@@ -144,6 +150,11 @@ public class ArchipelagoItemManager
         }
 
         if (!gearSubTypes.Contains(item.itemSubtype))
+        {
+            return false;
+        }
+
+        if (item.itemSubtype == ItemSubtype.GENERAL && !validGeneralItems.Contains(item.id))
         {
             return false;
         }
