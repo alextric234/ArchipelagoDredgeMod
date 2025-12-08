@@ -44,6 +44,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Assets\Textures\" />
     <Folder Include="Network\Patches\" />
     <Folder Include="Properties\" />
     <Folder Include="Utils\" />
