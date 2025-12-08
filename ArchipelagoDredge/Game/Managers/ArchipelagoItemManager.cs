@@ -69,7 +69,7 @@ public class ArchipelagoItemManager
         {
             var indexOfItemToProcess = ArchipelagoStateManager.StateData.LastProcessedIndex + 1;
             var apItem = ArchipelagoClient.Session.Items.AllItemsReceived[indexOfItemToProcess];
-            if (apItem.ItemGame != "Dredge" ||
+            if (apItem.ItemGame != "DREDGE" ||
                 apItem.ItemName.Contains("Starting Gear"))
             {
                 UpdateStateData(indexOfItemToProcess);
@@ -107,7 +107,7 @@ public class ArchipelagoItemManager
 
     public static List<SpatialItemData> GetItemsForShops()
     {
-        var apItemNames = ArchipelagoClient.Session.Items.AllItemsReceived.Where(item => item.ItemGame == "Dredge").Select(item => item.ItemName).ToList();
+        var apItemNames = ArchipelagoClient.Session.Items.AllItemsReceived.Where(item => item.ItemGame == "DREDGE").Select(item => item.ItemName).ToList();
         var collectedItems = NameToItemCache.Where(entry => apItemNames.Contains(entry.Key))
             .Where(entry => CheckIfValidShopItem(entry.Value))
             .Select(entry => entry.Value)

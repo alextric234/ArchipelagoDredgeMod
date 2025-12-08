@@ -7,7 +7,7 @@ namespace ArchipelagoDredge.Game.Managers
         public static void SendLocationCheck(string category, string itemId)
         {
             var apLocationName = ArchipelagoItemManager.ItemIdToNameCache[itemId];
-            var apLocationId = ArchipelagoClient.Session.Locations.GetLocationIdFromName("Dredge", $"{category} - {apLocationName}");
+            var apLocationId = ArchipelagoClient.Session.Locations.GetLocationIdFromName("DREDGE", $"{category} - {apLocationName}");
             ArchipelagoClient.Session.Locations.CompleteLocationChecksAsync(apLocationId);
         }
 
@@ -15,7 +15,7 @@ namespace ArchipelagoDredge.Game.Managers
         {
             var apLocationName = ArchipelagoItemManager.ItemIdToNameCache[itemId];
             var apLocations = ArchipelagoClient.Session.Locations.AllLocationsChecked;
-            var apLocationId = ArchipelagoClient.Session.Locations.GetLocationIdFromName("Dredge", $"{category} - {apLocationName}");
+            var apLocationId = ArchipelagoClient.Session.Locations.GetLocationIdFromName("DREDGE", $"{category} - {apLocationName}");
             
             if (apLocationId == -1)
             {

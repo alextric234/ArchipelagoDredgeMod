@@ -28,7 +28,7 @@ namespace ArchipelagoDredge.Network
             Session.Socket.PacketReceived += OnPacketReceived;
 
             var loginResult = Session.TryConnectAndLogin(
-                "Dredge",
+                "DREDGE",
                 slotName,
                 ItemsHandlingFlags.AllItems,
                 password: password
