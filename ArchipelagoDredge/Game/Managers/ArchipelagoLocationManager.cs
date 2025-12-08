@@ -14,8 +14,14 @@ namespace ArchipelagoDredge.Game.Managers
         public static bool HasThisLocationBeenChecked(string category, string itemId)
         {
             var apLocationName = ArchipelagoItemManager.ItemIdToNameCache[itemId];
-            var apLocationId = ArchipelagoClient.Session.Locations.GetLocationIdFromName("Dredge", $"{category} - {apLocationName}");
             var apLocations = ArchipelagoClient.Session.Locations.AllLocationsChecked;
+            var apLocationId = ArchipelagoClient.Session.Locations.GetLocationIdFromName("Dredge", $"{category} - {apLocationName}");
+            
+            if (apLocationId == -1)
+            {
+                return true;
+            }
+            
             
             return apLocations.Contains(apLocationId);
         }
