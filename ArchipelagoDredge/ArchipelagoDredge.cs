@@ -50,8 +50,8 @@ namespace ArchipelagoDredge
                 if (Input.GetKeyDown(KeyCode.F5))
                 {
                     WinchCore.Log.Info("Debug key pressed...");
-                    
-                    //Debugging code here
+
+                    //Debug code goes here
                     
                     WinchCore.Log.Info("Debug complete.");
                 }

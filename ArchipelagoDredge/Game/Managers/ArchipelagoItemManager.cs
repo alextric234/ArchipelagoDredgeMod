@@ -93,9 +93,7 @@ public class ArchipelagoItemManager
                 }
             }
 
-            ArchipelagoDredgeCallFlag.Allow = true;
             GameManager.Instance.ItemManager.AddItemById(dredgeItem.id, validGrid, false);
-            ArchipelagoDredgeCallFlag.Allow = false;
             
             RestockShops();
             UpdateStateData(indexOfItemToProcess);
