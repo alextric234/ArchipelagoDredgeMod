@@ -15,8 +15,6 @@ namespace ArchipelagoDredge
             gameObject.AddComponent<ArchipelagoDredge>();
             GameObject.DontDestroyOnLoad(gameObject);
 
-            GameManager.Instance.OnGameStarted += OnGameStarted;
-
             if (GameObject.Find("MainThreadDispatcher") == null)
             {
                 GameObject dispatcherObj = new GameObject("MainThreadDispatcher");
@@ -24,11 +22,6 @@ namespace ArchipelagoDredge
                 UnityEngine.Object.DontDestroyOnLoad(dispatcherObj);
             }
 
-        }
-
-        private static void OnGameStarted()
-        {
-            ArchipelagoItemManager.Initialize();
         }
     }
 }

@@ -17,51 +17,6 @@ namespace ArchipelagoDredge.Game.Managers;
 
 public class ArchipelagoItemManager
 {
-    public static Dictionary<string, ItemData> NameToItemCache;
-    public static Dictionary<string, string> ItemIdToNameCache;
-    public static async void Initialize()
-    {
-        await BuildItemNameCache();
-        ArchipelagoClient.GameReady = true;
-    }
-
-    public static async Task BuildItemNameCache(int batchSize = 25)
-    {
-        var allItems = ItemUtil.GetAllItemData();
-        NameToItemCache = new Dictionary<string, ItemData>();
-        ItemIdToNameCache = new Dictionary<string, string>();
-
-        for (int i = 0; i < allItems.Length; i += batchSize)
-        {
-            var batch = allItems.Skip(i).Take(batchSize);
-            var batchTasks = batch.Select(async item =>
-            {
-                string name = await GetItemNameAsync(
-                    item.itemNameKey.TableReference,
-                    item.itemNameKey.TableEntryReference
-                );
-                return (name, item);
-            });
-
-            var batchResults = await Task.WhenAll(batchTasks);
-            foreach (var (name, item) in batchResults)
-            {
-                if (!string.IsNullOrEmpty(name))
-                {
-                    NameToItemCache[name] = item;
-                    ItemIdToNameCache[item.id] = name;
-                }
-
-            }
-        }
-    }
-
-    private static async Task<string> GetItemNameAsync(TableReference tableRef, TableEntryReference entryRef)
-    {
-        var op = LocalizationSettings.StringDatabase.GetLocalizedStringAsync(tableRef, entryRef);
-        await op.Task;
-        return op.Result;
-    }
 
     public static void GetItem()
     {
@@ -83,7 +38,8 @@ public class ArchipelagoItemManager
             }
 
             SerializableGrid validGrid = null;
-            var dredgeItem = NameToItemCache[apItem.ItemName];
+            var itemId = ItemNames.NameToItem(apItem.ItemName);
+            var dredgeItem = ItemUtil.GetItemData(ItemNames.ItemToDredgeId(itemId));
             if (dredgeItem is SpatialItemData){
                 validGrid = GetValidGrid(dredgeItem);
             
@@ -108,17 +64,29 @@ public class ArchipelagoItemManager
     public static List<SpatialItemData> GetItemsForShops()
     {
         var apItemNames = ArchipelagoClient.Session.Items.AllItemsReceived.Where(item => item.ItemGame == "DREDGE").Select(item => item.ItemName).ToList();
-        var collectedItems = NameToItemCache.Where(entry => apItemNames.Contains(entry.Key))
-            .Where(entry => CheckIfValidShopItem(entry.Value))
-            .Select(entry => entry.Value)
-            .OfType<SpatialItemData>().ToList();
+        var collectedItems = apItemNames
+            .Select(i => ItemNames.ItemToDredgeId(ItemNames.NameToItem(i)))
+            .Select(dredgeItemId => new
+            {
+                IsValidShopItem = TryGetValidShopItem(dredgeItemId, out var dredgeSpatialItemData),
+                DredgeSpatialItemData = dredgeSpatialItemData
+            })
+            .Where(x => x.IsValidShopItem)
+            .Select(x => x.DredgeSpatialItemData)
+            .ToList();
 
         return collectedItems;
     }
 
-    private static bool CheckIfValidShopItem(ItemData item)
+    private static bool TryGetValidShopItem(string dredgeItemId, out SpatialItemData dredgeSpatialItemData)
     {
-
+        dredgeSpatialItemData = null;
+        var dredgeItem = ItemUtil.GetItemData(dredgeItemId);
+        if (!dredgeItem)
+        {
+            return false;
+        }
+        
         var invalidShopItems = new List<string> {
             "rod19",
             "rod8",
@@ -148,26 +116,26 @@ public class ArchipelagoItemManager
             "bait-exotic"
         };
 
-        if (item.id.StartsWith("tir"))
+        if (dredgeItem.id.StartsWith("tir"))
         {
             return false;
         }
 
-        if (invalidShopItems.Contains(item.id))
+        if (invalidShopItems.Contains(dredgeItem.id))
         {
             return false;
         }
 
-        if (!gearSubTypes.Contains(item.itemSubtype))
+        if (!gearSubTypes.Contains(dredgeItem.itemSubtype))
         {
             return false;
         }
 
-        if (item.itemSubtype == ItemSubtype.GENERAL && !validGeneralItems.Contains(item.id))
+        if (dredgeItem.itemSubtype == ItemSubtype.GENERAL && !validGeneralItems.Contains(dredgeItem.id))
         {
             return false;
         }
-
+        dredgeSpatialItemData = (SpatialItemData)dredgeItem;
         return true;
     }
 
@@ -200,7 +168,7 @@ public class ArchipelagoItemManager
     public static void RestockShops()
     {
         var shopRestocker = GameObject.FindObjectOfType<ShopRestocker>();
-        if (shopRestocker != null)
+        if (shopRestocker)
         {
             AccessTools.Method(typeof(ShopRestocker), "TryRefreshShops")
                 .Invoke(shopRestocker, null);

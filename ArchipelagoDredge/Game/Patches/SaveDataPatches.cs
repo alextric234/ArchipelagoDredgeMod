@@ -3,6 +3,7 @@ using ArchipelagoDredge.Network;
 using HarmonyLib;
 using System.Collections.Generic;
 using System.Linq;
+using ArchipelagoDredge.Game.Helpers;
 
 namespace ArchipelagoDredge.Game.Patches
 {
@@ -25,7 +26,8 @@ namespace ArchipelagoDredge.Game.Patches
             if (ArchipelagoClient.Session == null || !ArchipelagoClient.Session.Socket.Connected)
                 return;
             var apItems = ArchipelagoClient.Session.Items.AllItemsReceived.Select(i => i.ItemDisplayName).ToList();
-            var unlockedItemIds = ArchipelagoItemManager.NameToItemCache.Where(i => apItems.Contains(i.Key)).Select(i => i.Value.id).ToList();
+            var unlockedItemIds = ItemNames.itemNamesReversed.Where(itemName => apItems.Contains(itemName.Key))
+                .Select(itemName => ItemNames.ItemToDredgeId(itemName.Value));
             __result = __result.Where(r => unlockedItemIds.Contains(r.id)).ToList();
         }
     }

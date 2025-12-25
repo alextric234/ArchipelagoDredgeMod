@@ -10,7 +10,6 @@ public class GameManagerPatches
     [HarmonyPatch(nameof(GameManager.EndGame))]
     public static void PreFix()
     {
-        ArchipelagoClient.GameReady = false;
         ArchipelagoCommandManager.Disconnect();
     }
 }

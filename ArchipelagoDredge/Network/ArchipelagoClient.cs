@@ -12,11 +12,10 @@ namespace ArchipelagoDredge.Network
     public static class ArchipelagoClient
     {
         public static ArchipelagoSession Session { get; private set; }
-        public static bool GameReady { get; set; }
 
         public static void Connect(string apHost, int apPort, string slotName, string password)
         {
-            if (!GameReady)
+            if (!GameManager.Instance.DataLoader.HasLoaded())
             {
                 TerminalCommandManager.LogMessage(TerminalLogType.Error, "Please load a save before connecting to a multiworld");
                 return;
@@ -38,6 +37,8 @@ namespace ArchipelagoDredge.Network
             {
                 throw new Exception(loginResult.ToString());
             }
+
+            LocationNames.LoadArchipelagoIds();
 
             ArchipelagoItemManager.RestockShops();
         }

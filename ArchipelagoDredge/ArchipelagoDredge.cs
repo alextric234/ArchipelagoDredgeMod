@@ -1,4 +1,7 @@
-﻿using ArchipelagoDredge.Game.Managers;
+﻿using System.Linq;
+using System.Text.RegularExpressions;
+using ArchipelagoDredge.Game.Helpers;
+using ArchipelagoDredge.Game.Managers;
 using ArchipelagoDredge.Game.Ui;
 using ArchipelagoDredge.Network;
 using HarmonyLib;
@@ -17,8 +20,6 @@ namespace ArchipelagoDredge
             try
             {
                 WinchCore.Log.Info($"{nameof(ArchipelagoDredge)} has loaded!");
-
-                ArchipelagoClient.GameReady = false;
 
                 TerminalCommandManager.Initialize();
 
@@ -51,7 +52,8 @@ namespace ArchipelagoDredge
                 {
                     WinchCore.Log.Info("Debug key pressed...");
 
-                    //Debug code goes here
+                    var hasLoaded = GameManager.Instance.DataLoader.HasLoaded();
+                    WinchCore.Log.Info($"HasLoaded: {hasLoaded}");
                     
                     WinchCore.Log.Info("Debug complete.");
                 }
@@ -67,7 +69,7 @@ namespace ArchipelagoDredge
                 }
 
                 bool connected = ArchipelagoClient.Session?.Socket?.Connected == true;
-                bool ready = ArchipelagoClient.GameReady == true;
+                bool ready = GameManager.Instance.DataLoader.HasLoaded();
                 bool hasItems = ArchipelagoClient.HasItemsToProcess() == true;
 
                 if (ready && connected && hasItems)
