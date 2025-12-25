@@ -113,7 +113,9 @@ public class TerminalCommandManager
         }
 
         if (!int.TryParse(args[1].ToString(), out var port) || port <= 0 || port > 65535)
+        {
             WinchCore.Log.Error("Invalid port number");
+        }
 
         var host = args[0].ToString();
 
@@ -127,9 +129,14 @@ public class TerminalCommandManager
             if (token == "-p" || token == "--password")
             {
                 if (i + 1 < args.Length)
+                {
                     password = args[i + 1].ToString();
+                }
                 else
+                {
                     password = "";
+                }
+
                 break;
             }
 

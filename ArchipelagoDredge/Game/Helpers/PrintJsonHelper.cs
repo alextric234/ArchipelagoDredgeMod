@@ -35,7 +35,10 @@ public static class PrintJsonHelper
 
         var activePlayer = ArchipelagoClient.Session.Players.ActivePlayer.Slot;
         if (activePlayer != itemPrintJsonPacket.ReceivingPlayer &&
-            activePlayer != itemPrintJsonPacket.Item.Player) return;
+            activePlayer != itemPrintJsonPacket.Item.Player)
+        {
+            return;
+        }
 
         var itemName =
             ArchipelagoClient.Session.Items.GetItemName(itemPrintJsonPacket.Item.Item, receivingPlayer?.Game);
@@ -44,11 +47,17 @@ public static class PrintJsonHelper
         var notification = new DredgeNotification();
 
         if (activePlayer == itemPrintJsonPacket.ReceivingPlayer && activePlayer == sendingPlayer?.Slot)
+        {
             notification.Message = $"Found {itemName}";
+        }
         else if (activePlayer == itemPrintJsonPacket.ReceivingPlayer && activePlayer != sendingPlayer?.Slot)
+        {
             notification.Message = $"Received {itemName}";
+        }
         else
+        {
             notification.Message = $"Found {receivingPlayer?.Name}'s {itemName}";
+        }
 
         notification.MessageColor = itemNameColor ?? PaletteColor.White;
 

@@ -74,7 +74,11 @@ public class ApConfigPanel : MonoBehaviour
 
     private void OnGUI()
     {
-        if (!_show) return;
+        if (!_show)
+        {
+            return;
+        }
+
         _rect = GUILayout.Window(0xA11CED, _rect, Draw, "Archipelago (Config + Connect)");
     }
 
@@ -90,10 +94,14 @@ public class ApConfigPanel : MonoBehaviour
         GUILayout.BeginHorizontal();
 
         if (GUILayout.Button("Connect"))
+        {
             ConnectUsingFields();
+        }
 
         if (GUILayout.Button("Disconnect"))
+        {
             ArchipelagoCommandManager.Disconnect();
+        }
 
         GUILayout.EndHorizontal();
 
@@ -132,7 +140,10 @@ public class ApConfigPanel : MonoBehaviour
         var pwd = _pwd ?? "";
 
         var saved = ApConfigHelper.SaveValues(host, port, slot, pwd);
-        if (!saved) WinchCore.Log.Error("[AP] Proceeding to connect despite save error.");
+        if (!saved)
+        {
+            WinchCore.Log.Error("[AP] Proceeding to connect despite save error.");
+        }
 
         ArchipelagoCommandManager.TryConnect(host, port, slot, pwd);
     }

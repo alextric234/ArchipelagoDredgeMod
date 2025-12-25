@@ -14,7 +14,10 @@ public static class SaveDataPatches
     public static bool SaveDataGetResearchedItemData_Prefix()
     {
         if (ArchipelagoClient.Session == null || !ArchipelagoClient.Session.Socket.Connected)
+        {
             return false;
+        }
+
         return true;
     }
 
@@ -23,7 +26,10 @@ public static class SaveDataPatches
     public static void SaveDataGetResearchedItemData_Postfix(ref List<SpatialItemData> __result)
     {
         if (ArchipelagoClient.Session == null || !ArchipelagoClient.Session.Socket.Connected)
+        {
             return;
+        }
+
         var apItems = ArchipelagoClient.Session.Items.AllItemsReceived.Select(i => i.ItemDisplayName).ToList();
         var unlockedItemIds = ItemNames.itemNamesReversed.Where(itemName => apItems.Contains(itemName.Key))
             .Select(itemName => ItemNames.ItemToDredgeId(itemName.Value));

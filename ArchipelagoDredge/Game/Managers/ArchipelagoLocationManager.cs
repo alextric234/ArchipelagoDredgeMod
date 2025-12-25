@@ -6,7 +6,7 @@ namespace ArchipelagoDredge.Game.Managers;
 
 public static class ArchipelagoLocationManager
 {
-    public static void SendLocationCheck(string category, string itemId)
+    public static void SendLocationCheck(string itemId)
     {
         if (LocationNames.TryParseLocation(itemId, out var locationName))
         {

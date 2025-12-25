@@ -18,7 +18,10 @@ public class HarvestMinigameViewPatches
     {
         try
         {
-            if (___itemDataToHarvest == null) return;
+            if (___itemDataToHarvest == null)
+            {
+                return;
+            }
 
             if (___itemDataToHarvest.itemSubtype == ItemSubtype.FISH)
             {
@@ -30,11 +33,13 @@ public class HarvestMinigameViewPatches
 
                 var aberrationsToCatch = ((FishItemData) ___itemDataToHarvest).Aberrations;
                 foreach (var aberration in aberrationsToCatch)
+                {
                     if (!ArchipelagoLocationManager.HasThisLocationBeenChecked("Fish", aberration.id))
                     {
                         __instance.hintImage.sprite = TextureUtil.GetSprite("aberration_archipelago_icon");
                         return;
                     }
+                }
             }
         }
         catch (Exception ex)

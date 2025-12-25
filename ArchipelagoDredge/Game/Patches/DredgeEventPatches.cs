@@ -1,5 +1,7 @@
-﻿using ArchipelagoDredge.Game.Managers;
+﻿using System;
+using ArchipelagoDredge.Game.Managers;
 using HarmonyLib;
+using Winch.Core;
 using Winch.Core.API;
 
 namespace ArchipelagoDredge.Game.Patches;
@@ -8,9 +10,23 @@ namespace ArchipelagoDredge.Game.Patches;
 public static class DredgeEventPatches
 {
     [HarmonyPrefix]
-    [HarmonyPatch(nameof(DredgeEvent.TriggerFishCaught))]
-    public static void TriggerFishCaught_Prefix(SpatialItemInstance itemInstance)
+    [HarmonyPatch(nameof(DredgeEvent.TriggerPOIHarvested))]
+    public static void TriggerPOIHarvested_Prefix(HarvestPOI harvestPOI, SpatialItemInstance itemInstance)
     {
-        ArchipelagoLocationManager.SendLocationCheck("Fish", itemInstance.id);
+        try
+        {
+            if (itemInstance._itemData.itemSubtype == ItemSubtype.FISH)
+            {
+                ArchipelagoLocationManager.SendLocationCheck(itemInstance.id);
+            }
+            else
+            {
+                ArchipelagoLocationManager.SendLocationCheck(harvestPOI.Harvestable.GetId());
+            }
+        }
+        catch (Exception e)
+        {
+            WinchCore.Log.Error($"Error sending location check for {harvestPOI.Harvestable.GetId()}/{itemInstance.id}: {e.Message}");
+        }
     }
 }

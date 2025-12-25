@@ -26,6 +26,7 @@ public class MainThreadDispatcher : MonoBehaviour
         lock (_actions)
         {
             while (_actions.Count > 0)
+            {
                 try
                 {
                     _actions.Dequeue()?.Invoke();
@@ -34,12 +35,16 @@ public class MainThreadDispatcher : MonoBehaviour
                 {
                     Debug.LogError("MainThreadDispatcher Error: " + e);
                 }
+            }
         }
     }
 
     public static void Enqueue(Action action)
     {
-        if (action == null) return;
+        if (action == null)
+        {
+            return;
+        }
 
         lock (_actions)
         {

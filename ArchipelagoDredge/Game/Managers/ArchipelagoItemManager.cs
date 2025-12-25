@@ -40,7 +40,10 @@ public class ArchipelagoItemManager
             {
                 validGrid = GetValidGrid(dredgeItem);
 
-                if (validGrid == null) return;
+                if (validGrid == null)
+                {
+                    return;
+                }
             }
 
             GameManager.Instance.ItemManager.AddItemById(dredgeItem.id, validGrid, false);
@@ -77,7 +80,10 @@ public class ArchipelagoItemManager
     {
         dredgeSpatialItemData = null;
         var dredgeItem = ItemUtil.GetItemData(dredgeItemId);
-        if (!dredgeItem) return false;
+        if (!dredgeItem)
+        {
+            return false;
+        }
 
         var invalidShopItems = new List<string>
         {
@@ -109,13 +115,26 @@ public class ArchipelagoItemManager
             "bait-exotic"
         };
 
-        if (dredgeItem.id.StartsWith("tir")) return false;
+        if (dredgeItem.id.StartsWith("tir"))
+        {
+            return false;
+        }
 
-        if (invalidShopItems.Contains(dredgeItem.id)) return false;
+        if (invalidShopItems.Contains(dredgeItem.id))
+        {
+            return false;
+        }
 
-        if (!gearSubTypes.Contains(dredgeItem.itemSubtype)) return false;
+        if (!gearSubTypes.Contains(dredgeItem.itemSubtype))
+        {
+            return false;
+        }
 
-        if (dredgeItem.itemSubtype == ItemSubtype.GENERAL && !validGeneralItems.Contains(dredgeItem.id)) return false;
+        if (dredgeItem.itemSubtype == ItemSubtype.GENERAL && !validGeneralItems.Contains(dredgeItem.id))
+        {
+            return false;
+        }
+
         dredgeSpatialItemData = (SpatialItemData) dredgeItem;
         return true;
     }
@@ -124,13 +143,23 @@ public class ArchipelagoItemManager
     {
         Vector3Int foundPosition;
         if (GameManager.Instance.SaveData.Storage.FindPositionForObject((SpatialItemData) dredgeItem,
-                out foundPosition)) return GameManager.Instance.SaveData.Storage;
+                out foundPosition))
+        {
+            return GameManager.Instance.SaveData.Storage;
+        }
+
         if (GameManager.Instance.SaveData.Inventory.FindPositionForObject((SpatialItemData) dredgeItem,
                 out foundPosition))
+        {
             return GameManager.Instance.SaveData.Inventory;
+        }
+
         if (GameManager.Instance.SaveData.OverflowStorage.FindPositionForObject((SpatialItemData) dredgeItem,
                 out foundPosition))
+        {
             return GameManager.Instance.SaveData.OverflowStorage;
+        }
+
         return null;
     }
 
@@ -144,7 +173,9 @@ public class ArchipelagoItemManager
     {
         var shopRestocker = GameObject.FindObjectOfType<ShopRestocker>();
         if (shopRestocker)
+        {
             AccessTools.Method(typeof(ShopRestocker), "TryRefreshShops")
                 .Invoke(shopRestocker, null);
+        }
     }
 }

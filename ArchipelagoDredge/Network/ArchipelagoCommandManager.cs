@@ -38,7 +38,9 @@ public static class ArchipelagoCommandManager
     public static void TryConnect(string apHost, int apPort, string slotName, string password)
     {
         if (State == ConnectionState.Connecting || State == ConnectionState.Connected)
+        {
             return;
+        }
 
         _apHost = apHost;
         _apPort = apPort;
@@ -84,7 +86,9 @@ public static class ArchipelagoCommandManager
     public static void Disconnect()
     {
         if (State != ConnectionState.Connected)
+        {
             return;
+        }
 
         ArchipelagoClient.Disconnect();
         State = ConnectionState.Disconnected;

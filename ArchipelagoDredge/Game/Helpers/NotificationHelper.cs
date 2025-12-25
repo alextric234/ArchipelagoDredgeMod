@@ -65,7 +65,10 @@ internal static class NotificationHelper
     public static void TryToSendNotification(DredgeNotification notification)
     {
         _messageQueue.Enqueue(notification);
-        if (!_isProcessing) _ = ProcessQueue();
+        if (!_isProcessing)
+        {
+            _ = ProcessQueue();
+        }
     }
 
     private static async Task ProcessQueue()

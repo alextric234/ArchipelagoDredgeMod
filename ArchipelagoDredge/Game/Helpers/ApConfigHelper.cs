@@ -8,17 +8,30 @@ namespace ArchipelagoDredge.Game.Helpers;
 
 public static class ApConfigHelper
 {
-    private static string ModDir =>
-        Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!;
+    private static string ModDir
+    {
+        get { return Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!; }
+    }
 
-    public static string ConfigPath => Path.Combine(ModDir, "Config.json");
-    public static string DefaultPath => Path.Combine(ModDir, "default_config.json");
+    public static string ConfigPath
+    {
+        get { return Path.Combine(ModDir, "Config.json"); }
+    }
+
+    public static string DefaultPath
+    {
+        get { return Path.Combine(ModDir, "default_config.json"); }
+    }
 
     private static JObject LoadConfigObject(out bool isUserConfig)
     {
         isUserConfig = File.Exists(ConfigPath);
         var path = isUserConfig ? ConfigPath : DefaultPath;
-        if (!File.Exists(path)) throw new FileNotFoundException($"Config not found: {path}");
+        if (!File.Exists(path))
+        {
+            throw new FileNotFoundException($"Config not found: {path}");
+        }
+
         return JObject.Parse(File.ReadAllText(path));
     }
 
@@ -44,11 +57,17 @@ public static class ApConfigHelper
             Directory.CreateDirectory(modDir);
 
             if (File.Exists(ConfigPath))
+            {
                 cfg = JObject.Parse(File.ReadAllText(ConfigPath));
+            }
             else if (File.Exists(DefaultPath))
+            {
                 cfg = JObject.Parse(File.ReadAllText(DefaultPath));
+            }
             else
+            {
                 cfg = new JObject();
+            }
 
             EnsureSetting(cfg, "apIpAddress", "text");
             EnsureSetting(cfg, "apPort", "integer");
@@ -73,7 +92,11 @@ public static class ApConfigHelper
 
     private static void EnsureSetting(JObject root, string key, string typeIfNew)
     {
-        if (root[key] is JObject obj) return;
+        if (root[key] is JObject obj)
+        {
+            return;
+        }
+
         root[key] = new JObject
         {
             ["type"] = typeIfNew,

@@ -404,7 +404,58 @@ public enum Location
     VIPERFISH,
     WRECKFISH_AB_1,
     WRECKFISH_AB_2,
-    WRECKFISH
+    WRECKFISH,
+    ENGINE10,
+    ENGINE2,
+    ENGINE3,
+    ENGINE4,
+    ENGINE5,
+    ENGINE6,
+    ENGINE7,
+    ENGINE8,
+    ENGINE9,
+    LIGHT1,
+    LIGHT2,
+    LIGHT3,
+    LIGHT4,
+    LIGHT5,
+    LIGHT6,
+    NET1,
+    NET2,
+    NET3,
+    NET4,
+    NET5,
+    NET6,
+    NET7,
+    NET8,
+    POT1,
+    POT2,
+    POT3,
+    POT4,
+    POT5,
+    POT6,
+    POT7,
+    POT8,
+    ROD1,
+    ROD11,
+    ROD12,
+    ROD13,
+    ROD14,
+    ROD15,
+    ROD16,
+    ROD17,
+    ROD18,
+    ROD19,
+    ROD2,
+    ROD20,
+    ROD21,
+    ROD22,
+    ROD23,
+    ROD3,
+    ROD4,
+    ROD5,
+    ROD6,
+    ROD8,
 }
 
 public static class LocationNames
@@ -641,6 +692,57 @@ public static class LocationNames
         {Location.WRECKFISH_AB_1, "Shattered Wreckfish"},
         {Location.WRECKFISH_AB_2, "Bony Wreckfish"},
         {Location.WRECKFISH, "Wreckfish"},
+        {Location.ENGINE10, "Arterial Engine"},
+        {Location.ENGINE2, "Rusty Outboard Engine"},
+        {Location.ENGINE3, "Improved Outboard Engine"},
+        {Location.ENGINE4, "Refined Outboard Engine"},
+        {Location.ENGINE5, "Twin Prop Engine"},
+        {Location.ENGINE6, "Jet Drive Engine"},
+        {Location.ENGINE7, "Twin Jet Drive Engine"},
+        {Location.ENGINE8, "Engine Stack"},
+        {Location.ENGINE9, "Weak Valve Engine"},
+        {Location.LIGHT1, "Cracked Bulb"},
+        {Location.LIGHT2, "Cloudy Lens"},
+        {Location.LIGHT3, "Halogen Spotlight"},
+        {Location.LIGHT4, "Tungsten Floodlight"},
+        {Location.LIGHT5, "Incandescent Array"},
+        {Location.LIGHT6, "Flame of the Sky"},
+        {Location.NET1, "Basic Trawl Net"},
+        {Location.NET2, "Improved Trawl Net"},
+        {Location.NET3, "Silt Filtering Trawl Net"},
+        {Location.NET4, "Tempered Mesh Net"},
+        {Location.NET5, "Large Trawl Net"},
+        {Location.NET6, "Heavy-Duty Trawl Net"},
+        {Location.NET7, "Radiant Trawl Net"},
+        {Location.NET8, "Brittle Trawl Net"},
+        {Location.POT1, "Basic Crab Pot"},
+        {Location.POT2, "Efficient Crab Pot"},
+        {Location.POT3, "Hardy Crab Pot"},
+        {Location.POT4, "Large Crab Pot"},
+        {Location.POT5, "Complex Crab Pot"},
+        {Location.POT6, "Massive Crab Pot"},
+        {Location.POT7, "Reinforced Crab Pot"},
+        {Location.POT8, "Mouth of the Deep"},
+        {Location.ROD1, "Starting Gear - Basic Fishing Pole"},
+        {Location.ROD11, "Fathomless Winch"},
+        {Location.ROD12, "Heat-Resistant Line"},
+        {Location.ROD13, "Anti-Tangle Line"},
+        {Location.ROD14, "Versatile Rod"},
+        {Location.ROD15, "Harvesting Platform"},
+        {Location.ROD16, "Tendon Rod"},
+        {Location.ROD17, "Encrusted Talisman"},
+        {Location.ROD18, "Simple Skimmer"},
+        {Location.ROD19, "Sinew Spindle"},
+        {Location.ROD2, "Weighted Line"},
+        {Location.ROD20, "Sign of Ruin"},
+        {Location.ROD21, "Custom Rod"},
+        {Location.ROD22, "Barbed Ice Rod"},
+        {Location.ROD23, "Glacial Lance"},
+        {Location.ROD3, "Hydraulic Rod"},
+        {Location.ROD4, "Flexible Fishing Pole"},
+        {Location.ROD5, "Sampling Device"},
+        {Location.ROD6, "Bottomless Lines"},
+        {Location.ROD8, "Viscera Crane"},
         {Location.SILVER_PLATE_3, "Open Ocean - Silver Plate 1(M-10)"},
         {Location.CLOTH_10, "The Marrows - Cloth 1(J-8)"},
         {Location.LUMBER_18, "The Marrows - Lumber 1(I-6)"},
@@ -833,7 +935,9 @@ public static class LocationNames
     {
         var formattedString = locationId.ToUpper().Replace('-', '_');
         if (!Enum.TryParse<Location>(formattedString, true, out var location))
+        {
             WinchCore.Log.Error($"Can't find item {formattedString}");
+        }
 
         return location;
     }
@@ -850,9 +954,8 @@ public static class LocationNames
             if (archipelagoId == -1 && locationName != "???")
             {
                 WinchCore.Log.Error($"Could not find apId for {locationName}");
-                return;
+                continue;
             }
-
             archipelagoIdToLocation.Add(archipelagoId, locationNamesReversed[locationName]);
             locationToArchipelagoId.Add(locationNamesReversed[locationName], archipelagoId);
         }
@@ -862,11 +965,15 @@ public static class LocationNames
     {
         var formattedString = input.ToUpper().Replace('-', '_');
         if (Enum.TryParse(formattedString, true, out location))
+        {
+            WinchCore.Log.Info($"Found Location {input} by string");
             return true;
+        }
 
         if (int.TryParse(input, out var intValue) &&
             Enum.IsDefined(typeof(Location), intValue))
         {
+            WinchCore.Log.Info($"Found Location {input} by int");
             location = (Location) intValue;
             return true;
         }

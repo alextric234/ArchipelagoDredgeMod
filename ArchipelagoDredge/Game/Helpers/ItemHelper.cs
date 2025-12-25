@@ -887,7 +887,9 @@ public static class ItemNames
     {
         var formattedString = itemId.ToUpper().Replace('-', '_');
         if (!Enum.TryParse<Item>(formattedString, true, out var item))
+        {
             WinchCore.Log.Error($"Can't find item {formattedString}");
+        }
 
         return item;
     }

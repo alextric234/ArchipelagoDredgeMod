@@ -2,6 +2,7 @@
 using ArchipelagoDredge.Game.Managers;
 using ArchipelagoDredge.Game.Ui;
 using ArchipelagoDredge.Network;
+using CommandTerminal;
 using HarmonyLib;
 using UnityEngine;
 using Winch.Core;
@@ -36,25 +37,42 @@ public class ArchipelagoDredge : MonoBehaviour
     {
         try
         {
+            if (Input.GetKeyDown(KeyCode.F4))
+            {
+                WinchCore.Log.Info("Activating debug mode!");
+                GameManager.Instance.Player.IsGodModeEnabled = true;
+                GameManager.Instance.Player.IsImmuneModeEnabled = true;
+                Terminal.Shell.RunCommand("player.move 200");
+                Terminal.Shell.RunCommand("player.turn 250");
+            }
+
             if (Input.GetKeyDown(KeyCode.F5))
             {
                 WinchCore.Log.Info("Debug key pressed...");
 
-                var hasLoaded = GameManager.Instance.DataLoader.HasLoaded();
-                WinchCore.Log.Info($"HasLoaded: {hasLoaded}");
+                //Debug code goes here
 
                 WinchCore.Log.Info("Debug complete.");
             }
 
-            if (Input.GetKeyDown(KeyCode.F8)) ArchipelagoCommandManager.ConfigConnect();
+            if (Input.GetKeyDown(KeyCode.F8))
+            {
+                ArchipelagoCommandManager.ConfigConnect();
+            }
 
-            if (Input.GetKeyDown(KeyCode.F10)) ArchipelagoCommandManager.Disconnect();
+            if (Input.GetKeyDown(KeyCode.F10))
+            {
+                ArchipelagoCommandManager.Disconnect();
+            }
 
             var connected = ArchipelagoClient.Session?.Socket?.Connected == true;
             var ready = GameManager.Instance.DataLoader.HasLoaded();
             var hasItems = ArchipelagoClient.HasItemsToProcess();
 
-            if (ready && connected && hasItems) ArchipelagoItemManager.GetItem();
+            if (ready && connected && hasItems)
+            {
+                ArchipelagoItemManager.GetItem();
+            }
         }
         catch (Exception ex)
         {

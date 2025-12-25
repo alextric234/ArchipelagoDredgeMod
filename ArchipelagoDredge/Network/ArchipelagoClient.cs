@@ -35,7 +35,10 @@ public static class ArchipelagoClient
             password: password
         );
 
-        if (!loginResult.Successful) throw new Exception(loginResult.ToString());
+        if (!loginResult.Successful)
+        {
+            throw new Exception(loginResult.ToString());
+        }
 
         LocationNames.LoadArchipelagoIds();
 
@@ -63,7 +66,9 @@ public static class ArchipelagoClient
     public static bool HasItemsToProcess()
     {
         if (Session == null || Session.Socket == null || !Session.Socket.Connected)
+        {
             return false;
+        }
 
         var latestItemIndex = Session.Items.AllItemsReceived.Count - 1;
         return ArchipelagoStateManager.StateData.LastProcessedIndex < latestItemIndex;

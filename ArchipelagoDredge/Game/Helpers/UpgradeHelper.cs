@@ -59,7 +59,9 @@ public static class UpgradeHelper
     private static void UpgradeHull(HullTier newTier)
     {
         if (newTier <= _upgradeState.HullTier)
+        {
             return;
+        }
 
         _upgradeState.HullTier = newTier;
 
@@ -98,7 +100,10 @@ public static class UpgradeHelper
     private static void ApplyUpgradeIfEligible(string upgradeId)
     {
         var upgradeData = GameManager.Instance.UpgradeManager.GetUpgradeDataById(upgradeId);
-        if (upgradeData != null) GameManager.Instance.UpgradeManager.AddUpgrade(upgradeData, true);
+        if (upgradeData != null)
+        {
+            GameManager.Instance.UpgradeManager.AddUpgrade(upgradeData, true);
+        }
     }
 
     private static void MaxOutAllSystems()
@@ -139,5 +144,9 @@ public class PlayerUpgradeState
     public int NetTier { get; set; }
     public int LightTier { get; set; }
     public int StorageTier { get; set; }
-    public bool IsFullyUpgraded => HullTier == HullTier.Tier5;
+
+    public bool IsFullyUpgraded
+    {
+        get { return HullTier == HullTier.Tier5; }
+    }
 }

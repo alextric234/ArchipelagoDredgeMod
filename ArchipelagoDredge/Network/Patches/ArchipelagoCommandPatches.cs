@@ -10,8 +10,14 @@ public class ArchipelagoCommandPatches
     [HarmonyPatch(nameof(JsonConvert.SerializeObject), typeof(object))]
     public static void SerializeObjectPost(ref string __result)
     {
-        if (__result.Contains("AllItems")) __result = __result.Replace("\"AllItems\"", "7");
+        if (__result.Contains("AllItems"))
+        {
+            __result = __result.Replace("\"AllItems\"", "7");
+        }
 
-        if (__result.Contains("ClientGoal")) __result = __result.Replace("\"ClientGoal\"", "30");
+        if (__result.Contains("ClientGoal"))
+        {
+            __result = __result.Replace("\"ClientGoal\"", "30");
+        }
     }
 }
