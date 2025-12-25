@@ -1,7 +1,7 @@
-﻿using ArchipelagoDredge.Game.Managers;
+﻿using System.Collections.Generic;
+using ArchipelagoDredge.Game.Managers;
 using ArchipelagoDredge.Network;
 using HarmonyLib;
-using System.Collections.Generic;
 
 namespace ArchipelagoDredge.Game.Patches;
 

@@ -3,6 +3,7 @@ using HarmonyLib;
 using Winch.Core.API;
 
 namespace ArchipelagoDredge.Game.Patches;
+
 [HarmonyPatch(typeof(DredgeEvent))]
 public static class DredgeEventPatches
 {
@@ -12,5 +13,4 @@ public static class DredgeEventPatches
     {
         ArchipelagoLocationManager.SendLocationCheck("Fish", itemInstance.id);
     }
-
 }

@@ -15,7 +15,7 @@ public static class ArchipelagoStateManager
         SaveFilePath = Path.Combine(Application.persistentDataPath, SaveFile, $"{SaveFile}-{slot}.json");
         if (File.Exists(SaveFilePath))
         {
-            string json = File.ReadAllText(SaveFilePath);
+            var json = File.ReadAllText(SaveFilePath);
             StateData = JsonUtility.FromJson<ArchipelagoStateData>(json);
             StateData.LastProcessedIndex = StateData.LastProcessedIndexSinceSave;
         }
@@ -25,24 +25,21 @@ public static class ArchipelagoStateManager
 
             Directory.CreateDirectory(Path.GetDirectoryName(SaveFilePath)!);
 
-            string defaultJson = JsonUtility.ToJson(StateData, true);
+            var defaultJson = JsonUtility.ToJson(StateData, true);
             File.WriteAllText(SaveFilePath, defaultJson);
         }
-
     }
+
     public static void SaveData()
     {
-        string updatedJson = JsonUtility.ToJson(StateData, true);
+        var updatedJson = JsonUtility.ToJson(StateData, true);
         File.WriteAllText(SaveFilePath, updatedJson);
     }
 
     public static void Delete(int slot)
     {
         SaveFilePath = Path.Combine(Application.persistentDataPath, SaveFile, $"{SaveFile}-{slot}.json");
-        if (File.Exists(SaveFilePath))
-        {
-            File.Delete(SaveFilePath);
-        }
+        if (File.Exists(SaveFilePath)) File.Delete(SaveFilePath);
     }
 }
 
@@ -51,6 +48,6 @@ public class ArchipelagoStateData
 {
     public int LastProcessedIndexSinceSave = -1;
     public int LastProcessedIndex = -1;
-    public int CurrentHullUpgrade = 0;
-    public int HullUpgradeSinceSave = 0;
+    public int CurrentHullUpgrade;
+    public int HullUpgradeSinceSave;
 }

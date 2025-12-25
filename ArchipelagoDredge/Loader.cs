@@ -1,27 +1,24 @@
-﻿using ArchipelagoDredge.Game.Managers;
-using ArchipelagoDredge.Utils;
+﻿using ArchipelagoDredge.Utils;
 using UnityEngine;
 
-namespace ArchipelagoDredge
+namespace ArchipelagoDredge;
+
+public class Loader
 {
-    public class Loader
+    /// <summary>
+    ///     This method is run by Winch to initialize your mod
+    /// </summary>
+    public static void Initialize()
     {
-        /// <summary>
-        /// This method is run by Winch to initialize your mod
-        /// </summary>
-        public static void Initialize()
+        var gameObject = new GameObject(nameof(ArchipelagoDredge));
+        gameObject.AddComponent<ArchipelagoDredge>();
+        GameObject.DontDestroyOnLoad(gameObject);
+
+        if (GameObject.Find("MainThreadDispatcher") == null)
         {
-            var gameObject = new GameObject(nameof(ArchipelagoDredge));
-            gameObject.AddComponent<ArchipelagoDredge>();
-            GameObject.DontDestroyOnLoad(gameObject);
-
-            if (GameObject.Find("MainThreadDispatcher") == null)
-            {
-                GameObject dispatcherObj = new GameObject("MainThreadDispatcher");
-                dispatcherObj.AddComponent<MainThreadDispatcher>();
-                UnityEngine.Object.DontDestroyOnLoad(dispatcherObj);
-            }
-
+            var dispatcherObj = new GameObject("MainThreadDispatcher");
+            dispatcherObj.AddComponent<MainThreadDispatcher>();
+            Object.DontDestroyOnLoad(dispatcherObj);
         }
     }
 }

@@ -9,16 +9,6 @@ public class MainThreadDispatcher : MonoBehaviour
     private static readonly Queue<Action> _actions = new();
     private static MainThreadDispatcher _instance;
 
-    public static void Enqueue(Action action)
-    {
-        if (action == null) return;
-
-        lock (_actions)
-        {
-            _actions.Enqueue(action);
-        }
-    }
-
     private void Awake()
     {
         if (_instance != null && _instance != this)
@@ -36,7 +26,6 @@ public class MainThreadDispatcher : MonoBehaviour
         lock (_actions)
         {
             while (_actions.Count > 0)
-            {
                 try
                 {
                     _actions.Dequeue()?.Invoke();
@@ -45,7 +34,16 @@ public class MainThreadDispatcher : MonoBehaviour
                 {
                     Debug.LogError("MainThreadDispatcher Error: " + e);
                 }
-            }
+        }
+    }
+
+    public static void Enqueue(Action action)
+    {
+        if (action == null) return;
+
+        lock (_actions)
+        {
+            _actions.Enqueue(action);
         }
     }
 }

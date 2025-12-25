@@ -1,7 +1,9 @@
-﻿using ArchipelagoDredge.Network;
-using CommandTerminal;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using ArchipelagoDredge.Network;
+using CommandTerminal;
 using Winch.Core;
 
 namespace ArchipelagoDredge.Game.Managers;
@@ -61,43 +63,34 @@ public class TerminalCommandManager
 
     private static void SayCommand(CommandArg[] commandArgs)
     {
-        return;
     }
 
     private static void UnrecognizedCommand(CommandArg[] args)
     {
-
-        return;
     }
 
     private static void HintLocationCommand(CommandArg[] args)
     {
-        return;
     }
 
     private static void HintCommand(CommandArg[] args)
     {
-        return;
     }
 
     private static void ReadyCommand(CommandArg[] args)
     {
-        return;
     }
 
     private static void LocationsCommand(CommandArg[] args)
     {
-        return;
     }
 
     private static void ItemsCommand(CommandArg[] args)
     {
-        return;
     }
 
     private static void ReceivedCommand(CommandArg[] args)
     {
-        return;
     }
 
     private static void DisconnectCommand(CommandArg[] args)
@@ -120,33 +113,27 @@ public class TerminalCommandManager
         }
 
         if (!int.TryParse(args[1].ToString(), out var port) || port <= 0 || port > 65535)
-        {
             WinchCore.Log.Error("Invalid port number");
-        }
 
         var host = args[0].ToString();
 
-        string password = "";
-        var slotParts = new System.Collections.Generic.List<string>();
+        var password = "";
+        var slotParts = new List<string>();
 
-        for (int i = 2; i < args.Length; i++)
+        for (var i = 2; i < args.Length; i++)
         {
             var token = args[i].ToString();
 
             if (token == "-p" || token == "--password")
             {
                 if (i + 1 < args.Length)
-                {
                     password = args[i + 1].ToString();
-                }
                 else
-                {
                     password = "";
-                }
                 break;
             }
 
-            if (token.StartsWith("password=", System.StringComparison.OrdinalIgnoreCase))
+            if (token.StartsWith("password=", StringComparison.OrdinalIgnoreCase))
             {
                 password = token.Substring("password=".Length);
                 break;
@@ -159,7 +146,8 @@ public class TerminalCommandManager
 
         if (string.IsNullOrEmpty(slot))
         {
-            WinchCore.Log.Error("Slot name is required. Usage: /ap connect <host> <port> <slot name...> [-p <password>]");
+            WinchCore.Log.Error(
+                "Slot name is required. Usage: /ap connect <host> <port> <slot name...> [-p <password>]");
             return;
         }
 

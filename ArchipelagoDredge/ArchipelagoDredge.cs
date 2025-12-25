@@ -1,96 +1,84 @@
-﻿using System.Linq;
-using System.Text.RegularExpressions;
-using ArchipelagoDredge.Game.Helpers;
+﻿using System;
 using ArchipelagoDredge.Game.Managers;
 using ArchipelagoDredge.Game.Ui;
 using ArchipelagoDredge.Network;
 using HarmonyLib;
 using UnityEngine;
 using Winch.Core;
-using Winch.Util;
 
-namespace ArchipelagoDredge
+namespace ArchipelagoDredge;
+
+[HarmonyPatch]
+public class ArchipelagoDredge : MonoBehaviour
 {
-    [HarmonyPatch]
-    public class ArchipelagoDredge : MonoBehaviour
+    private static Harmony _harmony;
+
+    public void Awake()
     {
-        private static Harmony _harmony;
-        public void Awake()
+        try
         {
-            try
-            {
-                WinchCore.Log.Info($"{nameof(ArchipelagoDredge)} has loaded!");
+            WinchCore.Log.Info($"{nameof(ArchipelagoDredge)} has loaded!");
 
-                TerminalCommandManager.Initialize();
+            TerminalCommandManager.Initialize();
 
-                _harmony = new Harmony("com.alextric234.archipelago.dredge");
-                _harmony.PatchAll();
+            _harmony = new Harmony("com.alextric234.archipelago.dredge");
+            _harmony.PatchAll();
 
-                GetConnectionConfigPanel();
-            }
-            catch(System.Exception ex)
-            {
-                WinchCore.Log.Error($"[AP] Error in awake: {ex}");
-            }
+            GetConnectionConfigPanel();
         }
-
-        public void OnGameUnloaded()
+        catch (Exception ex)
         {
-            ArchipelagoClient.Disconnect();
+            WinchCore.Log.Error($"[AP] Error in awake: {ex}");
         }
+    }
 
-        public void Quit()
+    private void Update()
+    {
+        try
         {
-            ArchipelagoClient.Disconnect();
+            if (Input.GetKeyDown(KeyCode.F5))
+            {
+                WinchCore.Log.Info("Debug key pressed...");
+
+                var hasLoaded = GameManager.Instance.DataLoader.HasLoaded();
+                WinchCore.Log.Info($"HasLoaded: {hasLoaded}");
+
+                WinchCore.Log.Info("Debug complete.");
+            }
+
+            if (Input.GetKeyDown(KeyCode.F8)) ArchipelagoCommandManager.ConfigConnect();
+
+            if (Input.GetKeyDown(KeyCode.F10)) ArchipelagoCommandManager.Disconnect();
+
+            var connected = ArchipelagoClient.Session?.Socket?.Connected == true;
+            var ready = GameManager.Instance.DataLoader.HasLoaded();
+            var hasItems = ArchipelagoClient.HasItemsToProcess();
+
+            if (ready && connected && hasItems) ArchipelagoItemManager.GetItem();
         }
-
-        private void Update()
+        catch (Exception ex)
         {
-            try
-            {
-                if (Input.GetKeyDown(KeyCode.F5))
-                {
-                    WinchCore.Log.Info("Debug key pressed...");
-
-                    var hasLoaded = GameManager.Instance.DataLoader.HasLoaded();
-                    WinchCore.Log.Info($"HasLoaded: {hasLoaded}");
-                    
-                    WinchCore.Log.Info("Debug complete.");
-                }
-
-                if (Input.GetKeyDown(KeyCode.F8))
-                {
-                    ArchipelagoCommandManager.ConfigConnect();
-                }
-
-                if (Input.GetKeyDown(KeyCode.F10))
-                {
-                    ArchipelagoCommandManager.Disconnect();
-                }
-
-                bool connected = ArchipelagoClient.Session?.Socket?.Connected == true;
-                bool ready = GameManager.Instance.DataLoader.HasLoaded();
-                bool hasItems = ArchipelagoClient.HasItemsToProcess() == true;
-
-                if (ready && connected && hasItems)
-                {
-                    ArchipelagoItemManager.GetItem();
-                }
-            }
-            catch (System.Exception ex)
-            {
-                WinchCore.Log.Error($"[AP] Update processing error: {ex}");
-            }
+            WinchCore.Log.Error($"[AP] Update processing error: {ex}");
         }
+    }
 
-        private void GetConnectionConfigPanel()
+    public void OnGameUnloaded()
+    {
+        ArchipelagoClient.Disconnect();
+    }
+
+    public void Quit()
+    {
+        ArchipelagoClient.Disconnect();
+    }
+
+    private void GetConnectionConfigPanel()
+    {
+        var existing = FindObjectOfType<ApConfigPanel>();
+        if (existing == null)
         {
-            var existing = FindObjectOfType<ApConfigPanel>();
-            if (existing == null)
-            {
-                gameObject.AddComponent<ApConfigPanel>();
-                DontDestroyOnLoad(gameObject);
-            }
+            gameObject.AddComponent<ApConfigPanel>();
+            DontDestroyOnLoad(gameObject);
         }
     }
 }

@@ -11,17 +11,14 @@ public class HarvestMinigameViewPatches
 {
     [HarmonyPostfix]
     [HarmonyPatch(nameof(HarvestMinigameView.RefreshHarvestTarget))]
-    static void Postfix(
+    private static void Postfix(
         HarvestMinigameView __instance,
         ItemData ___itemDataToHarvest
     )
     {
         try
         {
-            if (___itemDataToHarvest == null)
-            {
-                return;
-            }
+            if (___itemDataToHarvest == null) return;
 
             if (___itemDataToHarvest.itemSubtype == ItemSubtype.FISH)
             {
@@ -33,16 +30,14 @@ public class HarvestMinigameViewPatches
 
                 var aberrationsToCatch = ((FishItemData) ___itemDataToHarvest).Aberrations;
                 foreach (var aberration in aberrationsToCatch)
-                {
                     if (!ArchipelagoLocationManager.HasThisLocationBeenChecked("Fish", aberration.id))
                     {
                         __instance.hintImage.sprite = TextureUtil.GetSprite("aberration_archipelago_icon");
                         return;
                     }
-                }
             }
         }
-        catch(System.Exception ex)
+        catch (Exception ex)
         {
             WinchCore.Log.Error($"[AP] Error in HarvestMinigameViewPatches: {ex}");
         }

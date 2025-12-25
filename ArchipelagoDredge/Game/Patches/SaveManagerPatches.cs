@@ -1,4 +1,5 @@
-﻿using ArchipelagoDredge.Utils;
+﻿using System;
+using ArchipelagoDredge.Utils;
 using HarmonyLib;
 using Winch.Core;
 
@@ -19,7 +20,7 @@ public static class SaveManagerPatches
                 ArchipelagoStateManager.StateData.CurrentHullUpgrade;
             ArchipelagoStateManager.SaveData();
         }
-        catch (System.Exception ex)
+        catch (Exception ex)
         {
             WinchCore.Log.Error(ex);
         }
@@ -33,7 +34,7 @@ public static class SaveManagerPatches
         {
             ArchipelagoStateManager.Load(slot);
         }
-        catch (System.Exception ex)
+        catch (Exception ex)
         {
             WinchCore.Log.Error(ex);
         }
@@ -47,7 +48,7 @@ public static class SaveManagerPatches
         {
             ArchipelagoStateManager.Delete(slot);
         }
-        catch (System.Exception ex)
+        catch (Exception ex)
         {
             WinchCore.Log.Error(ex);
         }
