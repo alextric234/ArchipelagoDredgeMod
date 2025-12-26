@@ -1,4 +1,5 @@
-﻿using ArchipelagoDredge.Game.Helpers;
+﻿using System;
+using ArchipelagoDredge.Game.Helpers;
 using ArchipelagoDredge.Network;
 using Winch.Core;
 
@@ -19,7 +20,7 @@ public static class ArchipelagoLocationManager
         }
     }
 
-    public static bool HasThisLocationBeenChecked(string category, string itemId)
+    public static bool HasThisLocationBeenChecked(string itemId)
     {
         if (LocationNames.TryParseLocation(itemId, out var locationName))
         {

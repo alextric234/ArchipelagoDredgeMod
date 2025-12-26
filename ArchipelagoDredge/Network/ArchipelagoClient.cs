@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Archipelago.MultiClient.Net;
 using Archipelago.MultiClient.Net.Enums;
 using Archipelago.MultiClient.Net.Packets;
@@ -6,6 +7,7 @@ using ArchipelagoDredge.Game.Helpers;
 using ArchipelagoDredge.Game.Managers;
 using ArchipelagoDredge.Utils;
 using CommandTerminal;
+using Winch.Util;
 
 namespace ArchipelagoDredge.Network;
 
@@ -41,6 +43,8 @@ public static class ArchipelagoClient
         }
 
         LocationNames.LoadArchipelagoIds();
+        RemoveCheckedRelicPois();
+        Terminal.Shell.RunCommand("ency.all");
 
         ArchipelagoItemManager.RestockShops();
     }
@@ -72,5 +76,15 @@ public static class ArchipelagoClient
 
         var latestItemIndex = Session.Items.AllItemsReceived.Count - 1;
         return ArchipelagoStateManager.StateData.LastProcessedIndex < latestItemIndex;
+    }
+
+    private static void RemoveCheckedRelicPois()
+    {
+        PoiUtil.GetAllPOI()
+            .Select(p => p.Value)
+            .OfType<HarvestPOI>()
+            .Where(h => LocationNames.RelicLocations.Contains(LocationNames.DredgeIdToLocation(h.harvestPOIData.id)))
+            .Where(h => h.Harvestable.GetStockCount(true) > 0)
+            .ForEach(h => h.OnHarvested(true));
     }
 }

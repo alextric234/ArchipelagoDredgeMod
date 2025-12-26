@@ -37,6 +37,17 @@ public class ApConfigPanel : MonoBehaviour
                 ReloadFromConfig();
                 _loadedOnce = true;
             }
+
+            if (_show)
+            {
+                Cursor.visible = true;
+                Cursor.lockState = CursorLockMode.None;
+            }
+            else
+            {
+                Cursor.visible = false;
+                Cursor.lockState = CursorLockMode.Locked;
+            }
         }
     }
 
@@ -78,7 +89,6 @@ public class ApConfigPanel : MonoBehaviour
         {
             return;
         }
-
         _rect = GUILayout.Window(0xA11CED, _rect, Draw, "Archipelago (Config + Connect)");
     }
 

@@ -33,6 +33,13 @@ public class ArchipelagoItemManager
                 return;
             }
 
+            if (apItem.ItemName.Equals("Dredge Crane"))
+            {
+                GameManager.Instance.DialogueRunner.AddItemById("dredge1", GameManager.Instance.SaveData.Inventory);
+                UpdateStateData(indexOfItemToProcess);
+                return;
+            }
+
             SerializableGrid validGrid = null;
             var itemId = ItemNames.NameToItem(apItem.ItemName);
             var dredgeItem = ItemUtil.GetItemData(ItemNames.ItemToDredgeId(itemId));

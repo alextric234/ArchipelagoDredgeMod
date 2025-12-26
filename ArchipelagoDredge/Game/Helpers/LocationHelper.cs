@@ -910,6 +910,13 @@ public static class LocationNames
         {Location.CRATE_1069, "Open Ocean - Crate 20(L-15)"}
     };
 
+    public static List<Location> RelicLocations = new()
+    {
+        Location.RELIC1_33,
+        Location.RELIC2_200,
+        Location.RELIC3_224
+    };
+
     public static Dictionary<string, Location> locationNamesReversed =
         locationNames.ToDictionary(ln => ln.Value, ln => ln.Key);
 
