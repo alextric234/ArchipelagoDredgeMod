@@ -26,9 +26,9 @@ public class ArchipelagoItemManager
                 return;
             }
 
-            if (apItem.ItemName.StartsWith("Progressive"))
+            if (apItem.ItemName.Equals("Progressive Hull"))
             {
-                UpgradeHelper.UpgradeItem(apItem.ItemName);
+                UpgradeHelper.UpgradeBoat();
                 UpdateStateData(indexOfItemToProcess);
                 return;
             }

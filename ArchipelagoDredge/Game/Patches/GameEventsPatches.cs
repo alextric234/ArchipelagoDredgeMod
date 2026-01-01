@@ -10,6 +10,10 @@ public static class GameEventsPatches
     [HarmonyPatch(nameof(GameEvents.TriggerResearchCompleted))]
     public static void TriggerResearchCompletedPre(SpatialItemData spatialItemData)
     {
+        if (spatialItemData.id == "net1")
+        {
+            return;
+        }
         ArchipelagoLocationManager.SendLocationCheck(spatialItemData.id);
     }
 }
