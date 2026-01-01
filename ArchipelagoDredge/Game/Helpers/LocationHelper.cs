@@ -973,14 +973,12 @@ public static class LocationNames
         var formattedString = input.ToUpper().Replace('-', '_');
         if (Enum.TryParse(formattedString, true, out location))
         {
-            WinchCore.Log.Info($"Found Location {input} by string");
             return true;
         }
 
         if (int.TryParse(input, out var intValue) &&
             Enum.IsDefined(typeof(Location), intValue))
         {
-            WinchCore.Log.Info($"Found Location {input} by int");
             location = (Location) intValue;
             return true;
         }
