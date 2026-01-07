@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Archipelago.MultiClient.Net.Colors;
 using ArchipelagoDredge.Game.Helpers;
+using ArchipelagoDredge.Game.Models;
 using ArchipelagoDredge.Network;
 using ArchipelagoDredge.Utils;
 using HarmonyLib;
@@ -30,6 +32,7 @@ public class ArchipelagoItemManager
             {
                 UpgradeHelper.UpgradeBoat();
                 UpdateStateData(indexOfItemToProcess);
+                UpgradeEquipped("Hull Upgraded");
                 return;
             }
 
@@ -37,6 +40,16 @@ public class ArchipelagoItemManager
             {
                 GameManager.Instance.DialogueRunner.AddItemById("dredge1", GameManager.Instance.SaveData.Inventory);
                 UpdateStateData(indexOfItemToProcess);
+                UpgradeEquipped("Dredge Crane Equipped");
+                return;
+            }
+
+            if (apItem.ItemName.Equals("Icebreaker"))
+            {
+                GameManager.Instance.SaveData.SetBoolVariable(BoatSubModelToggler.ICEBREAKER_EQUIP_STRING_KEY, true);
+                GameEvents.Instance.TriggerIcebreakerEquipChanged();
+                UpdateStateData(indexOfItemToProcess);
+                UpgradeEquipped("Icebreaker equipped");
                 return;
             }
 
@@ -63,6 +76,14 @@ public class ArchipelagoItemManager
             WinchCore.Log.Error("Error getting item from multiworld");
             WinchCore.Log.Error(e);
         }
+    }
+
+    private static void UpgradeEquipped(string upgradeMessage)
+    {
+        var notification = new DredgeNotification();
+        notification.Message = upgradeMessage;
+        notification.MessageColor = PaletteColor.Plum;
+        NotificationHelper.TryToSendNotification(notification);
     }
 
     public static List<SpatialItemData> GetItemsForShops()

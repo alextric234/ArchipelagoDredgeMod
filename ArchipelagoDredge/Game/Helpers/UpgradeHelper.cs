@@ -18,6 +18,13 @@ public static class UpgradeHelper
 
     public static void UpgradeBoat()
     {
+        var currentHullTier = ArchipelagoStateManager.StateData.CurrentHullUpgrade;
+
+        if (currentHullTier + 1 > HullUpgradeBoatUpgrades.Last().Key)
+        {
+            return;
+        }
+        
         var nextHullTier = ++ArchipelagoStateManager.StateData.CurrentHullUpgrade;
         var tirHullUpgrade = HullUpgradeBoatUpgrades[4].Last();
 
