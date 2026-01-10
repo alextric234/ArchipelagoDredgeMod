@@ -85,6 +85,7 @@ public static class ArchipelagoClient
             .OfType<HarvestPOI>()
             .Where(h => LocationNames.RelicLocations.Contains(LocationNames.DredgeIdToLocation(h.harvestPOIData.id)))
             .Where(h => h.Harvestable.GetStockCount(true) > 0)
+            .Where(h => ArchipelagoLocationManager.HasThisLocationBeenChecked(h.HarvestPOIData.id))
             .ForEach(h => h.OnHarvested(true));
     }
 }
