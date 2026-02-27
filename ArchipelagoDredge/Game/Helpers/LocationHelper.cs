@@ -456,6 +456,25 @@ public enum Location
     ROD5,
     ROD6,
     ROD8,
+    ENGINE3_R,
+    ENGINE4_R,
+    ENGINE5_R,
+    ENGINE7_R,
+    NET2_R,
+    NET3_R,
+    NET4_R,
+    NET5_R,
+    POT2_R,
+    POT3_R,
+    POT4_R,
+    POT5_R,
+    POT6_R,
+    ROD12_R,
+    ROD13_R,
+    ROD14_R,
+    ROD3_R,
+    ROD4_R,
+    ROD6_R,
 }
 
 public static class LocationNames
@@ -907,7 +926,26 @@ public static class LocationNames
         {Location.CRATE_1066, "Open Ocean - Crate 17(I-14)"},
         {Location.CRATE_1067, "Open Ocean - Crate 18(I-14)"},
         {Location.CRATE_1068, "Open Ocean - Crate 19(L-13)"},
-        {Location.CRATE_1069, "Open Ocean - Crate 20(L-15)"}
+        {Location.CRATE_1069, "Open Ocean - Crate 20(L-15)"},
+        {Location.ENGINE3_R, "Improved Outboard Engine Researched"},
+        {Location.ENGINE4_R, "Refined Outboard Engine Researched"},
+        {Location.ENGINE5_R, "Twin Prop Engine Researched"},
+        {Location.ENGINE7_R, "Twin Jet Drive Engine Researched"},
+        {Location.NET2_R, "Improved Trawl Net Researched"},
+        {Location.NET3_R, "Silt Filtering Trawl Net Researched"},
+        {Location.NET4_R, "Tempered Mesh Net Researched"},
+        {Location.NET5_R, "Large Trawl Net Researched"},
+        {Location.POT2_R, "Efficient Crab Pot Researched"},
+        {Location.POT3_R, "Hardy Crab Pot Researched"},
+        {Location.POT4_R, "Large Crab Pot Researched"},
+        {Location.POT5_R, "Complex Crab Pot Researched"},
+        {Location.POT6_R, "Massive Crab Pot Researched"},
+        {Location.ROD12_R, "Heat-Resistant Line Researched"},
+        {Location.ROD13_R, "Anti-Tangle Line Researched"},
+        {Location.ROD14_R, "Versatile Rod Researched"},
+        {Location.ROD3_R, "Hydraulic Rod Researched"},
+        {Location.ROD4_R, "Flexible Fishing Pole Researched"},
+        {Location.ROD6_R, "Bottomless Lines Researched"},
     };
 
     public static List<Location> RelicLocations = new()
@@ -915,6 +953,29 @@ public static class LocationNames
         Location.RELIC1_33,
         Location.RELIC2_200,
         Location.RELIC3_224
+    };
+
+    public static List<Location> ResearchLocations = new()
+    {
+        Location.ENGINE3,
+        Location.ENGINE4,
+        Location.ENGINE5,
+        Location.ENGINE7,
+        Location.NET2,
+        Location.NET3,
+        Location.NET4,
+        Location.NET5,
+        Location.POT2,
+        Location.POT3,
+        Location.POT4,
+        Location.POT5,
+        Location.POT6,
+        Location.ROD12,
+        Location.ROD13,
+        Location.ROD14,
+        Location.ROD3,
+        Location.ROD4,
+        Location.ROD6,
     };
 
     public static Dictionary<string, Location> locationNamesReversed =

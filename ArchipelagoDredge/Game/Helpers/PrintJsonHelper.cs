@@ -43,6 +43,12 @@ public static class PrintJsonHelper
         var itemName =
             ArchipelagoClient.Session.Items.GetItemName(itemPrintJsonPacket.Item.Item, receivingPlayer?.Game);
 
+        if (itemName.EndsWith("Researched"))
+        {
+            return;
+        }
+
+
         var itemNameColor = ColorUtils.GetColor(itemPrintJsonPacket.Item.Flags);
         var notification = new DredgeNotification();
 
