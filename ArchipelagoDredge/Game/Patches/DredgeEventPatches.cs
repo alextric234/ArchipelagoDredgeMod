@@ -15,6 +15,8 @@ public static class DredgeEventPatches
     {
         try
         {
+            if (itemInstance.ToItemData().itemSubtype == ItemSubtype.FISH)
+                return;
             ArchipelagoLocationManager.SendLocationCheck(harvestPOI.Harvestable.GetId());
         }
         catch (Exception e)

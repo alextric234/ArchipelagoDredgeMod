@@ -1,9 +1,8 @@
-﻿using System;
-using ArchipelagoDredge.Game.Managers;
+﻿using ArchipelagoDredge.Game.Managers;
 using ArchipelagoDredge.Game.Ui;
 using ArchipelagoDredge.Network;
-using CommandTerminal;
 using HarmonyLib;
+using System;
 using UnityEngine;
 using Winch.Core;
 

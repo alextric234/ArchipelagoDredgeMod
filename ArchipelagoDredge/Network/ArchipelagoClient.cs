@@ -42,6 +42,19 @@ public static class ArchipelagoClient
             throw new Exception(loginResult.ToString());
         }
 
+        StartupActions();
+    }
+
+
+    private static void StartupActions()
+    {
+        GameManager.Instance.SaveData.CanCatchAberrations = true;
+        var worldPhase = GameManager.Instance.SaveData.WorldPhase;
+
+        if (worldPhase < 1)
+        {
+            GameManager.Instance.SaveData.WorldPhase = 1;
+        }
         LocationNames.LoadArchipelagoIds();
         RemoveCheckedRelicPois();
         Terminal.Shell.RunCommand("ency.all");
