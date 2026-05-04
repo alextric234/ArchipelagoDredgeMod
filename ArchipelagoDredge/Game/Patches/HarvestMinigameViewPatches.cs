@@ -43,6 +43,13 @@ public class HarvestMinigameViewPatches
                     }
                 }
             }
+            else if(__instance.currentPOI.IsDredgePOI)
+            {
+                if (!ArchipelagoLocationManager.HasThisLocationBeenChecked(__instance.currentPOI.HarvestPOIData.id))
+                {
+                    __instance.hintImage.sprite = TextureUtil.GetSprite("archipelago_icon");
+                }
+            }
         }
         catch (Exception e)
         {
