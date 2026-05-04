@@ -54,6 +54,11 @@ public class ArchipelagoItemManager
                 return;
             }
 
+            if (GameManager.Instance.GridManager.IsCurrentlyHoldingObject())
+            {
+                return;
+            }
+
             SerializableGrid validGrid = null;
             var itemId = ItemNames.NameToItem(apItem.ItemName);
             var dredgeItem = ItemUtil.GetItemData(ItemNames.ItemToDredgeId(itemId));
