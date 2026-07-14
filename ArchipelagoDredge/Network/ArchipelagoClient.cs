@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Text;
 using Archipelago.MultiClient.Net;
 using Archipelago.MultiClient.Net.Enums;
 using Archipelago.MultiClient.Net.Packets;
@@ -39,7 +40,13 @@ public static class ArchipelagoClient
 
         if (!loginResult.Successful)
         {
-            throw new Exception(loginResult.ToString());
+            LoginFailure loginFailure = (LoginFailure)loginResult;
+            StringBuilder errorsStringBuilder = new StringBuilder();
+            foreach (var loginFailureError in loginFailure.Errors)
+            {
+                errorsStringBuilder.AppendLine(loginFailureError);
+            }
+            throw new Exception($"Errors: {loginFailure.Errors}");
         }
 
         StartupActions();

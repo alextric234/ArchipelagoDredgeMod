@@ -475,6 +475,7 @@ public enum Location
     ROD3_R,
     ROD4_R,
     ROD6_R,
+    APLACETOREST_ESCORT,
 }
 
 public static class LocationNames
@@ -946,6 +947,7 @@ public static class LocationNames
         {Location.ROD3_R, "Hydraulic Rod Researched"},
         {Location.ROD4_R, "Flexible Fishing Pole Researched"},
         {Location.ROD6_R, "Bottomless Lines Researched"},
+        {Location.APLACETOREST_ESCORT, "A Place to Rest - Escort Builder"}
     };
 
     public static List<Location> RelicLocations = new()
@@ -976,6 +978,11 @@ public static class LocationNames
         Location.ROD3,
         Location.ROD4,
         Location.ROD6,
+    };
+
+    public static List<Location> QuestLocations = new()
+    {
+        Location.APLACETOREST_ESCORT
     };
 
     public static Dictionary<string, Location> locationNamesReversed =
