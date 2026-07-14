@@ -3,6 +3,7 @@ using ArchipelagoDredge.Game.Ui;
 using ArchipelagoDredge.Network;
 using HarmonyLib;
 using System;
+using CommandTerminal;
 using UnityEngine;
 using Winch.Core;
 
@@ -38,11 +39,11 @@ public class ArchipelagoDredge : MonoBehaviour
         {
             if (Input.GetKeyDown(KeyCode.F4))
             {
-                // WinchCore.Log.Info("Activating debug mode!");
-                // GameManager.Instance.Player.IsGodModeEnabled = true;
-                // GameManager.Instance.Player.IsImmuneModeEnabled = true;
-                // Terminal.Shell.RunCommand("player.move 200");
-                // Terminal.Shell.RunCommand("player.turn 250");
+                WinchCore.Log.Info("Activating debug mode!");
+                GameManager.Instance.Player.IsGodModeEnabled = true;
+                GameManager.Instance.Player.IsImmuneModeEnabled = true;
+                Terminal.Shell.RunCommand("player.move 200");
+                Terminal.Shell.RunCommand("player.turn 250");
             }
 
             if (Input.GetKeyDown(KeyCode.F5))

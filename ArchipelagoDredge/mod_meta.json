@@ -4,6 +4,6 @@
   "ModGUID": "alextric234.archipelagodredge",
   "Version": "1.0.0",
   "ModAssembly": "ArchipelagoDredge.dll",
-  "MinWinchVersion": "0.6.1",
+  "MinWinchVersion": "0.6.2",
   "Entrypoint": "ArchipelagoDredge.Loader/Initialize"
 }

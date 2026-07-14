@@ -25,7 +25,6 @@ namespace ArchipelagoDredge.Game.Patches
             {
                 if (__result.itemSubtype == ItemSubtype.FISH)
                 {
-                    WinchCore.Log.Info($"result id: {__result.id}");
                     if (!ArchipelagoLocationManager.HasThisLocationBeenChecked(__result.id))
                     {
                         var resultClone = UnityEngine.Object.Instantiate(__result);
