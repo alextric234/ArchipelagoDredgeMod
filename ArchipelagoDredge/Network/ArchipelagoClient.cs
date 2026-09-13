@@ -62,7 +62,7 @@ public static class ArchipelagoClient
         {
             GameManager.Instance.SaveData.WorldPhase = 1;
         }
-        LocationNames.LoadArchipelagoIds();
+        LocationHelper.LoadArchipelagoIds();
         RemoveCheckedRelicPois();
         Terminal.Shell.RunCommand("ency.all");
 
@@ -103,9 +103,9 @@ public static class ArchipelagoClient
         PoiUtil.GetAllPOI()
             .Select(p => p.Value)
             .OfType<HarvestPOI>()
-            .Where(h => LocationNames.RelicLocations.Contains(LocationNames.DredgeIdToLocation(h.harvestPOIData.id)))
+            .Where(h => LocationHelper.RelicLocations.Contains(LocationHelper.DredgeIdToLocation(h.harvestPOIData.id)))
             .Where(h => h.Harvestable.GetStockCount(true) > 0)
-            .Where(h => ArchipelagoLocationManager.HasThisLocationBeenChecked(h.HarvestPOIData.id))
+            .Where(h => LocationHelper.HasThisLocationBeenChecked(h.HarvestPOIData.id))
             .ForEach(h => h.OnHarvested(true));
     }
 }

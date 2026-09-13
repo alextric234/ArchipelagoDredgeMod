@@ -27,7 +27,7 @@ public class HarvestMinigameViewPatches
 
             if (___itemDataToHarvest.itemSubtype == ItemSubtype.FISH)
             {
-                if (!ArchipelagoLocationManager.HasThisLocationBeenChecked(___itemDataToHarvest.id))
+                if (!LocationHelper.HasThisLocationBeenChecked(___itemDataToHarvest.id))
                 {
                     __instance.hintImage.sprite = TextureUtil.GetSprite("archipelago_icon");
                     return;
@@ -36,7 +36,7 @@ public class HarvestMinigameViewPatches
                 var aberrationsToCatch = ((FishItemData) ___itemDataToHarvest).Aberrations;
                 foreach (var aberration in aberrationsToCatch)
                 {
-                    if (!ArchipelagoLocationManager.HasThisLocationBeenChecked(aberration.id))
+                    if (!LocationHelper.HasThisLocationBeenChecked(aberration.id))
                     {
                         __instance.hintImage.sprite = TextureUtil.GetSprite("aberration_archipelago_icon");
                         return;
@@ -45,7 +45,7 @@ public class HarvestMinigameViewPatches
             }
             else if(__instance.currentPOI.IsDredgePOI)
             {
-                if (!ArchipelagoLocationManager.HasThisLocationBeenChecked(__instance.currentPOI.HarvestPOIData.id))
+                if (!LocationHelper.HasThisLocationBeenChecked(__instance.currentPOI.HarvestPOIData.id))
                 {
                     __instance.hintImage.sprite = TextureUtil.GetSprite("archipelago_icon");
                 }
@@ -80,7 +80,7 @@ public class HarvestMinigameViewPatches
                 locationToCheck = __instance.currentPOI.Harvestable.GetId();
             }
 
-            if (!ArchipelagoLocationManager.HasThisLocationBeenChecked(locationToCheck))
+            if (!LocationHelper.HasThisLocationBeenChecked(locationToCheck))
             {
                 var spatialItemInstance = new SpatialItemInstance();
                 spatialItemInstance.id = ___itemDataToHarvest.id;

@@ -19,15 +19,15 @@ public static class GameEventsPatches
         {
             return;
         }
-        LocationNames.TryParseLocation(spatialItemData.id, out var location);
+        LocationHelper.TryParseLocation(spatialItemData.id, out var location);
 
-        if (LocationNames.ResearchLocations.Contains(location))
+        if (LocationHelper.ResearchLocations.Contains(location))
         {
-            var researchedLocationName = LocationNames.locationNames[location] + " Researched";
-            var researchedLocation = LocationNames.NameToLocation(researchedLocationName);
-            var apLocationId = LocationNames.locationToArchipelagoId[researchedLocation];
-            ArchipelagoClient.Session.Locations.CompleteLocationChecksAsync(apLocationId);
+            var researchedLocationName = LocationHelper.locationNames[location] + " Researched";
+            var researchedLocation = LocationHelper.NameToLocation(researchedLocationName);
+            var apLocationId = LocationHelper.locationToArchipelagoId[researchedLocation];
+            LocationHelper.ReportLocationCheck(apLocationId);
         }
-        ArchipelagoLocationManager.SendLocationCheck(spatialItemData.id);
+        LocationHelper.ReportLocationCheck(spatialItemData.id);
     }
 }

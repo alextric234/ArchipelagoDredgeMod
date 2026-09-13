@@ -1,5 +1,5 @@
 ﻿using System;
-using ArchipelagoDredge.Game.Managers;
+using ArchipelagoDredge.Game.Helpers;
 using HarmonyLib;
 using Winch.Core;
 using Winch.Core.API;
@@ -17,7 +17,7 @@ public static class DredgeEventPatches
         {
             if (itemInstance.ToItemData().itemSubtype == ItemSubtype.FISH)
                 return;
-            ArchipelagoLocationManager.SendLocationCheck(harvestPOI.Harvestable.GetId());
+            LocationHelper.ReportLocationCheck(harvestPOI.Harvestable.GetId());
         }
         catch (Exception e)
         {
@@ -31,7 +31,7 @@ public static class DredgeEventPatches
     {
         try
         {
-            ArchipelagoLocationManager.SendLocationCheck(itemInstance.id);
+            LocationHelper.ReportLocationCheck(itemInstance.id);
         }
         catch (Exception e)
         {

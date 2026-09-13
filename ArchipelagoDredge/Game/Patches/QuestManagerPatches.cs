@@ -1,6 +1,6 @@
-﻿using HarmonyLib;
-using ArchipelagoDredge.Game.Helpers;
-using Winch.Core;
+﻿using ArchipelagoDredge.Game.Helpers;
+using ArchipelagoDredge.Network;
+using HarmonyLib;
 
 namespace ArchipelagoDredge.Game.Patches;
 
@@ -11,11 +11,6 @@ public class QuestManagerPatches
     [HarmonyPatch(nameof(QuestManager.CompleteQuestStep))]
     public static void CompleteQuestStep(string questStepId)
     {
-        LocationNames.TryParseLocation(questStepId, out var questLocation);
-
-        if (LocationNames.QuestLocations.Contains(questLocation))
-        {
-            WinchCore.Log.Info($"{questStepId} location found and completed");
-        }
+        LocationHelper.ReportLocationCheck(questStepId);
     }
 }

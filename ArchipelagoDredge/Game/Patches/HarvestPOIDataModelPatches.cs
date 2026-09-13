@@ -25,7 +25,7 @@ namespace ArchipelagoDredge.Game.Patches
             {
                 if (__result.itemSubtype == ItemSubtype.FISH)
                 {
-                    if (!ArchipelagoLocationManager.HasThisLocationBeenChecked(__result.id))
+                    if (!LocationHelper.HasThisLocationBeenChecked(__result.id))
                     {
                         var resultClone = UnityEngine.Object.Instantiate(__result);
                         resultClone.sprite = TextureUtil.GetSprite("archipelago_icon");
@@ -36,7 +36,7 @@ namespace ArchipelagoDredge.Game.Patches
                     var aberrationsToCatch = ((FishItemData)__result).Aberrations;
                     foreach (var aberration in aberrationsToCatch)
                     {
-                        if (!ArchipelagoLocationManager.HasThisLocationBeenChecked(aberration.id))
+                        if (!LocationHelper.HasThisLocationBeenChecked(aberration.id))
                         {
                             var resultClone = UnityEngine.Object.Instantiate(__result);
                             resultClone.sprite = TextureUtil.GetSprite("aberration_archipelago_icon");
@@ -45,9 +45,9 @@ namespace ArchipelagoDredge.Game.Patches
                         }
                     }
                 }
-                else if (LocationNames.TryParseLocation(__instance.id, out _))
+                else if (LocationHelper.TryParseLocation(__instance.id, out _))
                 {
-                    if (!ArchipelagoLocationManager.HasThisLocationBeenChecked(__instance.id))
+                    if (!LocationHelper.HasThisLocationBeenChecked(__instance.id))
                     {
                         var resultClone = UnityEngine.Object.Instantiate(__result);
                         resultClone.sprite = TextureUtil.GetSprite("archipelago_icon");
