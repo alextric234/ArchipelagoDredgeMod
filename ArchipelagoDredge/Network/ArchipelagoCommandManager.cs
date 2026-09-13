@@ -1,26 +1,18 @@
-﻿using System;
-using ArchipelagoDredge.Game.Helpers;
+﻿using ArchipelagoDredge.Game.Helpers;
 using ArchipelagoDredge.Game.Managers;
+using ArchipelagoDredge.Network.Enums;
 using CommandTerminal;
+using System;
 using Winch.Core;
 
 namespace ArchipelagoDredge.Network;
 
 public static class ArchipelagoCommandManager
 {
-    public enum ConnectionState
-    {
-        Disconnected,
-        Connecting,
-        Connected,
-        Error
-    }
-
     private static string _apHost;
     private static int _apPort;
     private static string _slotName;
     private static string _password;
-    public static ConnectionState State { get; private set; } = ConnectionState.Disconnected;
 
     public static void ConfigConnect()
     {
@@ -37,7 +29,7 @@ public static class ArchipelagoCommandManager
 
     public static void TryConnect(string apHost, int apPort, string slotName, string password)
     {
-        if (State == ConnectionState.Connecting || State == ConnectionState.Connected)
+        if (ArchipelagoClient.State == ConnectionState.Connecting || ArchipelagoClient.State == ConnectionState.Connected)
         {
             return;
         }
@@ -47,7 +39,7 @@ public static class ArchipelagoCommandManager
         _slotName = slotName;
         _password = password;
 
-        State = ConnectionState.Connecting;
+        ArchipelagoClient.State = ConnectionState.Connecting;
         TerminalCommandManager.LogMessage(TerminalLogType.Message, "Connecting to Archipelago...");
 
         try
@@ -63,19 +55,19 @@ public static class ArchipelagoCommandManager
                 ArchipelagoClient.Session.Socket != null &&
                 ArchipelagoClient.Session.Socket.Connected)
             {
-                State = ConnectionState.Connected;
+                ArchipelagoClient.State = ConnectionState.Connected;
                 TerminalCommandManager.LogMessage(TerminalLogType.Message, "Connected to Archipelago!");
                 NotificationHelper.ShowNotificationWithColour(NotificationType.NONE, "Connected to Archipelago!",
                     DredgeColorTypeEnum.POSITIVE);
             }
             else
             {
-                State = ConnectionState.Disconnected;
+                ArchipelagoClient.State = ConnectionState.Disconnected;
             }
         }
         catch (Exception e)
         {
-            State = ConnectionState.Disconnected;
+            ArchipelagoClient.State = ConnectionState.Disconnected;
             TerminalCommandManager.LogMessage(TerminalLogType.Error, "Connection failed.");
             NotificationHelper.ShowNotificationWithColour(NotificationType.NONE, "Connection failed.",
                 DredgeColorTypeEnum.NEGATIVE);
@@ -85,13 +77,13 @@ public static class ArchipelagoCommandManager
 
     public static void Disconnect()
     {
-        if (State != ConnectionState.Connected)
+        if (ArchipelagoClient.State != ConnectionState.Connected)
         {
             return;
         }
 
         ArchipelagoClient.Disconnect();
-        State = ConnectionState.Disconnected;
+        ArchipelagoClient.State = ConnectionState.Disconnected;
         TerminalCommandManager.LogMessage(TerminalLogType.Message, "Disconnected from Archipelago");
         NotificationHelper.ShowNotificationWithColour(NotificationType.NONE, "Disconnected from Archipelago",
             DredgeColorTypeEnum.NEUTRAL);

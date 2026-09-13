@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using ArchipelagoDredge.Network;
+using ArchipelagoDredge.Network.Enums;
 using Winch.Core;
 
 namespace ArchipelagoDredge.Game.Helpers;
@@ -1083,7 +1084,7 @@ public static class LocationHelper
 
     public static void ReportLocationCheck(long locationId)
     {
-        if (!ArchipelagoClient.Session.Socket.Connected)
+        if (ArchipelagoClient.State != ConnectionState.Connected)
         {
             PendingLocationChecks.Add(locationId);
             return;
@@ -1102,6 +1103,15 @@ public static class LocationHelper
         else
         {
             WinchCore.Log.Error($"Could not find location: {locationName}");
+        }
+    }
+
+    public static void FlushPendingLocation()
+    {
+        foreach (var locationId in PendingLocationChecks.ToList())
+        {
+            ArchipelagoClient.Session.Locations.CompleteLocationChecksAsync(locationId);
+            PendingLocationChecks.Remove(locationId);
         }
     }
 

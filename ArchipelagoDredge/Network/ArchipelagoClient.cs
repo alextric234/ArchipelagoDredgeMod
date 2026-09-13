@@ -6,6 +6,7 @@ using Archipelago.MultiClient.Net.Enums;
 using Archipelago.MultiClient.Net.Packets;
 using ArchipelagoDredge.Game.Helpers;
 using ArchipelagoDredge.Game.Managers;
+using ArchipelagoDredge.Network.Enums;
 using ArchipelagoDredge.Utils;
 using CommandTerminal;
 using Winch.Util;
@@ -15,6 +16,7 @@ namespace ArchipelagoDredge.Network;
 public static class ArchipelagoClient
 {
     public static ArchipelagoSession Session { get; private set; }
+    public static ConnectionState State { get; set; } = ConnectionState.Disconnected;
 
     public static void Connect(string apHost, int apPort, string slotName, string password)
     {
@@ -66,6 +68,8 @@ public static class ArchipelagoClient
         RemoveCheckedRelicPois();
         Terminal.Shell.RunCommand("ency.all");
 
+        LocationHelper.ReconcileArchipelagoChecks();
+        LocationHelper.FlushPendingLocation();
         ArchipelagoItemManager.RestockShops();
     }
 
