@@ -1,10 +1,12 @@
-﻿using ArchipelagoDredge.Game.Managers;
+﻿using ArchipelagoDredge.Game.Helpers;
+using ArchipelagoDredge.Game.Managers;
 using ArchipelagoDredge.Game.Ui;
 using ArchipelagoDredge.Network;
-using HarmonyLib;
-using System;
+using ArchipelagoDredge.Network.Enums;
 using ArchipelagoDredge.Utils;
 using CommandTerminal;
+using HarmonyLib;
+using System;
 using UnityEngine;
 using Winch.Core;
 

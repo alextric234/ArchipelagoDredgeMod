@@ -21,12 +21,20 @@ public static class ArchipelagoCommandManager
         if (string.IsNullOrWhiteSpace(host) || port <= 0 || port > 65535)
         {
             WinchCore.Log.Error("[AP] Host and Port are required.");
+            WinchCore.Log.Error($"Failed to connect to Archipelago slot. Check your config (mod menu or F7)");
+            NotificationHelper.ShowNotificationWithColour(NotificationType.NONE, "Connection failed.",
+                DredgeColorTypeEnum.NEGATIVE);
+            ArchipelagoClient.State = ConnectionState.Error;
             return;
         }
 
         if (string.IsNullOrEmpty(slot))
         {
             WinchCore.Log.Error("[AP] Player slot is required");
+            WinchCore.Log.Error($"Failed to connect to Archipelago slot. Check your config (mod menu or F7)");
+            NotificationHelper.ShowNotificationWithColour(NotificationType.NONE, "Connection failed.",
+                DredgeColorTypeEnum.NEGATIVE);
+            ArchipelagoClient.State = ConnectionState.Error;
             return;
         }
 
