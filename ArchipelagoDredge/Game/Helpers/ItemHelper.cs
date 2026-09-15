@@ -796,7 +796,7 @@ public static class ItemNames
         {Item.RESEARCH_ITEM, "Research Part"},
         {Item.SCRAP, "Metal Scraps"},
         {Item.QUEST_BELT_BUCKLE, "Bronze Belt Buckle"},
-        {Item.QUEST_BUILDER, "Builder"},
+        {Item.QUEST_BUILDER, "The Builder"},
         {Item.QUEST_CAMERA_CASE, "Photography Equipment"},
         {Item.QUEST_CASTAWAY, "Castaway"},
         {Item.QUEST_COMPONENTS, "Prototype Parts"},
