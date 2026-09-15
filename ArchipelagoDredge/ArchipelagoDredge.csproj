@@ -30,7 +30,9 @@
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
         <None Include="ArchipelagoDredge.csproj.user" />
-        <Content Include="$(NuGetPackageRoot)\archipelago.multiclient.net\6.6.0\lib\net45\Archipelago.MultiClient.Net.dll" Link="Archipelago.MultiClient.Net.dll">
+        <Content Remove="C:\Users\rando\.nuget\packages\\archipelago.multiclient.net\6.7.1\lib\net45\Archipelago.MultiClient.Net.dll" />
+        <Content Remove="C:\Users\rando\.nuget\packages\\archipelago.multiclient.net\6.7.1\lib\net45\Archipelago.MultiClient.Net.dll" />
+        <Content Include="$(NuGetPackageRoot)\archipelago.multiclient.net\6.7.1\lib\net45\Archipelago.MultiClient.Net.dll" Link="Archipelago.MultiClient.Net.dll">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </Content>
     </ItemGroup>
