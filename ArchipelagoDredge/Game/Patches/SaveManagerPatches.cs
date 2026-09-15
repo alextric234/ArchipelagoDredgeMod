@@ -14,11 +14,7 @@ public static class SaveManagerPatches
     {
         try
         {
-            ArchipelagoStateManager.StateData.LastProcessedIndexSinceSave =
-                ArchipelagoStateManager.StateData.LastProcessedIndex;
-            ArchipelagoStateManager.StateData.HullUpgradeSinceSave =
-                ArchipelagoStateManager.StateData.CurrentHullUpgrade;
-            ArchipelagoStateManager.SaveData();
+            ArchipelagoStateManager.PersistLastProcessedIndex();
         }
         catch (Exception ex)
         {
@@ -36,7 +32,6 @@ public static class SaveManagerPatches
         }
         catch (Exception ex)
         {
-            WinchCore.Log.Error(ex);
         }
     }
 

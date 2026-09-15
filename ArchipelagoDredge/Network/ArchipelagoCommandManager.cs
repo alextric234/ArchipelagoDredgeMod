@@ -24,6 +24,12 @@ public static class ArchipelagoCommandManager
             return;
         }
 
+        if (string.IsNullOrEmpty(slot))
+        {
+            WinchCore.Log.Error("[AP] Player slot is required");
+            return;
+        }
+
         TryConnect(host, port, slot, password);
     }
 

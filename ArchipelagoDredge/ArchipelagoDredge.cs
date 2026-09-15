@@ -3,6 +3,7 @@ using ArchipelagoDredge.Game.Ui;
 using ArchipelagoDredge.Network;
 using HarmonyLib;
 using System;
+using ArchipelagoDredge.Utils;
 using CommandTerminal;
 using UnityEngine;
 using Winch.Core;
@@ -24,6 +25,9 @@ public class ArchipelagoDredge : MonoBehaviour
 
             _harmony = new Harmony("com.alextric234.archipelago.dredge");
             _harmony.PatchAll();
+
+            GameManager.Instance.OnGameStarted += OnGameStarted;
+            GameManager.Instance.OnGameEnded += OnGameEnded;
 
             GetConnectionConfigPanel();
         }
@@ -80,14 +84,17 @@ public class ArchipelagoDredge : MonoBehaviour
         }
     }
 
-    public void OnGameUnloaded()
+    public void OnGameStarted()
     {
-        ArchipelagoClient.Disconnect();
+        WinchCore.Log.Info($"Game started, connecting with Archipelago configuration");
+        ArchipelagoCommandManager.ConfigConnect();
     }
 
-    public void Quit()
+    public void OnGameEnded()
     {
-        ArchipelagoClient.Disconnect();
+        ArchipelagoStateManager.RevertLastProcessedIndex();
+        WinchCore.Log.Info($"Game ended, disconnecting from Archipelago");
+        ArchipelagoCommandManager.Disconnect();
     }
 
     private void GetConnectionConfigPanel()

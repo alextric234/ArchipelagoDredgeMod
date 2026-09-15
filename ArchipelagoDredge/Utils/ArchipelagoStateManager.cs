@@ -1,6 +1,8 @@
-﻿using System;
+﻿using Steamworks;
+using System;
 using System.IO;
 using UnityEngine;
+using Winch.Core;
 
 namespace ArchipelagoDredge.Utils;
 
@@ -12,25 +14,32 @@ public static class ArchipelagoStateManager
 
     public static void Load(int slot)
     {
-        SaveFilePath = Path.Combine(Application.persistentDataPath, SaveFile, $"{SaveFile}-{slot}.json");
-        if (File.Exists(SaveFilePath))
+        try
         {
-            var json = File.ReadAllText(SaveFilePath);
-            StateData = JsonUtility.FromJson<ArchipelagoStateData>(json);
-            StateData.LastProcessedIndex = StateData.LastProcessedIndexSinceSave;
+            SaveFilePath = Path.Combine(Application.persistentDataPath, SaveFile, $"{SaveFile}-{slot}.json");
+            if (File.Exists(SaveFilePath))
+            {
+                var json = File.ReadAllText(SaveFilePath);
+                StateData = JsonUtility.FromJson<ArchipelagoStateData>(json);
+                StateData.LastProcessedIndex = StateData.LastProcessedIndexSinceSave;
+            }
+            else
+            {
+                StateData = new ArchipelagoStateData();
+
+                Directory.CreateDirectory(Path.GetDirectoryName(SaveFilePath)!);
+
+                var defaultJson = JsonUtility.ToJson(StateData, true);
+                File.WriteAllText(SaveFilePath, defaultJson);
+            }
         }
-        else
+        catch (Exception ex)
         {
-            StateData = new ArchipelagoStateData();
-
-            Directory.CreateDirectory(Path.GetDirectoryName(SaveFilePath)!);
-
-            var defaultJson = JsonUtility.ToJson(StateData, true);
-            File.WriteAllText(SaveFilePath, defaultJson);
+            WinchCore.Log.Error(ex);
         }
     }
 
-    public static void SaveData()
+    private static void SaveData()
     {
         var updatedJson = JsonUtility.ToJson(StateData, true);
         File.WriteAllText(SaveFilePath, updatedJson);
@@ -43,6 +52,25 @@ public static class ArchipelagoStateManager
         {
             File.Delete(SaveFilePath);
         }
+    }
+
+    public static void IncrementLastProcessedIndex(int index)
+    {
+        StateData.LastProcessedIndex = index;
+        SaveData();
+    }
+
+    public static void PersistLastProcessedIndex()
+    {
+        StateData.LastProcessedIndexSinceSave = StateData.LastProcessedIndex;
+        StateData.HullUpgradeSinceSave = StateData.CurrentHullUpgrade;
+        SaveData();
+    }
+
+    public static void RevertLastProcessedIndex()
+    {
+        StateData.LastProcessedIndex = StateData.LastProcessedIndexSinceSave;
+        StateData.CurrentHullUpgrade = StateData.HullUpgradeSinceSave;
     }
 }
 

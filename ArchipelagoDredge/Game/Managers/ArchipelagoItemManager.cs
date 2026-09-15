@@ -25,14 +25,14 @@ public class ArchipelagoItemManager
                 apItem.ItemName.EndsWith("Researched") ||
                 apItem.ItemName.Contains("Starting Gear"))
             {
-                UpdateStateData(indexOfItemToProcess);
+                ArchipelagoStateManager.IncrementLastProcessedIndex(indexOfItemToProcess);
                 return;
             }
 
             if (apItem.ItemName.Equals("Progressive Hull"))
             {
                 UpgradeHelper.UpgradeBoat();
-                UpdateStateData(indexOfItemToProcess);
+                ArchipelagoStateManager.IncrementLastProcessedIndex(indexOfItemToProcess);
                 UpgradeEquipped("Hull Upgraded");
                 return;
             }
@@ -40,7 +40,7 @@ public class ArchipelagoItemManager
             if (apItem.ItemName.Equals("Dredge Crane"))
             {
                 GameManager.Instance.DialogueRunner.AddItemById("dredge1", GameManager.Instance.SaveData.Inventory);
-                UpdateStateData(indexOfItemToProcess);
+                ArchipelagoStateManager.IncrementLastProcessedIndex(indexOfItemToProcess);
                 UpgradeEquipped("Dredge Crane Equipped");
                 return;
             }
@@ -49,7 +49,7 @@ public class ArchipelagoItemManager
             {
                 GameManager.Instance.SaveData.SetBoolVariable(BoatSubModelToggler.ICEBREAKER_EQUIP_STRING_KEY, true);
                 GameEvents.Instance.TriggerIcebreakerEquipChanged();
-                UpdateStateData(indexOfItemToProcess);
+                ArchipelagoStateManager.IncrementLastProcessedIndex(indexOfItemToProcess);
                 UpgradeEquipped("Icebreaker equipped");
                 return;
             }
@@ -75,7 +75,7 @@ public class ArchipelagoItemManager
             GameManager.Instance.ItemManager.AddItemById(dredgeItem.id, validGrid, false);
 
             RestockShops();
-            UpdateStateData(indexOfItemToProcess);
+            ArchipelagoStateManager.IncrementLastProcessedIndex(indexOfItemToProcess);
         }
         catch (Exception e)
         {
@@ -195,12 +195,6 @@ public class ArchipelagoItemManager
         }
 
         return null;
-    }
-
-    private static void UpdateStateData(int indexOfItemToProcess)
-    {
-        ArchipelagoStateManager.StateData.LastProcessedIndex = indexOfItemToProcess;
-        ArchipelagoStateManager.SaveData();
     }
 
     public static void RestockShops()
