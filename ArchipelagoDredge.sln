@@ -5,18 +5,6 @@ VisualStudioVersion = 18.3.11512.155
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArchipelagoDredge", "ArchipelagoDredge\ArchipelagoDredge.csproj", "{DEABC6B2-2551-43D8-A7B5-B4F7D3A6F423}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DREDGE", "..\..\Decompiles\DREDGE\DREDGE.csproj", "{2BFDD006-8C7E-4366-9AA9-8F9B986F26D8}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Winch Code", "Winch Code", "{C876ADAC-6CA0-4E87-8BDC-D9024F5B6D49}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Winch", "..\..\Code Library Sources\Winch\Winch\Winch.csproj", "{FA3B5C03-7B97-FB81-773D-BE82866B7BE4}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WinchCommon", "..\..\Code Library Sources\Winch\WinchCommon\WinchCommon.csproj", "{ED081A87-2BB1-5B65-50CE-FB8B10BD3410}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WinchConsole", "..\..\Code Library Sources\Winch\WinchConsole\WinchConsole.csproj", "{73BC6EFC-E8A1-CE82-68CD-16C2913438FB}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WinchLauncher", "..\..\Code Library Sources\Winch\WinchLauncher\WinchLauncher.csproj", "{F98F2F2B-79BE-919C-5EC1-1691CE6C7798}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
