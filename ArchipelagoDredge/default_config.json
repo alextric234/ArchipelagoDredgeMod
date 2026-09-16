@@ -23,5 +23,10 @@
     "tooltip": "alextric234.archipelagodredge.password.tooltip",
     "value": "",
     "secret": true
+  },
+  "apEnableDeathLink": {
+    "type": "toggle",
+    "title": "alextric234.archipelagodredge.deathlink.title",
+    "value": false
   }
 }

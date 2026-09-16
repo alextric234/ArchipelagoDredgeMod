@@ -1,7 +1,9 @@
 ﻿using System;
 using System.IO;
 using ArchipelagoDredge.Game.Helpers;
+using ArchipelagoDredge.Game.Managers;
 using ArchipelagoDredge.Network;
+using TMPro;
 using UnityEngine;
 using Winch.Core;
 
@@ -67,7 +69,7 @@ public class ApConfigPanel : MonoBehaviour
         }
         catch (Exception ex)
         {
-            WinchCore.Log.Error("[AP] Config watcher init failed: " + ex);
+            WinchCore.Log.Error("Config watcher init failed: " + ex);
         }
     }
 
@@ -124,16 +126,16 @@ public class ApConfigPanel : MonoBehaviour
     {
         try
         {
-            var (host, port, slot, pwd) = ApConfigHelper.Read();
+            var (host, port, slot, pwd, deathLink) = ApConfigHelper.Read();
             _host = host;
             _portText = port.ToString();
             _slot = slot;
             _pwd = pwd;
-            WinchCore.Log.Info("[AP] Reloaded values from config.");
+            WinchCore.Log.Info("Reloaded values from config.");
         }
         catch (Exception ex)
         {
-            WinchCore.Log.Error("[AP] Reload failed: " + ex);
+            WinchCore.Log.Error("Reload failed: " + ex);
         }
     }
 
@@ -141,7 +143,7 @@ public class ApConfigPanel : MonoBehaviour
     {
         if (!int.TryParse(_portText, out var port) || port <= 0 || port > 65535)
         {
-            WinchCore.Log.Error("[AP] Invalid port.");
+            WinchCore.Log.Error("Invalid port.");
             return;
         }
 
@@ -152,10 +154,12 @@ public class ApConfigPanel : MonoBehaviour
         var saved = ApConfigHelper.SaveValues(host, port, slot, pwd);
         if (!saved)
         {
-            WinchCore.Log.Error("[AP] Proceeding to connect despite save error.");
+            WinchCore.Log.Error("Proceeding to connect despite save error.");
         }
 
-        ArchipelagoCommandManager.TryConnect(host, port, slot, pwd);
+        var deathLink = ApConfigHelper.ReadDeathLink();
+
+        _ = ArchipelagoCommandManager.TryConnect(host, port, slot, pwd, deathLink);
     }
 
 
@@ -174,5 +178,5 @@ public class ApConfigPanel : MonoBehaviour
         var r = GUILayoutUtility.GetRect(0, 20, GUILayout.ExpandWidth(true));
         value = GUI.PasswordField(r, value, '*');
         GUILayout.EndHorizontal();
-    }
+    } 
 }

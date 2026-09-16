@@ -6,5 +6,6 @@
   "alextric234.archipelagodredge.slot.title": "Slot Name",
   "alextric234.archipelagodredge.slot.tooltip": "Your Archipelago slot (spaces allowed).",
   "alextric234.archipelagodredge.password.title": "Password",
-  "alextric234.archipelagodredge.password.tooltip": "Optional password if the server requires one."
+  "alextric234.archipelagodredge.password.tooltip": "Optional password if the server requires one.",
+  "alextric234.archipelagodredge.deathlink.title": "Enable DeathLink",
 }

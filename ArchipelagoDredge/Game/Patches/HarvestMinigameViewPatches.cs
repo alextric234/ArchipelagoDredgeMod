@@ -53,7 +53,7 @@ public class HarvestMinigameViewPatches
         }
         catch (Exception e)
         {
-            WinchCore.Log.Error($"[AP] Error in HarvestMinigameViewPatches.RefreshHarvestTarget: {e}");
+            WinchCore.Log.Error($"Error in HarvestMinigameViewPatches.RefreshHarvestTarget: {e}");
         }
     }
 

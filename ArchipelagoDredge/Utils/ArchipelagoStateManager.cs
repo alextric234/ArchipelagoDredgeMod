@@ -12,6 +12,8 @@ public static class ArchipelagoStateManager
     private static string SaveFilePath;
     public static ArchipelagoStateData StateData;
 
+    public static bool AwaitingDeathScreenChoice { get; internal set; }
+
     public static void Load(int slot)
     {
         try

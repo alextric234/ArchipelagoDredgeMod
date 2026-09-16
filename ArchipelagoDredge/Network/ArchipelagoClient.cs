@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using Archipelago.MultiClient.Net;
 using Archipelago.MultiClient.Net.Enums;
 using Archipelago.MultiClient.Net.Packets;
@@ -9,6 +10,7 @@ using ArchipelagoDredge.Game.Managers;
 using ArchipelagoDredge.Network.Enums;
 using ArchipelagoDredge.Utils;
 using CommandTerminal;
+using Winch.Core;
 using Winch.Util;
 
 namespace ArchipelagoDredge.Network;
@@ -18,7 +20,7 @@ public static class ArchipelagoClient
     public static ArchipelagoSession Session { get; private set; }
     public static ConnectionState State { get; set; } = ConnectionState.Disconnected;
 
-    public static void Connect(string apHost, int apPort, string slotName, string password)
+    public static async Task ConnectAsync(string apHost, int apPort, string slotName, string password, bool deathLink)
     {
         if (!GameManager.Instance.DataLoader.HasLoaded())
         {
@@ -33,12 +35,27 @@ public static class ArchipelagoClient
 
         Session.Socket.PacketReceived += OnPacketReceived;
 
-        var loginResult = Session.TryConnectAndLogin(
+        try
+        {
+            var roomInfoPacket = await Session.ConnectAsync();
+        }
+        catch (Exception e)
+        {
+            throw new Exception("Failed to connect to Archipelago", e);
+        }
+
+        string[] tags = null;
+        if (deathLink)
+        {
+            tags = ["DeathLink"];
+        }
+
+        var loginResult = await Session.LoginAsync(
             "DREDGE",
             slotName,
             ItemsHandlingFlags.AllItems,
-            password: password
-        );
+            password: password,
+            tags: tags);
 
         if (!loginResult.Successful)
         {

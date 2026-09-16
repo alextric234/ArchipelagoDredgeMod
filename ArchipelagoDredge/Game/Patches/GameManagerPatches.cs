@@ -1,4 +1,5 @@
 ﻿using ArchipelagoDredge.Network;
+using ArchipelagoDredge.Utils;
 using HarmonyLib;
 
 namespace ArchipelagoDredge.Game.Patches;
@@ -7,9 +8,10 @@ namespace ArchipelagoDredge.Game.Patches;
 public class GameManagerPatches
 {
     [HarmonyPrefix]
-    [HarmonyPatch(nameof(GameManager.EndGame))]
-    public static void PreFix()
+    [HarmonyPatch(nameof(GameManager.GameOver))]
+    private static void Prefix(GameOverMode endMode)
     {
-        ArchipelagoCommandManager.Disconnect();
+        ArchipelagoStateManager.AwaitingDeathScreenChoice =
+            endMode == GameOverMode.DEATH;
     }
 }

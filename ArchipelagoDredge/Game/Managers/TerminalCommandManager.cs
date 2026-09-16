@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using ArchipelagoDredge.Game.Helpers;
 using ArchipelagoDredge.Network;
 using CommandTerminal;
 using Winch.Core;
@@ -158,7 +159,9 @@ public class TerminalCommandManager
             return;
         }
 
-        ArchipelagoCommandManager.TryConnect(host, port, slot, password);
+        var deathLink = ApConfigHelper.ReadDeathLink();
+
+        _ = ArchipelagoCommandManager.TryConnect(host, port, slot, password, deathLink);
     }
 
     private static void HelpCommand(CommandArg[] args)

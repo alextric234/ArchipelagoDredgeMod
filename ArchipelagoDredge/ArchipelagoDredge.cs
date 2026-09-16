@@ -7,6 +7,7 @@ using ArchipelagoDredge.Utils;
 using CommandTerminal;
 using HarmonyLib;
 using System;
+using Archipelago.MultiClient.Net.BounceFeatures.DeathLink;
 using UnityEngine;
 using Winch.Core;
 
@@ -35,7 +36,7 @@ public class ArchipelagoDredge : MonoBehaviour
         }
         catch (Exception ex)
         {
-            WinchCore.Log.Error($"[AP] Error in awake: {ex}");
+            WinchCore.Log.Error($"Error in awake: {ex}");
         }
     }
 
@@ -43,14 +44,14 @@ public class ArchipelagoDredge : MonoBehaviour
     {
         try
         {
-            if (Input.GetKeyDown(KeyCode.F4))
-            {
-                WinchCore.Log.Info("Activating debug mode!");
-                GameManager.Instance.Player.IsGodModeEnabled = true;
-                GameManager.Instance.Player.IsImmuneModeEnabled = true;
-                Terminal.Shell.RunCommand("player.move 200");
-                Terminal.Shell.RunCommand("player.turn 250");
-            }
+            //if (Input.GetKeyDown(KeyCode.F4))
+            //{
+            //    WinchCore.Log.Info("Activating debug mode!");
+            //    GameManager.Instance.Player.IsGodModeEnabled = true;
+            //    GameManager.Instance.Player.IsImmuneModeEnabled = true;
+            //    Terminal.Shell.RunCommand("player.move 200");
+            //    Terminal.Shell.RunCommand("player.turn 250");
+            //}
 
             if (Input.GetKeyDown(KeyCode.F5))
             {
@@ -79,23 +80,36 @@ public class ArchipelagoDredge : MonoBehaviour
             {
                 ArchipelagoItemManager.GetItem();
             }
+
+            if (DeathLinkManager.HasPendingDeathLink())
+            {
+                GameManager.Instance.Player.Die();
+            }
         }
         catch (Exception ex)
         {
-            WinchCore.Log.Error($"[AP] Update processing error: {ex}");
+            WinchCore.Log.Error($"Update processing error: {ex}");
         }
     }
 
     public void OnGameStarted()
     {
-        WinchCore.Log.Info($"Game started, connecting with Archipelago configuration");
-        ArchipelagoCommandManager.ConfigConnect();
+        if (ArchipelagoClient.State != ConnectionState.Connected && ArchipelagoClient.State != ConnectionState.Connecting)
+        {
+            WinchCore.Log.Info($"Game started, connecting with Archipelago configuration");
+            ArchipelagoCommandManager.ConfigConnect();
+        }
     }
 
     public void OnGameEnded()
     {
+        if (ArchipelagoStateManager.AwaitingDeathScreenChoice)
+        {
+            return;
+        }
+
         ArchipelagoStateManager.RevertLastProcessedIndex();
-        WinchCore.Log.Info($"Game ended, disconnecting from Archipelago");
+        WinchCore.Log.Info("Game ended, disconnecting from Archipelago");
         ArchipelagoCommandManager.Disconnect();
     }
 

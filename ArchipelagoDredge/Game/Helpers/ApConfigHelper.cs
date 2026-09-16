@@ -35,7 +35,7 @@ public static class ApConfigHelper
         return JObject.Parse(File.ReadAllText(path));
     }
 
-    public static (string host, int port, string slot, string pwd) Read()
+    public static (string host, int port, string slot, string pwd, bool deathLink) Read()
     {
         var cfg = LoadConfigObject(out _);
 
@@ -43,8 +43,18 @@ public static class ApConfigHelper
         var port = (int?) cfg["apPort"]?["value"] ?? 38281;
         var slot = cfg["apSlotName"]?["value"]?.ToString() ?? "";
         var pwd = cfg["apPassword"]?["value"]?.ToString() ?? "";
+        var deathLink = (bool?) cfg["apEnableDeathLink"]?["value"] ?? false;
 
-        return (host.Trim(), port, (slot ?? "").Trim(), pwd ?? "");
+        return (host.Trim(), port, (slot ?? "").Trim(), pwd ?? "", deathLink);
+    }
+
+    public static bool ReadDeathLink()
+    {
+        var cfg = LoadConfigObject(out _);
+
+        var deathLink = (bool?)cfg["apEnableDeathLink"]?["value"] ?? false;
+
+        return deathLink;
     }
 
     public static bool SaveValues(string host, int port, string slot, string pwd)
@@ -73,6 +83,7 @@ public static class ApConfigHelper
             EnsureSetting(cfg, "apPort", "integer");
             EnsureSetting(cfg, "apSlotName", "text");
             EnsureSetting(cfg, "apPassword", "text");
+            EnsureSetting(cfg, "apEnableDeathLink", "toggle");
 
             cfg["apIpAddress"]["value"] = host ?? "";
             cfg["apPort"]["value"] = port;
@@ -84,7 +95,7 @@ public static class ApConfigHelper
         }
         catch (Exception ex)
         {
-            WinchCore.Log.Error("[AP] Save failed: " + ex);
+            WinchCore.Log.Error("Save failed: " + ex);
             return false;
         }
     }
@@ -100,7 +111,7 @@ public static class ApConfigHelper
         root[key] = new JObject
         {
             ["type"] = typeIfNew,
-            ["title"] = key, // safe fallback; Mods UI will show the key if no localization
+            ["title"] = key,
             ["tooltip"] = key,
             ["value"] = typeIfNew == "integer" ? 0 : ""
         };
