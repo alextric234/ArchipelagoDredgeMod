@@ -12,13 +12,6 @@ public static class ArchipelagoStateManager
     private static string SaveFilePath;
     public static ArchipelagoStateData StateData;
 
-    public const string GaleCliffsFishingLicense = "fishing_license.gale_cliffs";
-    public const string StellarBasinFishingLicense = "fishing_license.stellar_basin";
-    public const string TwistedStrandFishingLicense = "fishing_license.twisted_strand";
-    public const string DevilsSpineFishingLicense = "fishing_license.devils_spine";
-    public const string OpenOceanFishingLicense = "fishing_license.open_ocean";
-    public const string PaleReachFishingLicense = "fishing_license.pale_reach";
-
     public static bool AwaitingDeathScreenChoice { get; internal set; }
 
     public static void Load(int slot)

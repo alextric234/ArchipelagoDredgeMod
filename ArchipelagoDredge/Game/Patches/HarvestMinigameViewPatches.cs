@@ -1,9 +1,10 @@
 using ArchipelagoDredge.Game.Helpers;
+using ArchipelagoDredge.Game.Managers;
 using HarmonyLib;
 using System;
 using System.Collections.Generic;
 using System.Reflection.Emit;
-using ArchipelagoDredge.Utils;
+using UnityEngine.Localization.Components;
 using Winch.Core;
 using Winch.Core.API;
 using Winch.Util;
@@ -181,35 +182,32 @@ internal static class HarvestMinigameViewFishingLicensePatches
             return true;
         }
 
-        return HasLicenseForZone(itemToHarvest.zonesFoundIn);
+        return FishingLicenseManager.HasLicenseForZone(itemToHarvest.zonesFoundIn);
     }
 
-    private static bool HasLicenseForZone(ZoneEnum zone)
+    [HarmonyPatch(typeof(HarvestMinigameView), "RefreshHarvestTarget")]
+    [HarmonyPostfix]
+    private static void PostFix(
+        HarvestMinigameView __instance,
+        HarvestableItemData ___itemDataToHarvest,
+        LocalizeStringEvent ___cannotStartText)
     {
-        return zone switch
+        // Check vanilla rod first.
+        var hasRod = GameManager.Instance.PlayerStats
+            .GetHasEquipmentForHarvestType(
+                __instance.currentPOI.Harvestable.GetHarvestType(),
+                __instance.currentPOI.Harvestable.GetIsAdvancedHarvestType());
+
+        if (!hasRod ||
+            !FishingLicenseManager.TryGetMissingFishingLicense(
+                ___itemDataToHarvest,
+                out var missingLicense))
         {
-            ZoneEnum.THE_MARROWS => true,
-            ZoneEnum.GALE_CLIFFS =>
-                ArchipelagoStateManager.HasVirtualItem("fishing_license.gale_cliffs"),
-            ZoneEnum.STELLAR_BASIN =>
-                ArchipelagoStateManager.HasVirtualItem("fishing_license.stellar_basin"),
-            ZoneEnum.TWISTED_STRAND =>
-                ArchipelagoStateManager.HasVirtualItem("fishing_license.twisted_strand"),
-            ZoneEnum.DEVILS_SPINE =>
-                ArchipelagoStateManager.HasVirtualItem("fishing_license.devils_spine"),
-            ZoneEnum.OPEN_OCEAN =>
-                ArchipelagoStateManager.HasVirtualItem("fishing_license.open_ocean"),
-            ZoneEnum.PALE_REACH =>
-                ArchipelagoStateManager.HasVirtualItem("fishing_license.pale_reach"),
-            ZoneEnum.NONE => true,
+            return;
+        }
 
-            _ => LogAndAllowUnknownZone(zone)
-        };
-    }
-
-    private static bool LogAndAllowUnknownZone(ZoneEnum zone)
-    {
-        WinchCore.Log.Warn($"No fishing-license rule configured for zone: {zone}");
-        return true;
+        ___cannotStartText.StringReference.SetReference(
+            LanguageManager.STRING_TABLE,
+            missingLicense.MissingMessageKey);
     }
 }

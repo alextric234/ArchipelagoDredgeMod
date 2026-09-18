@@ -8,4 +8,10 @@
   "alextric234.archipelagodredge.password.title": "Password",
   "alextric234.archipelagodredge.password.tooltip": "Optional password if the server requires one.",
   "alextric234.archipelagodredge.deathlink.title": "Enable DeathLink",
+  "alextric234.archipelagodredge.poi-label.missing-license.gale-cliffs": "Missing Gale Cliffs Fishing License",
+  "alextric234.archipelagodredge.poi-label.missing-license.stellar-basin": "Missing Stellar Basin Fishing License",
+  "alextric234.archipelagodredge.poi-label.missing-license.twisted-strand": "Missing Twisted Strand Fishing License",
+  "alextric234.archipelagodredge.poi-label.missing-license.devils-spine": "Missing Devil's Spine Fishing License",
+  "alextric234.archipelagodredge.poi-label.missing-license.open-ocean": "Missing Open Ocean Fishing License",
+  "alextric234.archipelagodredge.poi-label.missing-license.pale-reach": "Missing Pale Reach Fishing License"
 }
