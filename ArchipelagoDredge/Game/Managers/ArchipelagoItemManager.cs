@@ -46,6 +46,9 @@ public class ArchipelagoItemManager
                 {
                     WinchCore.Log.Error($"{apItem.ItemName}");
                 }
+
+                ArchipelagoStateManager.IncrementLastProcessedIndex(indexOfItemToProcess);
+                return;
             }
 
             if (apItem.ItemName.Equals("Progressive Hull"))
@@ -113,9 +116,10 @@ public class ArchipelagoItemManager
 
     public static List<SpatialItemData> GetItemsForShops()
     {
-        var apItemNames = ArchipelagoClient.Session.Items.AllItemsReceived.Where(item => item.ItemGame == "DREDGE" && !item.ItemName.EndsWith("Researched"))
+        var apItemNames = ArchipelagoClient.Session.Items.AllItemsReceived.Where(item => item.ItemGame == "DREDGE")
             .Select(item => item.ItemName).ToList();
         var collectedItems = apItemNames
+            .Where(i => ItemNames.itemNamesReversed.ContainsKey(i))
             .Select(i => ItemNames.ItemToDredgeId(ItemNames.NameToItem(i)))
             .Select(dredgeItemId => new
             {
