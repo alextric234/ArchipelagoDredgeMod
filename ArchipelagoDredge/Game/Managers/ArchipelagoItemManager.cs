@@ -29,6 +29,25 @@ public class ArchipelagoItemManager
                 return;
             }
 
+            if (apItem.ItemName.EndsWith("License"))
+            {
+                string licenseKey = apItem.ItemName switch
+                {
+                    "Gale Cliffs Fishing License" => ArchipelagoStateManager.GaleCliffsFishingLicense,
+                    "Stellar Basin Fishing License" => ArchipelagoStateManager.StellarBasinFishingLicense,
+                    "Twisted Strand Fishing License" => ArchipelagoStateManager.TwistedStrandFishingLicense,
+                    "Devil's Spine Fishing License" => ArchipelagoStateManager.DevilsSpineFishingLicense,
+                    "Open Ocean Fishing License" => ArchipelagoStateManager.OpenOceanFishingLicense,
+                    "Pale Reach Fishing License" => ArchipelagoStateManager.PaleReachFishingLicense,
+                    _ => "unknown"
+                };
+
+                if (!ArchipelagoStateManager.AddVirtualItem(licenseKey))
+                {
+                    WinchCore.Log.Error($"{apItem.ItemName}");
+                }
+            }
+
             if (apItem.ItemName.Equals("Progressive Hull"))
             {
                 UpgradeHelper.UpgradeBoat();

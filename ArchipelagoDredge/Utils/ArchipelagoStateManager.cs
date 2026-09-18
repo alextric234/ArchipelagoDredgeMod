@@ -1,5 +1,5 @@
-﻿using Steamworks;
-using System;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 using Winch.Core;
@@ -11,6 +11,13 @@ public static class ArchipelagoStateManager
     private static readonly string SaveFile = "ArchipelagoState";
     private static string SaveFilePath;
     public static ArchipelagoStateData StateData;
+
+    public const string GaleCliffsFishingLicense = "fishing_license.gale_cliffs";
+    public const string StellarBasinFishingLicense = "fishing_license.stellar_basin";
+    public const string TwistedStrandFishingLicense = "fishing_license.twisted_strand";
+    public const string DevilsSpineFishingLicense = "fishing_license.devils_spine";
+    public const string OpenOceanFishingLicense = "fishing_license.open_ocean";
+    public const string PaleReachFishingLicense = "fishing_license.pale_reach";
 
     public static bool AwaitingDeathScreenChoice { get; internal set; }
 
@@ -74,6 +81,30 @@ public static class ArchipelagoStateManager
         StateData.LastProcessedIndex = StateData.LastProcessedIndexSinceSave;
         StateData.CurrentHullUpgrade = StateData.HullUpgradeSinceSave;
     }
+
+    public static bool HasVirtualItem(string itemKey)
+    {
+        return StateData.ReceivedVirtualItems?.Contains(itemKey) == true;
+    }
+
+    public static bool AddVirtualItem(string itemKey)
+    {
+        if (itemKey == "unknown")
+        {
+            WinchCore.Log.Error($"Unknown virtual item");
+            return false;
+        }
+        StateData.ReceivedVirtualItems ??= new List<string>();
+
+        if (StateData.ReceivedVirtualItems.Contains(itemKey))
+        {
+            return false;
+        }
+
+        StateData.ReceivedVirtualItems.Add(itemKey);
+        SaveData();
+        return true;
+    }
 }
 
 [Serializable]
@@ -83,4 +114,6 @@ public class ArchipelagoStateData
     public int LastProcessedIndex = -1;
     public int CurrentHullUpgrade;
     public int HullUpgradeSinceSave;
+
+    public List<string> ReceivedVirtualItems = new();
 }
