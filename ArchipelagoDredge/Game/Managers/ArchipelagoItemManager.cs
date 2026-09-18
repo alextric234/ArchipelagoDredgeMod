@@ -33,12 +33,12 @@ public class ArchipelagoItemManager
             {
                 string licenseKey = apItem.ItemName switch
                 {
-                    "Gale Cliffs Fishing License" => ArchipelagoStateManager.GaleCliffsFishingLicense,
-                    "Stellar Basin Fishing License" => ArchipelagoStateManager.StellarBasinFishingLicense,
-                    "Twisted Strand Fishing License" => ArchipelagoStateManager.TwistedStrandFishingLicense,
-                    "Devil's Spine Fishing License" => ArchipelagoStateManager.DevilsSpineFishingLicense,
-                    "Open Ocean Fishing License" => ArchipelagoStateManager.OpenOceanFishingLicense,
-                    "Pale Reach Fishing License" => ArchipelagoStateManager.PaleReachFishingLicense,
+                    "Gale Cliffs Fishing License" => FishingLicenseManager.GaleCliffsFishingLicenseKey,
+                    "Stellar Basin Fishing License" => FishingLicenseManager.StellarBasinFishingLicenseKey,
+                    "Twisted Strand Fishing License" => FishingLicenseManager.TwistedStrandFishingLicenseKey,
+                    "Devil's Spine Fishing License" => FishingLicenseManager.DevilsSpineFishingLicenseKey,
+                    "Open Ocean Fishing License" => FishingLicenseManager.OpenOceanFishingLicenseKey,
+                    "Pale Reach Fishing License" => FishingLicenseManager.PaleReachFishingLicenseKey,
                     _ => "unknown"
                 };
 
