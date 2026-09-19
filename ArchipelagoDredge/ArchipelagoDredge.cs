@@ -7,9 +7,6 @@ using ArchipelagoDredge.Utils;
 using CommandTerminal;
 using HarmonyLib;
 using System;
-using System.Collections.Generic;
-using System.Threading;
-using Archipelago.MultiClient.Net.BounceFeatures.DeathLink;
 using UnityEngine;
 using Winch.Core;
 
