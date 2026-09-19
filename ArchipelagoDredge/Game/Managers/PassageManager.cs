@@ -96,23 +96,19 @@ public static class PassageManager
 
         if (Time.time - state.LastAttemptTime > ViolationWindowSeconds)
         {
-            WinchCore.Log.Info($"Reset attempts");
             state.Attempts = 0;
         }
 
-        WinchCore.Log.Info($"Increase attempts");
         state.Attempts++;
         state.LastAttemptTime = Time.time;
 
         if (state.Attempts <= 2)
         {
-            WinchCore.Log.Info($"Attempts < 3");
             ShowPassageWarning(zone);
             PushBoatToward();
             return;
         }
 
-        WinchCore.Log.Info($"Attempts > 2");
         //SummonBoundaryMonster(zone);
         PushBoatToward();
     }
