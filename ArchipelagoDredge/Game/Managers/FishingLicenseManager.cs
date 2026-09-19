@@ -1,5 +1,6 @@
 ﻿using ArchipelagoDredge.Utils;
 using System.Collections.Generic;
+using ArchipelagoDredge.Network;
 using Winch.Core;
 
 namespace ArchipelagoDredge.Game.Managers;
@@ -72,6 +73,11 @@ public static class FishingLicenseManager
 
     public static bool HasLicenseForZone(ZoneEnum zone)
     {
+        if (!ArchipelagoClient.SlotData.AddFishingLicenses)
+        {
+            return true;
+        }
+
         return zone switch
         {
             ZoneEnum.THE_MARROWS => true,

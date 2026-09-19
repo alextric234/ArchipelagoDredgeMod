@@ -73,12 +73,13 @@ public class ArchipelagoDredge : MonoBehaviour
 
             var connected = ArchipelagoClient.Session?.Socket?.Connected == true;
             var ready = GameManager.Instance.DataLoader.HasLoaded();
-            var hasItems = ArchipelagoClient.HasItemsToProcess();
 
-            if (ready && connected)
+            if (ready && connected && ArchipelagoClient.SlotData.AddPassageItems)
             {
                 PassageManager.Update();
             }
+
+            var hasItems = ArchipelagoClient.HasItemsToProcess();
 
             if (ready && connected && hasItems)
             {

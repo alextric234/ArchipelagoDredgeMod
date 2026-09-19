@@ -10,7 +10,6 @@ using ArchipelagoDredge.Game.Managers;
 using ArchipelagoDredge.Network.Enums;
 using ArchipelagoDredge.Utils;
 using CommandTerminal;
-using Winch.Core;
 using Winch.Util;
 
 namespace ArchipelagoDredge.Network;
@@ -19,6 +18,7 @@ public static class ArchipelagoClient
 {
     public static ArchipelagoSession Session { get; private set; }
     public static ConnectionState State { get; set; } = ConnectionState.Disconnected;
+    public static SlotData SlotData = new SlotData();
 
     public static async Task ConnectAsync(string apHost, int apPort, string slotName, string password, bool deathLink)
     {
@@ -44,18 +44,11 @@ public static class ArchipelagoClient
             throw new Exception("Failed to connect to Archipelago", e);
         }
 
-        string[] tags = null;
-        if (deathLink)
-        {
-            tags = ["DeathLink"];
-        }
-
         var loginResult = await Session.LoginAsync(
             "DREDGE",
             slotName,
             ItemsHandlingFlags.AllItems,
-            password: password,
-            tags: tags);
+            password: password);
 
         if (!loginResult.Successful)
         {
@@ -67,6 +60,13 @@ public static class ArchipelagoClient
             }
             throw new Exception($"Errors: {loginFailure.Errors}");
         }
+
+        var successfulLogin = (LoginSuccessful)loginResult;
+        SlotData.DeathLink = successfulLogin.SlotData.TryGetValue("death_link", out var deathLinkOption) && int.Parse(deathLinkOption.ToString()) == 1;
+        SlotData.IncludeIronRigDLC = successfulLogin.SlotData.TryGetValue("include_iron_rig_dlc", out var ironRigDlcOption) && int.Parse(ironRigDlcOption.ToString()) == 1;
+        SlotData.IncludePaleReachDLC = successfulLogin.SlotData.TryGetValue("include_pale_reach_dlc", out var paleReachDlcOption) && int.Parse(paleReachDlcOption.ToString()) == 1;
+        SlotData.AddFishingLicenses = successfulLogin.SlotData.TryGetValue("add_fishing_licenses", out var addFishingLicensesOption) && int.Parse(addFishingLicensesOption.ToString()) == 1;
+        SlotData.AddPassageItems = successfulLogin.SlotData.TryGetValue("add_passage_items", out var addPassageItemsOption) && int.Parse(addPassageItemsOption.ToString()) == 1;
 
         StartupActions();
     }

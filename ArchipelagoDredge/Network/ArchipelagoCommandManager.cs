@@ -79,6 +79,16 @@ public static class ArchipelagoCommandManager
                 TerminalCommandManager.LogMessage(TerminalLogType.Message, "Connected to Archipelago!");
                 NotificationHelper.ShowNotificationWithColour(NotificationType.NONE, "Connected to Archipelago!",
                     DredgeColorTypeEnum.POSITIVE);
+
+
+                if (ArchipelagoClient.SlotData.DeathLink)
+                {
+                    DeathLinkManager.EnableDeathLink();
+                }
+                else
+                {
+                    DeathLinkManager.DisableDeathLink();
+                }
             }
             else
             {
