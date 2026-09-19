@@ -7,6 +7,8 @@ using ArchipelagoDredge.Utils;
 using CommandTerminal;
 using HarmonyLib;
 using System;
+using System.Collections.Generic;
+using System.Threading;
 using Archipelago.MultiClient.Net.BounceFeatures.DeathLink;
 using UnityEngine;
 using Winch.Core;
@@ -44,14 +46,14 @@ public class ArchipelagoDredge : MonoBehaviour
     {
         try
         {
-            //if (Input.GetKeyDown(KeyCode.F4))
-            //{
-            //    WinchCore.Log.Info("Activating debug mode!");
-            //    GameManager.Instance.Player.IsGodModeEnabled = true;
-            //    GameManager.Instance.Player.IsImmuneModeEnabled = true;
-            //    Terminal.Shell.RunCommand("player.move 200");
-            //    Terminal.Shell.RunCommand("player.turn 250");
-            //}
+            if (Input.GetKeyDown(KeyCode.F4))
+            {
+                WinchCore.Log.Info("Activating debug mode!");
+                GameManager.Instance.Player.IsGodModeEnabled = true;
+                GameManager.Instance.Player.IsImmuneModeEnabled = true;
+                Terminal.Shell.RunCommand("player.move 200");
+                Terminal.Shell.RunCommand("player.turn 250");
+            }
 
             if (Input.GetKeyDown(KeyCode.F5))
             {
@@ -75,6 +77,11 @@ public class ArchipelagoDredge : MonoBehaviour
             var connected = ArchipelagoClient.Session?.Socket?.Connected == true;
             var ready = GameManager.Instance.DataLoader.HasLoaded();
             var hasItems = ArchipelagoClient.HasItemsToProcess();
+
+            if (ready && connected)
+            {
+                PassageManager.Update();
+            }
 
             if (ready && connected && hasItems)
             {
