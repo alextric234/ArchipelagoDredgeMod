@@ -138,19 +138,25 @@ public class ArchipelagoItemManager
     {
         var apItemNames = ArchipelagoClient.Session.Items.AllItemsReceived.Where(item => item.ItemGame == "DREDGE")
             .Select(item => item.ItemName).ToList();
-        var collectedItems = apItemNames
-            .Where(i => ItemNames.itemNamesReversed.ContainsKey(i))
-            .Select(i => ItemNames.ItemToDredgeId(ItemNames.NameToItem(i)))
-            .Select(dredgeItemId => new
+        List<Item> shopItems = [];
+        List<SpatialItemData> shopDredgeItems = [];
+        foreach (var apItemName in apItemNames)
+        {
+            var item = ItemNames.NameToItem(apItemName);
+            if (ItemNames.ShopItems.Contains(item))
             {
-                IsValidShopItem = TryGetValidShopItem(dredgeItemId, out var dredgeSpatialItemData),
-                DredgeSpatialItemData = dredgeSpatialItemData
-            })
-            .Where(x => x.IsValidShopItem)
-            .Select(x => x.DredgeSpatialItemData)
-            .ToList();
+                if (shopItems.Contains(item))
+                {
+                    continue;
+                }
+                shopItems.Add(item);
+                var dredgeItemId = ItemNames.ItemToDredgeId(item);
+                var dredgeItem = ItemUtil.GetItemData(dredgeItemId);
+                shopDredgeItems.Add((SpatialItemData)dredgeItem);
+            }
+        }
 
-        return collectedItems;
+        return shopDredgeItems;
     }
 
     private static bool TryGetValidShopItem(string dredgeItemId, out SpatialItemData dredgeSpatialItemData)
