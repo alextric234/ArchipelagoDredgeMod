@@ -889,8 +889,8 @@ public static class ItemNames
         {Item.VIRTUAL_PASSAGE_PALE_REACH, "The Rimebound Chronicle"}
     };
 
-    public static List<Item> VirtualItems = new()
-    {
+    public static List<Item> VirtualItems =
+    [
         Item.VIRTUAL_LICENSE_GALE_CLIFFS,
         Item.VIRTUAL_LICENSE_STELLAR_BASIN,
         Item.VIRTUAL_LICENSE_TWISTED_STRAND,
@@ -902,8 +902,18 @@ public static class ItemNames
         Item.VIRTUAL_PASSAGE_TWISTED_STRAND,
         Item.VIRTUAL_PASSAGE_DEVILS_SPINE,
         Item.VIRTUAL_PASSAGE_OPEN_OCEAN,
-        Item.VIRTUAL_PASSAGE_PALE_REACH,
-    };
+        Item.VIRTUAL_PASSAGE_PALE_REACH
+    ];
+
+    public static List<Item> PassageItems =
+    [
+        Item.VIRTUAL_PASSAGE_GALE_CLIFFS,
+        Item.VIRTUAL_PASSAGE_STELLAR_BASIN,
+        Item.VIRTUAL_PASSAGE_TWISTED_STRAND,
+        Item.VIRTUAL_PASSAGE_DEVILS_SPINE,
+        Item.VIRTUAL_PASSAGE_OPEN_OCEAN,
+        Item.VIRTUAL_PASSAGE_PALE_REACH
+    ];
 
     public static Dictionary<string, Item> itemNamesReversed =
         itemNames.ToDictionary(name => name.Value, name => name.Key);

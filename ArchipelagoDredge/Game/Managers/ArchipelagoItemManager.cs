@@ -31,33 +31,7 @@ public class ArchipelagoItemManager
 
             if (ItemNames.VirtualItems.Contains(ItemNames.NameToItem(apItem.ItemName)))
             {
-                var item = ItemNames.NameToItem(apItem.ItemName);
-                string itemKey = item switch
-                {
-                    //Fishing Licenses
-                    Item.VIRTUAL_LICENSE_GALE_CLIFFS => FishingLicenseManager.GaleCliffsFishingLicenseKey,
-                    Item.VIRTUAL_LICENSE_STELLAR_BASIN => FishingLicenseManager.StellarBasinFishingLicenseKey,
-                    Item.VIRTUAL_LICENSE_TWISTED_STRAND => FishingLicenseManager.TwistedStrandFishingLicenseKey,
-                    Item.VIRTUAL_LICENSE_DEVILS_SPINE => FishingLicenseManager.DevilsSpineFishingLicenseKey,
-                    Item.VIRTUAL_LICENSE_OPEN_OCEAN => FishingLicenseManager.OpenOceanFishingLicenseKey,
-                    Item.VIRTUAL_LICENSE_PALE_REACH => FishingLicenseManager.PaleReachFishingLicenseKey,
-
-                    //Passage Items
-                    Item.VIRTUAL_PASSAGE_GALE_CLIFFS => PassageManager.GaleCliffsPassageItemKey,
-                    Item.VIRTUAL_PASSAGE_STELLAR_BASIN => PassageManager.StellarBasinPassageItemKey,
-                    Item.VIRTUAL_PASSAGE_TWISTED_STRAND => PassageManager.TwistedStrandPassageItemKey,
-                    Item.VIRTUAL_PASSAGE_DEVILS_SPINE => PassageManager.DevilsSpinePassageItemKey,
-                    Item.VIRTUAL_PASSAGE_OPEN_OCEAN => PassageManager.OpenOceanPassageItemKey,
-                    Item.VIRTUAL_PASSAGE_PALE_REACH => PassageManager.PaleReachPassageItemKey,
-
-                    _ => "unknown"
-                };
-
-                if (!ArchipelagoStateManager.AddVirtualItem(itemKey))
-                {
-                    WinchCore.Log.Error($"{apItem.ItemName}");
-                }
-
+                ReceiveVirtualItem(apItem.ItemName);
                 ArchipelagoStateManager.IncrementLastProcessedIndex(indexOfItemToProcess);
                 return;
             }
@@ -114,6 +88,41 @@ public class ArchipelagoItemManager
         {
             WinchCore.Log.Error("Error getting item from multiworld");
             WinchCore.Log.Error(e);
+        }
+    }
+
+    private static void ReceiveVirtualItem(string apItemName)
+    {
+        var item = ItemNames.NameToItem(apItemName);
+        string itemKey = item switch
+        {
+            //Fishing Licenses
+            Item.VIRTUAL_LICENSE_GALE_CLIFFS => FishingLicenseManager.GaleCliffsFishingLicenseKey,
+            Item.VIRTUAL_LICENSE_STELLAR_BASIN => FishingLicenseManager.StellarBasinFishingLicenseKey,
+            Item.VIRTUAL_LICENSE_TWISTED_STRAND => FishingLicenseManager.TwistedStrandFishingLicenseKey,
+            Item.VIRTUAL_LICENSE_DEVILS_SPINE => FishingLicenseManager.DevilsSpineFishingLicenseKey,
+            Item.VIRTUAL_LICENSE_OPEN_OCEAN => FishingLicenseManager.OpenOceanFishingLicenseKey,
+            Item.VIRTUAL_LICENSE_PALE_REACH => FishingLicenseManager.PaleReachFishingLicenseKey,
+
+            //Passage Items
+            Item.VIRTUAL_PASSAGE_GALE_CLIFFS => PassageManager.GaleCliffsPassageItemKey,
+            Item.VIRTUAL_PASSAGE_STELLAR_BASIN => PassageManager.StellarBasinPassageItemKey,
+            Item.VIRTUAL_PASSAGE_TWISTED_STRAND => PassageManager.TwistedStrandPassageItemKey,
+            Item.VIRTUAL_PASSAGE_DEVILS_SPINE => PassageManager.DevilsSpinePassageItemKey,
+            Item.VIRTUAL_PASSAGE_OPEN_OCEAN => PassageManager.OpenOceanPassageItemKey,
+            Item.VIRTUAL_PASSAGE_PALE_REACH => PassageManager.PaleReachPassageItemKey,
+
+            _ => "unknown"
+        };
+
+        if (!ArchipelagoStateManager.AddVirtualItem(itemKey))
+        {
+            WinchCore.Log.Error($"{apItemName}");
+        }
+
+        if (ItemNames.PassageItems.Contains(item))
+        {
+            PassageManager.ShowPassageUnlocked(apItemName);
         }
     }
 

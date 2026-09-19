@@ -5,7 +5,7 @@ using UnityEngine.Localization.Components;
 using UnityEngine.UI;
 using Winch.Core;
 
-internal static class PassageDeniedBanner
+internal static class PassageBanner
 {
     private static readonly AccessTools.FieldRef<BannersUI, BannerUI>
         BannerUiField =
@@ -49,7 +49,7 @@ internal static class PassageDeniedBanner
     /// Returns false when DREDGE is already showing a normal banner.
     /// In that case, do not overwrite it.
     /// </summary>
-    public static bool TryShow(BannersUI bannersUi, string passageName)
+    public static bool TryShow(BannersUI bannersUi, string titleText, string subtitleText, DredgeColorTypeEnum color)
     {
         if ((UnityEngine.Object)bannersUi == null)
         {
@@ -74,13 +74,12 @@ internal static class PassageDeniedBanner
         titleLocalized.enabled = false;
         subtitleLocalized.enabled = false;
 
-        var titleText = TitleTextField(bannerUi);
-        titleText.color = GameManager.Instance.LanguageManager.GetColor(
-            DredgeColorTypeEnum.WARNING);
-        titleText.text = "THE CURRENT REJECTS YOU";
+        var titleTextField = TitleTextField(bannerUi);
+        titleTextField.color = GameManager.Instance.LanguageManager.GetColor(color);
+        titleTextField.text = titleText;
 
-        var subtitleText = SubtitleTextField(bannerUi);
-        subtitleText.text = $"Requires: {passageName}";
+        var subtitleTextField = SubtitleTextField(bannerUi);
+        subtitleTextField.text = subtitleText;
 
         var image = ImageField(bannerUi);
         image.sprite = BookSpriteField(bannerUi);

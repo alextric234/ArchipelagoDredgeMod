@@ -1,7 +1,6 @@
 ﻿using ArchipelagoDredge.Utils;
 using System.Collections.Generic;
 using UnityEngine;
-using Winch.Core;
 
 namespace ArchipelagoDredge.Game.Managers;
 public static class PassageManager
@@ -129,9 +128,44 @@ public static class PassageManager
     {
         bannersUi = Object.FindObjectOfType<BannersUI>();
 
-        PassageDeniedBanner.TryShow(
+        PassageBanner.TryShow(
             bannersUi,
-            GetRequiredPassageName(lockedZone));
+            "THE CURRENT REJECTS YOU",
+            BuildPassageWarningSubtitle(lockedZone),
+            DredgeColorTypeEnum.WARNING);
+    }
+
+    private static string BuildPassageWarningSubtitle(ZoneEnum lockedZone)
+    {
+        var passageName = GetRequiredPassageName(lockedZone);
+        return $"Requires: {passageName}";
+    }
+
+    public static void ShowPassageUnlocked(string passageItemName)
+    {
+        bannersUi = Object.FindObjectOfType<BannersUI>();
+        var zoneName = GetPassageZoneName(passageItemName);
+
+
+        PassageBanner.TryShow(
+            bannersUi,
+            $"{zoneName} PASSAGE UNLOCKED",
+            $"You can now travel through {zoneName} unimpeded",
+            DredgeColorTypeEnum.POSITIVE);
+    }
+
+    private static string GetPassageZoneName(string passageItemName)
+    {
+        return passageItemName switch
+        {
+            "The Windward Litany" => "Gale Cliffs",
+            "The Astral Testament" => "Stellar Basin",
+            "The Mangrove Canticle" => "Twisted Strand",
+            "The Cinder Gospel" => "Devil's Spine",
+            "The Pelagic Psalm" => "Open Ocean",
+            "The Rimebound Chronicle" => "Pale Reach",
+            _ => "the required passage"
+        };
     }
 
     private static string GetRequiredPassageName(ZoneEnum zone)

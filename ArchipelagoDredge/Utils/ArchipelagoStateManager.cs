@@ -94,6 +94,7 @@ public static class ArchipelagoStateManager
 
         if (StateData.ReceivedVirtualItems.Contains(itemKey))
         {
+            WinchCore.Log.Info($"Already received virtual item");
             return false;
         }
 
