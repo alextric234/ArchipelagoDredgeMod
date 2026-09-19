@@ -1,6 +1,7 @@
-﻿using ArchipelagoDredge.Utils;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using ArchipelagoDredge.Network;
+using ArchipelagoDredge.Utils;
+using UnityEngine;
 using Winch.Core;
 
 namespace ArchipelagoDredge.Game.Managers;
@@ -55,7 +56,7 @@ public static class FishingLicenseManager
     {
         missingLicense = null;
 
-        if ((UnityEngine.Object)item == null ||
+        if ((Object)item == null ||
             item.itemSubtype != ItemSubtype.FISH ||
             !FishingLicenses.TryGetValue(item.zonesFoundIn, out var license))
         {

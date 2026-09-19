@@ -1,4 +1,4 @@
-﻿using ArchipelagoDredge.Game.Helpers;
+﻿using System;
 using ArchipelagoDredge.Game.Managers;
 using ArchipelagoDredge.Game.Ui;
 using ArchipelagoDredge.Network;
@@ -6,7 +6,6 @@ using ArchipelagoDredge.Network.Enums;
 using ArchipelagoDredge.Utils;
 using CommandTerminal;
 using HarmonyLib;
-using System;
 using UnityEngine;
 using Winch.Core;
 

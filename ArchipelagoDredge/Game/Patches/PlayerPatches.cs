@@ -1,6 +1,5 @@
 ﻿using System;
 using ArchipelagoDredge.Game.Managers;
-using ArchipelagoDredge.Network;
 using HarmonyLib;
 using Winch.Core;
 

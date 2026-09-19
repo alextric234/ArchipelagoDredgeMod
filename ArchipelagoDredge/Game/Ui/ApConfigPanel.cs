@@ -4,7 +4,6 @@ using ArchipelagoDredge.Game.Helpers;
 using ArchipelagoDredge.Game.Managers;
 using ArchipelagoDredge.Network;
 using ArchipelagoDredge.Network.Enums;
-using TMPro;
 using UnityEngine;
 using Winch.Core;
 

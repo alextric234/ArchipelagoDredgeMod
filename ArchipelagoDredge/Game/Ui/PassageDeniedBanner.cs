@@ -51,7 +51,7 @@ internal static class PassageBanner
     /// </summary>
     public static bool TryShow(BannersUI bannersUi, string titleText, string subtitleText, DredgeColorTypeEnum color)
     {
-        if ((UnityEngine.Object)bannersUi == null)
+        if ((Object)bannersUi == null)
         {
             WinchCore.Log.Warn("Cannot show passage warning: BannersUI is null.");
             return false;
@@ -59,7 +59,7 @@ internal static class PassageBanner
 
         var bannerUi = BannerUiField(bannersUi);
 
-        if ((UnityEngine.Object)bannerUi == null ||
+        if ((Object)bannerUi == null ||
             bannerUi.isShowing ||
             bannerUi.isHiding)
         {

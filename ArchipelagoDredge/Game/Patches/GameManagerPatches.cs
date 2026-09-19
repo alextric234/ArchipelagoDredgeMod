@@ -1,5 +1,4 @@
-﻿using ArchipelagoDredge.Network;
-using ArchipelagoDredge.Utils;
+﻿using ArchipelagoDredge.Utils;
 using HarmonyLib;
 
 namespace ArchipelagoDredge.Game.Patches;

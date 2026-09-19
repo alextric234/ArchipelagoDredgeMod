@@ -1,10 +1,9 @@
-﻿using ArchipelagoDredge.Game.Helpers;
+﻿using System;
+using System.Threading.Tasks;
+using ArchipelagoDredge.Game.Helpers;
 using ArchipelagoDredge.Game.Managers;
 using ArchipelagoDredge.Network.Enums;
 using CommandTerminal;
-using System;
-using System.Threading.Tasks;
-using Archipelago.MultiClient.Net.BounceFeatures.DeathLink;
 using Winch.Core;
 
 namespace ArchipelagoDredge.Network;

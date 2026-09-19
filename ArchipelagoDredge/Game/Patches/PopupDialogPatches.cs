@@ -1,11 +1,9 @@
-﻿using ArchipelagoDredge.Game.Helpers;
+﻿using System;
+using System.Linq;
 using ArchipelagoDredge.Game.Managers;
 using ArchipelagoDredge.Network;
-using HarmonyLib;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using ArchipelagoDredge.Utils;
+using HarmonyLib;
 using TMPro;
 using Winch.Core;
 

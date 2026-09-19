@@ -2,10 +2,6 @@
 using Archipelago.MultiClient.Net.BounceFeatures.DeathLink;
 using ArchipelagoDredge.Game.Helpers;
 using ArchipelagoDredge.Network;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Microsoft.Win32.SafeHandles;
-using UnityEngine.Localization.Settings;
-using UnityEngine.Localization.Tables;
 using Winch.Core;
 
 namespace ArchipelagoDredge.Game.Managers;

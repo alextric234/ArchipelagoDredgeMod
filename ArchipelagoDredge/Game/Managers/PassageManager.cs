@@ -1,5 +1,5 @@
-﻿using ArchipelagoDredge.Utils;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using ArchipelagoDredge.Utils;
 using UnityEngine;
 
 namespace ArchipelagoDredge.Game.Managers;
