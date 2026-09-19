@@ -7,6 +7,12 @@ namespace ArchipelagoDredge.Game.Managers;
 public static class PassageManager
 {
     private const float ViolationWindowSeconds = 60f;
+    public const string GaleCliffsPassageItemKey = "passage.gale_cliffs";
+    public const string StellarBasinPassageItemKey = "passage.stellar_basin";
+    public const string TwistedStrandPassageItemKey = "passage.twisted_strand";
+    public const string DevilsSpinePassageItemKey = "passage.devils_spine";
+    public const string OpenOceanPassageItemKey = "passage.open_ocean";
+    public const string PaleReachPassageItemKey = "passage.pale_reach";
 
     private static ZoneEnum previousZone = ZoneEnum.NONE;
     private static Vector3 lastAllowedPosition;
@@ -59,22 +65,22 @@ public static class PassageManager
             ZoneEnum.NONE => true,
 
             ZoneEnum.GALE_CLIFFS =>
-                ArchipelagoStateManager.HasVirtualItem("passage.gale_cliffs"),
+                ArchipelagoStateManager.HasVirtualItem(GaleCliffsPassageItemKey),
 
             ZoneEnum.STELLAR_BASIN =>
-                ArchipelagoStateManager.HasVirtualItem("passage.stellar_basin"),
+                ArchipelagoStateManager.HasVirtualItem(StellarBasinPassageItemKey),
 
             ZoneEnum.TWISTED_STRAND =>
-                ArchipelagoStateManager.HasVirtualItem("passage.twisted_strand"),
+                ArchipelagoStateManager.HasVirtualItem(TwistedStrandPassageItemKey),
 
             ZoneEnum.DEVILS_SPINE =>
-                ArchipelagoStateManager.HasVirtualItem("passage.devils_spine"),
+                ArchipelagoStateManager.HasVirtualItem(DevilsSpinePassageItemKey),
 
             ZoneEnum.OPEN_OCEAN =>
-                ArchipelagoStateManager.HasVirtualItem("passage.open_ocean"),
+                ArchipelagoStateManager.HasVirtualItem(OpenOceanPassageItemKey),
 
             ZoneEnum.PALE_REACH =>
-                ArchipelagoStateManager.HasVirtualItem("passage.pale_reach"),
+                ArchipelagoStateManager.HasVirtualItem(PaleReachPassageItemKey),
 
             _ => true
         };

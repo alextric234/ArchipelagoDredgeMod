@@ -29,20 +29,31 @@ public class ArchipelagoItemManager
                 return;
             }
 
-            if (apItem.ItemName.EndsWith("License"))
+            if (ItemNames.VirtualItems.Contains(ItemNames.NameToItem(apItem.ItemName)))
             {
-                string licenseKey = apItem.ItemName switch
+                var item = ItemNames.NameToItem(apItem.ItemName);
+                string itemKey = item switch
                 {
-                    "Gale Cliffs Fishing License" => FishingLicenseManager.GaleCliffsFishingLicenseKey,
-                    "Stellar Basin Fishing License" => FishingLicenseManager.StellarBasinFishingLicenseKey,
-                    "Twisted Strand Fishing License" => FishingLicenseManager.TwistedStrandFishingLicenseKey,
-                    "Devil's Spine Fishing License" => FishingLicenseManager.DevilsSpineFishingLicenseKey,
-                    "Open Ocean Fishing License" => FishingLicenseManager.OpenOceanFishingLicenseKey,
-                    "Pale Reach Fishing License" => FishingLicenseManager.PaleReachFishingLicenseKey,
+                    //Fishing Licenses
+                    Item.VIRTUAL_LICENSE_GALE_CLIFFS => FishingLicenseManager.GaleCliffsFishingLicenseKey,
+                    Item.VIRTUAL_LICENSE_STELLAR_BASIN => FishingLicenseManager.StellarBasinFishingLicenseKey,
+                    Item.VIRTUAL_LICENSE_TWISTED_STRAND => FishingLicenseManager.TwistedStrandFishingLicenseKey,
+                    Item.VIRTUAL_LICENSE_DEVILS_SPINE => FishingLicenseManager.DevilsSpineFishingLicenseKey,
+                    Item.VIRTUAL_LICENSE_OPEN_OCEAN => FishingLicenseManager.OpenOceanFishingLicenseKey,
+                    Item.VIRTUAL_LICENSE_PALE_REACH => FishingLicenseManager.PaleReachFishingLicenseKey,
+
+                    //Passage Items
+                    Item.VIRTUAL_PASSAGE_GALE_CLIFFS => PassageManager.GaleCliffsPassageItemKey,
+                    Item.VIRTUAL_PASSAGE_STELLAR_BASIN => PassageManager.StellarBasinPassageItemKey,
+                    Item.VIRTUAL_PASSAGE_TWISTED_STRAND => PassageManager.TwistedStrandPassageItemKey,
+                    Item.VIRTUAL_PASSAGE_DEVILS_SPINE => PassageManager.DevilsSpinePassageItemKey,
+                    Item.VIRTUAL_PASSAGE_OPEN_OCEAN => PassageManager.OpenOceanPassageItemKey,
+                    Item.VIRTUAL_PASSAGE_PALE_REACH => PassageManager.PaleReachPassageItemKey,
+
                     _ => "unknown"
                 };
 
-                if (!ArchipelagoStateManager.AddVirtualItem(licenseKey))
+                if (!ArchipelagoStateManager.AddVirtualItem(itemKey))
                 {
                     WinchCore.Log.Error($"{apItem.ItemName}");
                 }

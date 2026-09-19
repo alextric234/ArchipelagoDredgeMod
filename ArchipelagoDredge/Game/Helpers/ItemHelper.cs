@@ -434,7 +434,19 @@ public enum Item
     SILVER_PLATE,
     SILVER_TRINKET,
     WHOLE_ICEBREAKER,
-    PROGRESSIVE_HULL
+    PROGRESSIVE_HULL,
+    VIRTUAL_LICENSE_GALE_CLIFFS,
+    VIRTUAL_LICENSE_STELLAR_BASIN,
+    VIRTUAL_LICENSE_TWISTED_STRAND,
+    VIRTUAL_LICENSE_DEVILS_SPINE,
+    VIRTUAL_LICENSE_OPEN_OCEAN,
+    VIRTUAL_LICENSE_PALE_REACH,
+    VIRTUAL_PASSAGE_GALE_CLIFFS,
+    VIRTUAL_PASSAGE_STELLAR_BASIN,
+    VIRTUAL_PASSAGE_TWISTED_STRAND,
+    VIRTUAL_PASSAGE_DEVILS_SPINE,
+    VIRTUAL_PASSAGE_OPEN_OCEAN,
+    VIRTUAL_PASSAGE_PALE_REACH
 }
 
 public static class ItemNames
@@ -862,8 +874,36 @@ public static class ItemNames
         {Item.SEXTANT, "Sextant"},
         {Item.SILVER_PLATE, "Silver Plate"},
         {Item.SILVER_TRINKET, "Silver Trinket"},
-        {Item.PROGRESSIVE_HULL, "Progressive Hull"}
+        {Item.PROGRESSIVE_HULL, "Progressive Hull"},
+        {Item.VIRTUAL_LICENSE_GALE_CLIFFS, "Gale Cliffs Fishing License"},
+        {Item.VIRTUAL_LICENSE_STELLAR_BASIN, "Stellar Basin Fishing License"},
+        {Item.VIRTUAL_LICENSE_TWISTED_STRAND, "Twisted Strand Fishing License"},
+        {Item.VIRTUAL_LICENSE_DEVILS_SPINE, "Devil's Spine Fishing License"},
+        {Item.VIRTUAL_LICENSE_OPEN_OCEAN, "Open Ocean Fishing License"},
+        {Item.VIRTUAL_LICENSE_PALE_REACH, "Pale Reach Fishing License"},
+        {Item.VIRTUAL_PASSAGE_GALE_CLIFFS, "The Windward Litany"},
+        {Item.VIRTUAL_PASSAGE_STELLAR_BASIN, "The Astral Testament"},
+        {Item.VIRTUAL_PASSAGE_TWISTED_STRAND, "The Mangrove Canticle"},
+        {Item.VIRTUAL_PASSAGE_DEVILS_SPINE, "The Cinder Gospel"},
+        {Item.VIRTUAL_PASSAGE_OPEN_OCEAN, "The Pelagic Psalm"},
+        {Item.VIRTUAL_PASSAGE_PALE_REACH, "The Rimebound Chronicle"}
     };
+
+    public static List<Item> VirtualItems = new ()
+    {
+        Item.VIRTUAL_LICENSE_GALE_CLIFFS,
+        Item.VIRTUAL_LICENSE_STELLAR_BASIN,
+        Item.VIRTUAL_LICENSE_TWISTED_STRAND,
+        Item.VIRTUAL_LICENSE_DEVILS_SPINE,
+        Item.VIRTUAL_LICENSE_OPEN_OCEAN,
+        Item.VIRTUAL_LICENSE_PALE_REACH,
+        Item.VIRTUAL_PASSAGE_GALE_CLIFFS,
+        Item.VIRTUAL_PASSAGE_STELLAR_BASIN,
+        Item.VIRTUAL_PASSAGE_TWISTED_STRAND,
+        Item.VIRTUAL_PASSAGE_DEVILS_SPINE,
+        Item.VIRTUAL_PASSAGE_OPEN_OCEAN,
+        Item.VIRTUAL_PASSAGE_PALE_REACH,
+    }
 
     public static Dictionary<string, Item> itemNamesReversed =
         itemNames.ToDictionary(name => name.Value, name => name.Key);
