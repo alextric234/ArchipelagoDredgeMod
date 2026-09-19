@@ -3,6 +3,7 @@ using ArchipelagoDredge.Game.Managers;
 using ArchipelagoDredge.Network;
 using HarmonyLib;
 using Winch.Core;
+using Winch.Util;
 
 namespace ArchipelagoDredge.Game.Patches;
 
@@ -13,6 +14,7 @@ public class ShopDataPatches
     [HarmonyPatch(nameof(ShopData.GetNewStock))]
     public static void PostFix(ref List<SpatialItemData> __result)
     {
+        __result.Clear();
         if (GameManager.Instance.DataLoader.HasLoaded() &&
             ArchipelagoClient.Session.Socket.Connected)
         {
