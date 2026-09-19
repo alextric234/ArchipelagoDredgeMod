@@ -3,6 +3,7 @@ using System.IO;
 using ArchipelagoDredge.Game.Helpers;
 using ArchipelagoDredge.Game.Managers;
 using ArchipelagoDredge.Network;
+using ArchipelagoDredge.Network.Enums;
 using TMPro;
 using UnityEngine;
 using Winch.Core;
@@ -131,12 +132,26 @@ public class ApConfigPanel : MonoBehaviour
             _portText = port.ToString();
             _slot = slot;
             _pwd = pwd;
-            WinchCore.Log.Info("Reloaded values from config.");
+            SetDeathLink(deathLink);
         }
         catch (Exception ex)
         {
             WinchCore.Log.Error("Reload failed: " + ex);
         }
+    }
+
+    private void SetDeathLink(bool deathLink)
+    {
+        if (ArchipelagoClient.State != ConnectionState.Connected || deathLink == DeathLinkManager.IsDeathLinkEnabled)
+        {
+            return;
+        }
+        if (deathLink)
+        {
+            DeathLinkManager.EnableDeathLink();
+            return;
+        }
+        DeathLinkManager.DisableDeathLink();
     }
 
     private void ConnectUsingFields()

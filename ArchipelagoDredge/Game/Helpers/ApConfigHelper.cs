@@ -83,12 +83,47 @@ public static class ApConfigHelper
             EnsureSetting(cfg, "apPort", "integer");
             EnsureSetting(cfg, "apSlotName", "text");
             EnsureSetting(cfg, "apPassword", "text");
-            EnsureSetting(cfg, "apEnableDeathLink", "toggle");
 
             cfg["apIpAddress"]["value"] = host ?? "";
             cfg["apPort"]["value"] = port;
             cfg["apSlotName"]["value"] = slot ?? "";
             cfg["apPassword"]["value"] = pwd ?? "";
+
+            File.WriteAllText(ConfigPath, cfg.ToString());
+            return true;
+        }
+        catch (Exception ex)
+        {
+            WinchCore.Log.Error("Save failed: " + ex);
+            return false;
+        }
+    }
+
+    public static bool SaveDeathLinkValue(bool deathLink)
+    {
+        try
+        {
+            JObject cfg;
+
+            var modDir = ModDir;
+            Directory.CreateDirectory(modDir);
+
+            if (File.Exists(ConfigPath))
+            {
+                cfg = JObject.Parse(File.ReadAllText(ConfigPath));
+            }
+            else if (File.Exists(DefaultPath))
+            {
+                cfg = JObject.Parse(File.ReadAllText(DefaultPath));
+            }
+            else
+            {
+                cfg = new JObject();
+            }
+
+            EnsureSetting(cfg, "apEnableDeathLink", "toggle");
+
+            cfg["apEnableDeathLink"]["value"] = deathLink;
 
             File.WriteAllText(ConfigPath, cfg.ToString());
             return true;

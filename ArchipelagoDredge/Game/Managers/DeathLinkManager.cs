@@ -34,14 +34,6 @@ public static class DeathLinkManager
             ArchipelagoClient.Session.CreateDeathLinkService();
 
         DredgeDeathLinkService.OnDeathLinkReceived += OnDeathLinkReceived;
-
-        IsDeathLinkEnabled = ApConfigHelper.ReadDeathLink();
-
-        if (IsDeathLinkEnabled)
-        {
-            WinchCore.Log.Info($"Enabling deathlink on setup");
-            DredgeDeathLinkService.EnableDeathLink();
-        }
     }
 
     private static void OnDeathLinkReceived(DeathLink deathLink)
@@ -95,6 +87,7 @@ public static class DeathLinkManager
     public static void EnableDeathLink()
     {
         IsDeathLinkEnabled = true;
+        ApConfigHelper.SaveDeathLinkValue(IsDeathLinkEnabled);
         DredgeDeathLinkService.EnableDeathLink();
         WinchCore.Log.Info($"DeathLink enabled");
     }
@@ -102,6 +95,7 @@ public static class DeathLinkManager
     public static void DisableDeathLink()
     {
         IsDeathLinkEnabled = false;
+        ApConfigHelper.SaveDeathLinkValue(IsDeathLinkEnabled);
         DredgeDeathLinkService.DisableDeathLink();
         WinchCore.Log.Info($"DeathLink disabled");
     }
