@@ -75,7 +75,7 @@ internal static class PopupDialogPatches
         {
             case 0: // Load Last Savee
 
-                ArchipelagoStateManager.RevertLastProcessedIndex();
+                ArchipelagoStateManager.RevertStateData();
                 ArchipelagoStateManager.AwaitingDeathScreenChoice = false;
                 break;
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using UnityEngine;
 using Winch.Core;
 
@@ -62,17 +63,19 @@ public static class ArchipelagoStateManager
         SaveData();
     }
 
-    public static void PersistLastProcessedIndex()
+    public static void PersistStateData()
     {
         StateData.LastProcessedIndexSinceSave = StateData.LastProcessedIndex;
         StateData.HullUpgradeSinceSave = StateData.CurrentHullUpgrade;
+        StateData.ReceivedVirtualItemsSinceSave = StateData.ReceivedVirtualItems.ToList();
         SaveData();
     }
 
-    public static void RevertLastProcessedIndex()
+    public static void RevertStateData()
     {
         StateData.LastProcessedIndex = StateData.LastProcessedIndexSinceSave;
         StateData.CurrentHullUpgrade = StateData.HullUpgradeSinceSave;
+        StateData.ReceivedVirtualItems = StateData.ReceivedVirtualItemsSinceSave.ToList();
     }
 
     public static bool HasVirtualItem(string itemKey)
@@ -108,5 +111,6 @@ public class ArchipelagoStateData
     public int CurrentHullUpgrade;
     public int HullUpgradeSinceSave;
 
+    public List<string> ReceivedVirtualItemsSinceSave = new();
     public List<string> ReceivedVirtualItems = new();
 }

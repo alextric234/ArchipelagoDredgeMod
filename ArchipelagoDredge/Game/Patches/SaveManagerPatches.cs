@@ -14,7 +14,7 @@ public static class SaveManagerPatches
     {
         try
         {
-            ArchipelagoStateManager.PersistLastProcessedIndex();
+            ArchipelagoStateManager.PersistStateData();
         }
         catch (Exception ex)
         {
