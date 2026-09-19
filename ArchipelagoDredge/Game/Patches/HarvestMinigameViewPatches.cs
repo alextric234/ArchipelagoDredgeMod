@@ -1,13 +1,14 @@
-using ArchipelagoDredge.Game.Helpers;
-using ArchipelagoDredge.Game.Managers;
-using HarmonyLib;
 using System;
 using System.Collections.Generic;
 using System.Reflection.Emit;
+using ArchipelagoDredge.Game.Helpers;
+using ArchipelagoDredge.Game.Managers;
+using HarmonyLib;
 using UnityEngine.Localization.Components;
 using Winch.Core;
 using Winch.Core.API;
 using Winch.Util;
+using Object = UnityEngine.Object;
 
 namespace ArchipelagoDredge.Game.Patches;
 
@@ -30,7 +31,8 @@ public class HarvestMinigameViewPatches
 
             if (___itemDataToHarvest.itemSubtype == ItemSubtype.FISH)
             {
-                if (!LocationHelper.HasThisLocationBeenChecked(___itemDataToHarvest.id))
+                var id = ___itemDataToHarvest.id;
+                if (LocationHelper.DoesApWorldContainLocation(id) && !LocationHelper.HasThisLocationBeenChecked(id))
                 {
                     __instance.hintImage.sprite = TextureUtil.GetSprite("archipelago_icon");
                     return;
@@ -39,7 +41,7 @@ public class HarvestMinigameViewPatches
                 var aberrationsToCatch = ((FishItemData) ___itemDataToHarvest).Aberrations;
                 foreach (var aberration in aberrationsToCatch)
                 {
-                    if (!LocationHelper.HasThisLocationBeenChecked(aberration.id))
+                    if (LocationHelper.DoesApWorldContainLocation(aberration.id) && !LocationHelper.HasThisLocationBeenChecked(aberration.id))
                     {
                         __instance.hintImage.sprite = TextureUtil.GetSprite("aberration_archipelago_icon");
                         return;
@@ -48,7 +50,8 @@ public class HarvestMinigameViewPatches
             }
             else if(__instance.currentPOI.IsDredgePOI)
             {
-                if (!LocationHelper.HasThisLocationBeenChecked(__instance.currentPOI.HarvestPOIData.id))
+                var id = __instance.currentPOI.HarvestPOIData.id;
+                if (LocationHelper.DoesApWorldContainLocation(id) && !LocationHelper.HasThisLocationBeenChecked(id))
                 {
                     __instance.hintImage.sprite = TextureUtil.GetSprite("archipelago_icon");
                 }
@@ -83,7 +86,7 @@ public class HarvestMinigameViewPatches
                 locationToCheck = __instance.currentPOI.Harvestable.GetId();
             }
 
-            if (!LocationHelper.HasThisLocationBeenChecked(locationToCheck))
+            if (LocationHelper.DoesApWorldContainLocation(locationToCheck) && !LocationHelper.HasThisLocationBeenChecked(locationToCheck))
             {
                 var spatialItemInstance = new SpatialItemInstance();
                 spatialItemInstance.id = ___itemDataToHarvest.id;
@@ -169,14 +172,14 @@ internal static class HarvestMinigameViewFishingLicensePatches
     private static bool HasRequiredFishingLicense(HarvestMinigameView HarvestMinigameView)
     {
         ref var itemToHarvest = ref ItemDataToHarvest(HarvestMinigameView);
-        if ((UnityEngine.Object)itemToHarvest == null)
+        if ((Object)itemToHarvest == null)
         {
             itemToHarvest = HarvestMinigameView.currentPOI
                 .harvestPOIData
                 .GetNextHarvestableItem();
         }
 
-        if ((UnityEngine.Object)itemToHarvest == null ||
+        if ((Object)itemToHarvest == null ||
             itemToHarvest.itemSubtype != ItemSubtype.FISH)
         {
             return true;

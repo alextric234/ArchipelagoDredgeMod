@@ -1119,13 +1119,30 @@ public static class LocationHelper
     {
         if (TryParseLocation(itemId, out var locationName))
         {
-            var apLocations = ArchipelagoClient.Session.Locations.AllLocationsChecked;
+            var checkedApLocations = ArchipelagoClient.Session.Locations.AllLocationsChecked;
             var apLocationId = locationToArchipelagoId[locationName];
-            return apLocations.Contains(apLocationId);
+            return checkedApLocations.Contains(apLocationId);
         }
 
         WinchCore.Log.Error($"Could not find location: {itemId}");
+        return false;
+    }
 
+    public static bool DoesApWorldContainLocation(string itemId)
+    {
+        if (TryParseLocation(itemId, out var locationName))
+        {
+            var allApLocations = ArchipelagoClient.Session.Locations.AllLocations;
+            var apLocationId = locationToArchipelagoId[locationName];
+            if (!allApLocations.Contains(apLocationId))
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        WinchCore.Log.Error($"Could not find location: {itemId}");
         return false;
     }
 }
