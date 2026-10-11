@@ -58,17 +58,13 @@ public static class FishingLicenseManager
 
         if ((Object)item == null ||
             item.itemSubtype != ItemSubtype.FISH ||
-            !FishingLicenses.TryGetValue(item.zonesFoundIn, out var license))
+            HasLicenseForZone(item.zonesFoundIn))
         {
             return false;
         }
 
-        if (ArchipelagoStateManager.HasVirtualItem(license.StateKey))
-        {
-            return false;
-        }
-
-        missingLicense = license;
+        // HasLicenseForZone only says no for zones in the table.
+        missingLicense = FishingLicenses[item.zonesFoundIn];
         return true;
     }
 
@@ -79,23 +75,15 @@ public static class FishingLicenseManager
             return true;
         }
 
+        if (FishingLicenses.TryGetValue(zone, out var license))
+        {
+            return ArchipelagoStateManager.HasVirtualItem(license.StateKey);
+        }
+
         return zone switch
         {
             ZoneEnum.THE_MARROWS => true,
-            ZoneEnum.GALE_CLIFFS =>
-                ArchipelagoStateManager.HasVirtualItem("fishing_license.gale_cliffs"),
-            ZoneEnum.STELLAR_BASIN =>
-                ArchipelagoStateManager.HasVirtualItem("fishing_license.stellar_basin"),
-            ZoneEnum.TWISTED_STRAND =>
-                ArchipelagoStateManager.HasVirtualItem("fishing_license.twisted_strand"),
-            ZoneEnum.DEVILS_SPINE =>
-                ArchipelagoStateManager.HasVirtualItem("fishing_license.devils_spine"),
-            ZoneEnum.OPEN_OCEAN =>
-                ArchipelagoStateManager.HasVirtualItem("fishing_license.open_ocean"),
-            ZoneEnum.PALE_REACH =>
-                ArchipelagoStateManager.HasVirtualItem("fishing_license.pale_reach"),
             ZoneEnum.NONE => true,
-
             _ => LogAndAllowUnknownZone(zone)
         };
     }

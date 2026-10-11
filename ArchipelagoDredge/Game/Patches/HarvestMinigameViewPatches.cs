@@ -7,60 +7,100 @@ using ArchipelagoDredge.Game.Services;
 using HarmonyLib;
 using UnityEngine.Localization.Components;
 using Winch.Core;
-using Winch.Core.API;
-using Winch.Util;
 using Object = UnityEngine.Object;
 
 namespace ArchipelagoDredge.Game.Patches;
 
+/// <summary>
+///     All patches on <see cref="HarvestMinigameView" />, so their order is explicit:
+///     <list type="number">
+///         <item>RefreshHarvestTarget transpiler: the fishing-license check is ANDed into the equipment check.</item>
+///         <item>RefreshHarvestTarget postfix: the missing-license text, then the AP hint icon.</item>
+///         <item>StartGame prefix: blocks the minigame without the license.</item>
+///         <item>SpawnItem prefix: an unchecked AP location gives the check instead of the item.</item>
+///     </list>
+/// </summary>
 [HarmonyPatch(typeof(HarvestMinigameView))]
-public class HarvestMinigameViewPatches
+public static class HarvestMinigameViewPatches
 {
+    private static readonly AccessTools.FieldRef<HarvestMinigameView, HarvestableItemData> ItemDataToHarvest =
+        AccessTools.FieldRefAccess<HarvestMinigameView, HarvestableItemData>("itemDataToHarvest");
+
+    [HarmonyTranspiler]
+    [HarmonyPatch(nameof(HarvestMinigameView.RefreshHarvestTarget))]
+    private static IEnumerable<CodeInstruction> RefreshHarvestTarget_Transpiler(
+        IEnumerable<CodeInstruction> instructions,
+        ILGenerator generator)
+    {
+        var equipmentCheck = AccessTools.Method(
+            typeof(PlayerStats),
+            nameof(PlayerStats.GetHasEquipmentForHarvestType),
+            new[]
+            {
+                typeof(HarvestableType),
+                typeof(bool)
+            });
+
+        var licenseCheck = AccessTools.Method(
+            typeof(HarvestMinigameViewPatches),
+            nameof(ChooseItemAndCheckLicense));
+
+        var matcher = new CodeMatcher(instructions, generator);
+
+        matcher.MatchForward(
+            false,
+            new CodeMatch(instruction => instruction.Calls(equipmentCheck)));
+
+        if (!matcher.IsValid)
+        {
+            WinchCore.Log.Error(
+                "Could not find the harvest equipment check for fishing-license patch.");
+            return matcher.InstructionEnumeration();
+        }
+
+        matcher.Advance(1);
+        matcher.Insert(
+            new CodeInstruction(OpCodes.Ldarg_0),
+            new CodeInstruction(OpCodes.Call, licenseCheck),
+            new CodeInstruction(OpCodes.And));
+
+        return matcher.InstructionEnumeration();
+    }
+
     [HarmonyPostfix]
     [HarmonyPatch(nameof(HarvestMinigameView.RefreshHarvestTarget))]
     private static void RefreshHarvestTarget_Postfix(
         HarvestMinigameView __instance,
-        ItemData ___itemDataToHarvest
-    )
+        HarvestableItemData ___itemDataToHarvest,
+        LocalizeStringEvent ___cannotStartText)
+    {
+        if (__instance.currentPOI == null)
+        {
+            return;
+        }
+
+        ShowMissingLicenseText(__instance, ___itemDataToHarvest, ___cannotStartText);
+        ShowApHintIcon(__instance, ___itemDataToHarvest);
+    }
+
+    [HarmonyPrefix]
+    [HarmonyPatch("StartGame")]
+    private static bool StartGame_Prefix(HarvestMinigameView __instance)
     {
         try
         {
-            if (___itemDataToHarvest == null)
+            if (ChooseItemAndCheckLicense(__instance))
             {
-                return;
+                return true;
             }
 
-            if (___itemDataToHarvest.itemSubtype == ItemSubtype.FISH)
-            {
-                var id = ___itemDataToHarvest.id;
-                if (LocationHelper.DoesApWorldContainLocation(id) && !LocationHelper.HasThisLocationBeenChecked(id))
-                {
-                    __instance.hintImage.sprite = TextureUtil.GetSprite("archipelago_icon");
-                    return;
-                }
-
-                var aberrationsToCatch = ((FishItemData) ___itemDataToHarvest).Aberrations;
-                foreach (var aberration in aberrationsToCatch)
-                {
-                    if (LocationHelper.DoesApWorldContainLocation(aberration.id) && !LocationHelper.HasThisLocationBeenChecked(aberration.id))
-                    {
-                        __instance.hintImage.sprite = TextureUtil.GetSprite("aberration_archipelago_icon");
-                        return;
-                    }
-                }
-            }
-            else if(__instance.currentPOI.IsDredgePOI)
-            {
-                var id = __instance.currentPOI.HarvestPOIData.id;
-                if (LocationHelper.DoesApWorldContainLocation(id) && !LocationHelper.HasThisLocationBeenChecked(id))
-                {
-                    __instance.hintImage.sprite = TextureUtil.GetSprite("archipelago_icon");
-                }
-            }
+            WinchCore.Log.Debug("Blocked harvest minigame: missing fishing license.");
+            return false;
         }
         catch (Exception e)
         {
-            WinchCore.Log.Error($"Error in HarvestMinigameViewPatches.RefreshHarvestTarget: {e}");
+            WinchCore.Log.Error($"Error in HarvestMinigameViewPatches.StartGame_Prefix: {e}");
+            return true;
         }
     }
 
@@ -107,124 +147,87 @@ public class HarvestMinigameViewPatches
             return true;
         }
     }
-}
 
-[HarmonyPatch]
-internal static class HarvestMinigameViewFishingLicensePatches
-{
-    private static readonly AccessTools.FieldRef<HarvestMinigameView, HarvestableItemData>
-        ItemDataToHarvest =
-            AccessTools.FieldRefAccess<HarvestMinigameView, HarvestableItemData>(
-                "itemDataToHarvest");
-
-    [HarmonyPatch(typeof(HarvestMinigameView), "RefreshHarvestTarget")]
-    [HarmonyTranspiler]
-    private static IEnumerable<CodeInstruction> RefreshHarvestTargetTranspiler(
-        IEnumerable<CodeInstruction> instructions,
-        ILGenerator generator)
-    {
-        var equipmentCheck = AccessTools.Method(
-            typeof(PlayerStats),
-            nameof(PlayerStats.GetHasEquipmentForHarvestType),
-            new[]
-            {
-                typeof(HarvestableType),
-                typeof(bool)
-            });
-
-        var licenseCheck = AccessTools.Method(
-            typeof(HarvestMinigameViewFishingLicensePatches),
-            nameof(HasRequiredFishingLicense));
-
-        var matcher = new CodeMatcher(instructions, generator);
-
-        matcher.MatchForward(
-            false,
-            new CodeMatch(instruction => instruction.Calls(equipmentCheck)));
-
-        if (!matcher.IsValid)
-        {
-            WinchCore.Log.Error(
-                "Could not find the harvest equipment check for fishing-license patch.");
-            return matcher.InstructionEnumeration();
-        }
-
-        matcher.Advance(1);
-        matcher.Insert(
-            new CodeInstruction(OpCodes.Ldarg_0),
-            new CodeInstruction(OpCodes.Call, licenseCheck),
-            new CodeInstruction(OpCodes.And));
-
-        return matcher.InstructionEnumeration();
-    }
-
-    [HarmonyPatch(typeof(HarvestMinigameView), "StartGame")]
-    [HarmonyPrefix]
-    private static bool StartGamePrefix(HarvestMinigameView __instance)
-    {
-        if (HasRequiredFishingLicense(__instance))
-        {
-            return true;
-        }
-
-        WinchCore.Log.Debug("Blocked harvest minigame: missing fishing license.");
-        return false;
-    }
-
-    private static bool HasRequiredFishingLicense(HarvestMinigameView HarvestMinigameView)
-    {
-        ref var itemToHarvest = ref ItemDataToHarvest(HarvestMinigameView);
-        if ((Object)itemToHarvest == null)
-        {
-            itemToHarvest = HarvestMinigameView.currentPOI
-                .harvestPOIData
-                .GetNextHarvestableItem();
-        }
-
-        if ((Object)itemToHarvest == null ||
-            itemToHarvest.itemSubtype != ItemSubtype.FISH)
-        {
-            return true;
-        }
-
-        return FishingLicenseManager.HasLicenseForZone(itemToHarvest.zonesFoundIn);
-    }
-
-    [HarmonyPatch(typeof(HarvestMinigameView), "RefreshHarvestTarget")]
-    [HarmonyPostfix]
-    private static void PostFix(
-        HarvestMinigameView __instance,
-        HarvestableItemData ___itemDataToHarvest,
-        LocalizeStringEvent ___cannotStartText)
+    /// <summary>
+    ///     True if the player may harvest the spot's next item. <b>Also picks that item</b> when vanilla
+    ///     hasn't yet, storing it in <c>itemDataToHarvest</c> exactly as vanilla does later in
+    ///     RefreshHarvestTarget. The pick is random, so choosing it here is what makes the license check
+    ///     apply to the fish that will actually be caught.
+    /// </summary>
+    private static bool ChooseItemAndCheckLicense(HarvestMinigameView view)
     {
         try
         {
-            if (__instance.currentPOI == null || ___cannotStartText == null)
+            ref var itemToHarvest = ref ItemDataToHarvest(view);
+            if ((Object) itemToHarvest == null)
+            {
+                itemToHarvest = view.currentPOI.Harvestable.GetNextHarvestableItem();
+            }
+
+            if ((Object) itemToHarvest == null || itemToHarvest.itemSubtype != ItemSubtype.FISH)
+            {
+                return true;
+            }
+
+            return FishingLicenseManager.HasLicenseForZone(itemToHarvest.zonesFoundIn);
+        }
+        catch (Exception e)
+        {
+            // Runs inside vanilla RefreshHarvestTarget via the transpiler; never throw there.
+            WinchCore.Log.Error($"Error in HarvestMinigameViewPatches.ChooseItemAndCheckLicense: {e}");
+            return true;
+        }
+    }
+
+    private static void ShowMissingLicenseText(
+        HarvestMinigameView view,
+        HarvestableItemData itemToHarvest,
+        LocalizeStringEvent cannotStartText)
+    {
+        try
+        {
+            if (cannotStartText == null)
             {
                 return;
             }
 
-            // Check vanilla rod first.
+            // Only replace the text when the rod isn't the problem.
             var hasRod = GameManager.Instance.PlayerStats
                 .GetHasEquipmentForHarvestType(
-                    __instance.currentPOI.Harvestable.GetHarvestType(),
-                    __instance.currentPOI.Harvestable.GetIsAdvancedHarvestType());
+                    view.currentPOI.Harvestable.GetHarvestType(),
+                    view.currentPOI.Harvestable.GetIsAdvancedHarvestType());
 
             if (!hasRod ||
-                !FishingLicenseManager.TryGetMissingFishingLicense(
-                    ___itemDataToHarvest,
-                    out var missingLicense))
+                !FishingLicenseManager.TryGetMissingFishingLicense(itemToHarvest, out var missingLicense))
             {
                 return;
             }
 
-            ___cannotStartText.StringReference.SetReference(
+            cannotStartText.StringReference.SetReference(
                 LanguageManager.STRING_TABLE,
                 missingLicense.MissingMessageKey);
         }
         catch (Exception e)
         {
-            WinchCore.Log.Error($"Error in HarvestMinigameViewFishingLicensePatches.PostFix: {e}");
+            WinchCore.Log.Error($"Error in HarvestMinigameViewPatches.ShowMissingLicenseText: {e}");
+        }
+    }
+
+    private static void ShowApHintIcon(HarvestMinigameView view, HarvestableItemData itemToHarvest)
+    {
+        try
+        {
+            // Only dredge spots can be AP locations by spot id; other spots go by the item.
+            var spotLocationId = view.currentPOI.IsDredgePOI ? view.currentPOI.HarvestPOIData.id : null;
+            var iconName = ApHarvestIconHelper.GetIconName(itemToHarvest, spotLocationId);
+            if (iconName != null)
+            {
+                view.hintImage.sprite = ApHarvestIconHelper.GetIcon(iconName);
+            }
+        }
+        catch (Exception e)
+        {
+            WinchCore.Log.Error($"Error in HarvestMinigameViewPatches.ShowApHintIcon: {e}");
         }
     }
 }

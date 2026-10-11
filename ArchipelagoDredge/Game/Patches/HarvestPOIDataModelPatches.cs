@@ -2,14 +2,13 @@
 using ArchipelagoDredge.Game.Helpers;
 using HarmonyLib;
 using Winch.Core;
-using Winch.Util;
-using Object = UnityEngine.Object;
 
 namespace ArchipelagoDredge.Game.Patches
 {
     [HarmonyPatch(typeof(HarvestPOIDataModel))]
     public class HarvestPOIDataModelPatches
     {
+        // Used by the spyglass and other UI to show what a spot holds: swap in the AP icon.
         [HarmonyPostfix]
         [HarmonyPatch(nameof(HarvestPOIDataModel.GetActiveFirstHarvestableItem))]
         private static void GetActiveFirstHarvestableItem_PostFix(HarvestPOIDataModel __instance,
@@ -17,42 +16,10 @@ namespace ArchipelagoDredge.Game.Patches
         {
             try
             {
-                if (__result != null)
+                var iconName = ApHarvestIconHelper.GetIconName(__result, __instance.id);
+                if (iconName != null)
                 {
-                    if (__result.itemSubtype == ItemSubtype.FISH)
-                    {
-                        var id = __result.id;
-                        if (LocationHelper.DoesApWorldContainLocation(id) && !LocationHelper.HasThisLocationBeenChecked(id))
-                        {
-                            var resultClone = Object.Instantiate(__result);
-                            resultClone.sprite = TextureUtil.GetSprite("archipelago_icon");
-                            __result = resultClone;
-                            return;
-                        }
-
-                        var aberrationsToCatch = ((FishItemData)__result).Aberrations;
-                        foreach (var aberration in aberrationsToCatch)
-                        {
-                            if (LocationHelper.DoesApWorldContainLocation(aberration.id) && !LocationHelper.HasThisLocationBeenChecked(aberration.id))
-                            {
-                                var resultClone = Object.Instantiate(__result);
-                                resultClone.sprite = TextureUtil.GetSprite("aberration_archipelago_icon");
-                                __result = resultClone;
-                                return;
-                            }
-                        }
-                    }
-                    else if (LocationHelper.TryParseLocation(__instance.id, out _))
-                    {
-                        var id = __instance.id;
-                        if (LocationHelper.DoesApWorldContainLocation(id) && !LocationHelper.HasThisLocationBeenChecked(id))
-                        {
-                            var resultClone = Object.Instantiate(__result);
-                            resultClone.sprite = TextureUtil.GetSprite("archipelago_icon");
-                            __result = resultClone;
-                            return;
-                        }
-                    }
+                    __result = ApHarvestIconHelper.GetItemWithIcon(__result, iconName);
                 }
             }
             catch (Exception e)
