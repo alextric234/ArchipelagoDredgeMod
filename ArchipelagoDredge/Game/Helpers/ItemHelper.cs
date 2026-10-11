@@ -462,6 +462,11 @@ public enum Item
 
 public static class ItemNames
 {
+    // "<thing> Researched" items are AP-side progress events; the mod never gives them.
+    public const string ResearchedSuffix = "Researched";
+    // "Starting Gear - <thing>" items are already on the boat at the start of the game.
+    public const string StartingGearTag = "Starting Gear";
+
     public static Dictionary<Item, string> itemNames = new()
     {
         {Item.MESSAGE_FISHERMAN_1, "Fisherman's Note"},

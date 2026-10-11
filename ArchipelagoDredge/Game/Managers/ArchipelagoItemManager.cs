@@ -4,6 +4,7 @@ using System.Linq;
 using Archipelago.MultiClient.Net.Colors;
 using ArchipelagoDredge.Game.Helpers;
 using ArchipelagoDredge.Game.Models;
+using ArchipelagoDredge.Game.Services;
 using ArchipelagoDredge.Network;
 using ArchipelagoDredge.Utils;
 using CommandTerminal;
@@ -23,8 +24,8 @@ public class ArchipelagoItemManager
             var indexOfItemToProcess = ArchipelagoStateManager.StateData.LastProcessedIndex + 1;
             var apItem = ArchipelagoClient.Session.Items.AllItemsReceived[indexOfItemToProcess];
             if (apItem.ItemGame != "DREDGE" ||
-                apItem.ItemName.EndsWith("Researched") ||
-                apItem.ItemName.Contains("Starting Gear"))
+                apItem.ItemName.EndsWith(ItemNames.ResearchedSuffix) ||
+                apItem.ItemName.Contains(ItemNames.StartingGearTag))
             {
                 ArchipelagoStateManager.IncrementLastProcessedIndex(indexOfItemToProcess);
                 return;
@@ -43,23 +44,24 @@ public class ArchipelagoItemManager
                 return;
             }
 
-            if (apItem.ItemName.Equals("Progressive Hull"))
+            if (item == Item.PROGRESSIVE_HULL)
             {
-                UpgradeHelper.UpgradeBoat();
+                UpgradeService.ApplyNextHullTier();
                 ArchipelagoStateManager.IncrementLastProcessedIndex(indexOfItemToProcess);
                 UpgradeEquipped("Hull Upgraded");
                 return;
             }
 
-            if (apItem.ItemName.Equals("Dredge Crane"))
+            if (item == Item.DREDGE1)
             {
-                GameManager.Instance.DialogueRunner.AddItemById("dredge1", GameManager.Instance.SaveData.Inventory);
+                GameManager.Instance.DialogueRunner.AddItemById(ItemNames.ItemToDredgeId(Item.DREDGE1),
+                    GameManager.Instance.SaveData.Inventory);
                 ArchipelagoStateManager.IncrementLastProcessedIndex(indexOfItemToProcess);
                 UpgradeEquipped("Dredge Crane Equipped");
                 return;
             }
 
-            if (apItem.ItemName.Equals("Icebreaker"))
+            if (item == Item.WHOLE_ICEBREAKER)
             {
                 GameManager.Instance.SaveData.SetBoolVariable(BoatSubModelToggler.ICEBREAKER_EQUIP_STRING_KEY, true);
                 GameEvents.Instance.TriggerIcebreakerEquipChanged();

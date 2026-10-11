@@ -32,7 +32,7 @@ public static class PrintJsonHelper
 
         var itemName = message.Item.ItemDisplayName;
 
-        if (itemName.EndsWith("Researched"))
+        if (itemName.EndsWith(ItemNames.ResearchedSuffix))
         {
             return;
         }
