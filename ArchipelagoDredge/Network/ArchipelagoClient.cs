@@ -80,33 +80,6 @@ public static class ArchipelagoClient
         WinchCore.Log.Info($"Slot data: death_link={SlotData.DeathLink}, include_iron_rig_dlc={SlotData.IncludeIronRigDLC}, " +
                            $"include_pale_reach_dlc={SlotData.IncludePaleReachDLC}, add_fishing_licenses={SlotData.AddFishingLicenses}, " +
                            $"add_passage_items={SlotData.AddPassageItems}");
-
-        StartupActions();
-    }
-
-
-    private static void StartupActions()
-    {
-        GameManager.Instance.SaveData.CanCatchAberrations = true;
-        var worldPhase = GameManager.Instance.SaveData.WorldPhase;
-
-        if (worldPhase < 1)
-        {
-            GameManager.Instance.SaveData.WorldPhase = 1;
-        }
-
-        // Hulls arrive as AP items, so the player may never have the shipwright conversation that
-        // normally opens the dry docks; open them so slot upgrades can still be bought.
-        GameManager.Instance.SaveData.availableDestinations.Add("destination.gm-shipwright-upgrades");
-        GameManager.Instance.SaveData.availableDestinations.Add("destination.tm-upgrades");
-
-        LocationHelper.LoadArchipelagoIds();
-        RemoveCheckedRelicPois();
-        Terminal.Shell.RunCommand("ency.all");
-
-        LocationHelper.ReconcileArchipelagoChecks();
-        LocationHelper.FlushPendingLocation();
-        ArchipelagoItemManager.RestockShops();
     }
 
     private static void OnMessageReceived(LogMessage message)
@@ -220,16 +193,5 @@ public static class ArchipelagoClient
 
         var latestItemIndex = Session.Items.AllItemsReceived.Count - 1;
         return ArchipelagoStateManager.StateData.LastProcessedIndex < latestItemIndex;
-    }
-
-    private static void RemoveCheckedRelicPois()
-    {
-        PoiUtil.GetAllPOI()
-            .Select(p => p.Value)
-            .OfType<HarvestPOI>()
-            .Where(h => LocationHelper.RelicLocations.Contains(LocationHelper.DredgeIdToLocation(h.harvestPOIData.id)))
-            .Where(h => h.Harvestable.GetStockCount(true) > 0)
-            .Where(h => LocationHelper.HasThisLocationBeenChecked(h.HarvestPOIData.id))
-            .ForEach(h => h.OnHarvested(true));
     }
 }

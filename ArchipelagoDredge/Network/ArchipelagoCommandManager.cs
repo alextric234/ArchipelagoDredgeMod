@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using ArchipelagoDredge.Game.Helpers;
 using ArchipelagoDredge.Game.Managers;
+using ArchipelagoDredge.Game.Services;
 using ArchipelagoDredge.Network.Enums;
 using ArchipelagoDredge.Utils;
 using CommandTerminal;
@@ -78,6 +79,7 @@ public static class ArchipelagoCommandManager
                 WinchCore.Log.Info($"Connected to {_apHost}:{_apPort} as '{_slotName}'. " +
                                    $"Items received so far: {ArchipelagoClient.Session.Items.AllItemsReceived.Count}, " +
                                    $"last processed item index: {ArchipelagoStateManager.StateData?.LastProcessedIndex}");
+                SessionStartService.OnSessionStarted();
                 DeathLinkManager.SetupDredgeDeathLinkService();
                 TerminalCommandManager.LogMessage(TerminalLogType.Message, "Connected to Archipelago!");
                 NotificationHelper.ShowNotificationWithColour(NotificationType.NONE, "Connected to Archipelago!",
