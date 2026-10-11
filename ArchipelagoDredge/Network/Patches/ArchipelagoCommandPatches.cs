@@ -1,23 +1,42 @@
-﻿using HarmonyLib;
+﻿using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using Archipelago.MultiClient.Net;
+using HarmonyLib;
 using Newtonsoft.Json;
 
 namespace ArchipelagoDredge.Network.Patches;
 
+/// <summary>
+///     Winch replaces <see cref="JsonConvert.DefaultSettings" /> for the whole process (string enums,
+///     <c>$type</c> names, indenting, ...). MultiClient sends packets with plain
+///     <c>JsonConvert.SerializeObject(packets)</c>, so they'd pick those up and the server rejects
+///     e.g. <c>"items_handling": "AllItems"</c>. Serialize outgoing packets with stock Newtonsoft settings
+///     instead; every other call goes through untouched.
+/// </summary>
 [HarmonyPatch(typeof(JsonConvert))]
 public class ArchipelagoCommandPatches
 {
-    [HarmonyPostfix]
+    // JsonSerializer.Create, unlike JsonConvert.SerializeObject(value, settings), doesn't merge in DefaultSettings.
+    private static readonly JsonSerializer PacketSerializer = JsonSerializer.Create(new JsonSerializerSettings());
+
+    [HarmonyPrefix]
     [HarmonyPatch(nameof(JsonConvert.SerializeObject), typeof(object))]
-    public static void SerializeObjectPost(ref string __result)
+    public static bool SerializeObjectPrefix(object value, ref string __result)
     {
-        if (__result.Contains("AllItems"))
+        if (value is not IEnumerable<ArchipelagoPacketBase>)
         {
-            __result = __result.Replace("\"AllItems\"", "7");
+            return true;
         }
 
-        if (__result.Contains("ClientGoal"))
+        var stringWriter = new StringWriter(CultureInfo.InvariantCulture);
+        using (var jsonWriter = new JsonTextWriter(stringWriter))
         {
-            __result = __result.Replace("\"ClientGoal\"", "30");
+            jsonWriter.Formatting = Formatting.None;
+            PacketSerializer.Serialize(jsonWriter, value);
         }
+
+        __result = stringWriter.ToString();
+        return false;
     }
 }
