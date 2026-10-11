@@ -94,6 +94,12 @@ public static class ArchipelagoClient
         {
             GameManager.Instance.SaveData.WorldPhase = 1;
         }
+
+        // Hulls arrive as AP items, so the player may never have the shipwright conversation that
+        // normally opens the dry docks; open them so slot upgrades can still be bought.
+        GameManager.Instance.SaveData.availableDestinations.Add("destination.gm-shipwright-upgrades");
+        GameManager.Instance.SaveData.availableDestinations.Add("destination.tm-upgrades");
+
         LocationHelper.LoadArchipelagoIds();
         RemoveCheckedRelicPois();
         Terminal.Shell.RunCommand("ency.all");
