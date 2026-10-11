@@ -6,6 +6,7 @@ using ArchipelagoDredge.Game.Helpers;
 using ArchipelagoDredge.Game.Models;
 using ArchipelagoDredge.Network;
 using ArchipelagoDredge.Utils;
+using CommandTerminal;
 using HarmonyLib;
 using UnityEngine;
 using Winch.Core;
@@ -29,7 +30,13 @@ public class ArchipelagoItemManager
                 return;
             }
 
-            if (ItemNames.VirtualItems.Contains(ItemNames.NameToItem(apItem.ItemName)))
+            if (!ItemNames.TryNameToItem(apItem.ItemName, out var item))
+            {
+                SkipUnknownItem(apItem.ItemName, indexOfItemToProcess);
+                return;
+            }
+
+            if (ItemNames.VirtualItems.Contains(item))
             {
                 ReceiveVirtualItem(apItem.ItemName);
                 ArchipelagoStateManager.IncrementLastProcessedIndex(indexOfItemToProcess);
@@ -67,8 +74,13 @@ public class ArchipelagoItemManager
             }
 
             SerializableGrid validGrid = null;
-            var itemId = ItemNames.NameToItem(apItem.ItemName);
-            var dredgeItem = ItemUtil.GetItemData(ItemNames.ItemToDredgeId(itemId));
+            var dredgeItem = ItemUtil.GetItemData(ItemNames.ItemToDredgeId(item));
+            if (dredgeItem == null)
+            {
+                SkipUnknownItem(apItem.ItemName, indexOfItemToProcess);
+                return;
+            }
+
             if (dredgeItem is SpatialItemData)
             {
                 validGrid = GetValidGrid(dredgeItem);
@@ -89,6 +101,22 @@ public class ArchipelagoItemManager
             WinchCore.Log.Error("Error getting item from multiworld");
             WinchCore.Log.Error(e);
         }
+    }
+
+    // Skips an item this version of the mod can't give (e.g. the APWorld added or renamed it),
+    // so the items after it are still delivered.
+    private static void SkipUnknownItem(string apItemName, int index)
+    {
+        WinchCore.Log.Warn($"Skipping unknown item '{apItemName}' at index {index}; the mod may be out of date.");
+        TerminalCommandManager.LogMessage(TerminalLogType.Warning,
+            $"Couldn't receive unknown item '{apItemName}'. Is the mod out of date?");
+
+        var notification = new DredgeNotification();
+        notification.Message = $"Unknown item '{apItemName}'. Is the mod out of date?";
+        notification.MessageColor = PaletteColor.Red;
+        NotificationHelper.TryToSendNotification(notification);
+
+        ArchipelagoStateManager.IncrementLastProcessedIndex(index);
     }
 
     private static void ReceiveVirtualItem(string apItemName)
@@ -142,7 +170,11 @@ public class ArchipelagoItemManager
         List<SpatialItemData> shopDredgeItems = [];
         foreach (var apItemName in apItemNames)
         {
-            var item = ItemNames.NameToItem(apItemName);
+            if (!ItemNames.TryNameToItem(apItemName, out var item))
+            {
+                continue;
+            }
+
             if (ItemNames.ShopItems.Contains(item))
             {
                 if (shopItems.Contains(item))

@@ -1014,6 +1014,11 @@ public static class ItemNames
         return itemNamesReversed[itemName];
     }
 
+    public static bool TryNameToItem(string itemName, out Item item)
+    {
+        return itemNamesReversed.TryGetValue(itemName, out item);
+    }
+
     public static string ItemToDredgeId(Item item)
     {
         return item.ToString().ToLower().Replace('_', '-');
