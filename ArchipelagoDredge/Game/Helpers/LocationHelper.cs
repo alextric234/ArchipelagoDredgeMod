@@ -1112,34 +1112,41 @@ public static class LocationHelper
         }
     }
 
+    /// <summary>
+    ///     False when not connected, so callers fall back to vanilla behavior.
+    /// </summary>
     public static bool HasThisLocationBeenChecked(string itemId)
     {
-        if (TryParseLocation(itemId, out var locationName))
+        if (!TryParseLocation(itemId, out var location))
         {
-            var checkedApLocations = ArchipelagoClient.Session.Locations.AllLocationsChecked;
-            var apLocationId = locationToArchipelagoId[locationName];
-            return checkedApLocations.Contains(apLocationId);
+            WinchCore.Log.Error($"Could not find location: {itemId}");
+            return false;
         }
 
-        WinchCore.Log.Error($"Could not find location: {itemId}");
-        return false;
+        if (!ArchipelagoClient.IsConnected || !TryGetArchipelagoId(location, out var apLocationId))
+        {
+            return false;
+        }
+
+        return ArchipelagoClient.Session.Locations.AllLocationsChecked.Contains(apLocationId);
     }
 
+    /// <summary>
+    ///     False when not connected, so callers fall back to vanilla behavior.
+    /// </summary>
     public static bool DoesApWorldContainLocation(string itemId)
     {
-        if (TryParseLocation(itemId, out var locationName))
+        if (!TryParseLocation(itemId, out var location))
         {
-            var allApLocations = ArchipelagoClient.Session.Locations.AllLocations;
-            var apLocationId = locationToArchipelagoId[locationName];
-            if (!allApLocations.Contains(apLocationId))
-            {
-                return false;
-            }
-
-            return true;
+            WinchCore.Log.Error($"Could not find location: {itemId}");
+            return false;
         }
 
-        WinchCore.Log.Error($"Could not find location: {itemId}");
-        return false;
+        if (!ArchipelagoClient.IsConnected || !TryGetArchipelagoId(location, out var apLocationId))
+        {
+            return false;
+        }
+
+        return ArchipelagoClient.Session.Locations.AllLocations.Contains(apLocationId);
     }
 }

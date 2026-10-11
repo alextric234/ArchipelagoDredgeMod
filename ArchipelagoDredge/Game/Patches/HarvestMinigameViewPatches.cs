@@ -195,22 +195,34 @@ internal static class HarvestMinigameViewFishingLicensePatches
         HarvestableItemData ___itemDataToHarvest,
         LocalizeStringEvent ___cannotStartText)
     {
-        // Check vanilla rod first.
-        var hasRod = GameManager.Instance.PlayerStats
-            .GetHasEquipmentForHarvestType(
-                __instance.currentPOI.Harvestable.GetHarvestType(),
-                __instance.currentPOI.Harvestable.GetIsAdvancedHarvestType());
-
-        if (!hasRod ||
-            !FishingLicenseManager.TryGetMissingFishingLicense(
-                ___itemDataToHarvest,
-                out var missingLicense))
+        try
         {
-            return;
-        }
+            if (__instance.currentPOI == null || ___cannotStartText == null)
+            {
+                return;
+            }
 
-        ___cannotStartText.StringReference.SetReference(
-            LanguageManager.STRING_TABLE,
-            missingLicense.MissingMessageKey);
+            // Check vanilla rod first.
+            var hasRod = GameManager.Instance.PlayerStats
+                .GetHasEquipmentForHarvestType(
+                    __instance.currentPOI.Harvestable.GetHarvestType(),
+                    __instance.currentPOI.Harvestable.GetIsAdvancedHarvestType());
+
+            if (!hasRod ||
+                !FishingLicenseManager.TryGetMissingFishingLicense(
+                    ___itemDataToHarvest,
+                    out var missingLicense))
+            {
+                return;
+            }
+
+            ___cannotStartText.StringReference.SetReference(
+                LanguageManager.STRING_TABLE,
+                missingLicense.MissingMessageKey);
+        }
+        catch (Exception e)
+        {
+            WinchCore.Log.Error($"Error in HarvestMinigameViewFishingLicensePatches.PostFix: {e}");
+        }
     }
 }

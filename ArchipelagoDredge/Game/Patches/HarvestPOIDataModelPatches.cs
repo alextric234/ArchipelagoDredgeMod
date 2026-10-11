@@ -1,7 +1,9 @@
-﻿using ArchipelagoDredge.Game.Helpers;
+﻿using System;
+using ArchipelagoDredge.Game.Helpers;
 using HarmonyLib;
-using UnityEngine;
+using Winch.Core;
 using Winch.Util;
+using Object = UnityEngine.Object;
 
 namespace ArchipelagoDredge.Game.Patches
 {
@@ -13,42 +15,49 @@ namespace ArchipelagoDredge.Game.Patches
         private static void GetActiveFirstHarvestableItem_PostFix(HarvestPOIDataModel __instance,
             ref HarvestableItemData __result)
         {
-            if (__result != null)
+            try
             {
-                if (__result.itemSubtype == ItemSubtype.FISH)
+                if (__result != null)
                 {
-                    var id = __result.id;
-                    if (LocationHelper.DoesApWorldContainLocation(id) && !LocationHelper.HasThisLocationBeenChecked(id))
+                    if (__result.itemSubtype == ItemSubtype.FISH)
                     {
-                        var resultClone = Object.Instantiate(__result);
-                        resultClone.sprite = TextureUtil.GetSprite("archipelago_icon");
-                        __result = resultClone;
-                        return;
-                    }
-
-                    var aberrationsToCatch = ((FishItemData)__result).Aberrations;
-                    foreach (var aberration in aberrationsToCatch)
-                    {
-                        if (LocationHelper.DoesApWorldContainLocation(aberration.id) && !LocationHelper.HasThisLocationBeenChecked(aberration.id))
+                        var id = __result.id;
+                        if (LocationHelper.DoesApWorldContainLocation(id) && !LocationHelper.HasThisLocationBeenChecked(id))
                         {
                             var resultClone = Object.Instantiate(__result);
-                            resultClone.sprite = TextureUtil.GetSprite("aberration_archipelago_icon");
+                            resultClone.sprite = TextureUtil.GetSprite("archipelago_icon");
+                            __result = resultClone;
+                            return;
+                        }
+
+                        var aberrationsToCatch = ((FishItemData)__result).Aberrations;
+                        foreach (var aberration in aberrationsToCatch)
+                        {
+                            if (LocationHelper.DoesApWorldContainLocation(aberration.id) && !LocationHelper.HasThisLocationBeenChecked(aberration.id))
+                            {
+                                var resultClone = Object.Instantiate(__result);
+                                resultClone.sprite = TextureUtil.GetSprite("aberration_archipelago_icon");
+                                __result = resultClone;
+                                return;
+                            }
+                        }
+                    }
+                    else if (LocationHelper.TryParseLocation(__instance.id, out _))
+                    {
+                        var id = __instance.id;
+                        if (LocationHelper.DoesApWorldContainLocation(id) && !LocationHelper.HasThisLocationBeenChecked(id))
+                        {
+                            var resultClone = Object.Instantiate(__result);
+                            resultClone.sprite = TextureUtil.GetSprite("archipelago_icon");
                             __result = resultClone;
                             return;
                         }
                     }
                 }
-                else if (LocationHelper.TryParseLocation(__instance.id, out _))
-                {
-                    var id = __instance.id;
-                    if (LocationHelper.DoesApWorldContainLocation(id) && !LocationHelper.HasThisLocationBeenChecked(id))
-                    {
-                        var resultClone = Object.Instantiate(__result);
-                        resultClone.sprite = TextureUtil.GetSprite("archipelago_icon");
-                        __result = resultClone;
-                        return;
-                    }
-                }
+            }
+            catch (Exception e)
+            {
+                WinchCore.Log.Error($"Error in HarvestPOIDataModelPatches.GetActiveFirstHarvestableItem: {e}");
             }
         }
     }
