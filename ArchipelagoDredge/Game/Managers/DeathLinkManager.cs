@@ -9,8 +9,8 @@ namespace ArchipelagoDredge.Game.Managers;
 
 public static class DeathLinkManager
 {
-    public static DeathLinkService DredgeDeathLinkService;
-    public static bool IsDeathLinkEnabled;
+    private static DeathLinkService DredgeDeathLinkService;
+    public static bool IsDeathLinkEnabled { get; private set; }
 
     private static readonly object PendingDeathLinkLock = new object();
 

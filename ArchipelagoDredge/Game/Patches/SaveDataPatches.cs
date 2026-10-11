@@ -19,7 +19,7 @@ public static class SaveDataPatches
         }
 
         var apItems = ArchipelagoClient.Session.Items.AllItemsReceived.Select(i => i.ItemDisplayName).ToList();
-        var unlockedItemIds = ItemNames.itemNamesReversed.Where(itemName => apItems.Contains(itemName.Key))
+        var unlockedItemIds = ItemNames.ItemsByName.Where(itemName => apItems.Contains(itemName.Key))
             .Select(itemName => ItemNames.ItemToDredgeId(itemName.Value));
         __result = __result.Where(r => unlockedItemIds.Contains(r.id)).ToList();
     }

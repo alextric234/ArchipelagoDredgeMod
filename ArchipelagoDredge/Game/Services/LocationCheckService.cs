@@ -11,6 +11,9 @@ namespace ArchipelagoDredge.Game.Services;
 /// </summary>
 public static class LocationCheckService
 {
+    // Iron Rig salvage crates; only checks when the seed includes the Iron Rig.
+    private const string IronRigCrateItemId = "crate";
+
     private static bool _initialized;
 
     public static void Initialize()
@@ -33,7 +36,7 @@ public static class LocationCheckService
             if (itemInstance.ToItemData().itemSubtype == ItemSubtype.FISH)
                 return;
             if (harvestPOI.IsDredgePOI &&
-                harvestPOI.Harvestable.GetNextHarvestableItem().id == "crate" &&
+                harvestPOI.Harvestable.GetNextHarvestableItem().id == IronRigCrateItemId &&
                 !ArchipelagoClient.SlotData.IncludeIronRigDLC)
             {
                 WinchCore.Log.Debug($"It's a crate");

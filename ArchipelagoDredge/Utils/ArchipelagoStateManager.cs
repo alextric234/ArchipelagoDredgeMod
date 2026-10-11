@@ -80,7 +80,7 @@ public static class ArchipelagoStateManager
         }
     }
 
-    public static void IncrementLastProcessedIndex(int index)
+    public static void SetLastProcessedIndex(int index)
     {
         StateData.LastProcessedIndex = index;
         SaveData();
@@ -108,7 +108,7 @@ public static class ArchipelagoStateManager
 
     public static bool AddVirtualItem(string itemKey)
     {
-        if (itemKey == "unknown")
+        if (string.IsNullOrEmpty(itemKey))
         {
             WinchCore.Log.Error($"Unknown virtual item");
             return false;

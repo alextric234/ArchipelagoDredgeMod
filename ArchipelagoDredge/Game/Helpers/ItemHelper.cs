@@ -467,7 +467,7 @@ public static class ItemNames
     // "Starting Gear - <thing>" items are already on the boat at the start of the game.
     public const string StartingGearTag = "Starting Gear";
 
-    public static Dictionary<Item, string> itemNames = new()
+    public static readonly IReadOnlyDictionary<Item, string> Names = new Dictionary<Item, string>
     {
         {Item.MESSAGE_FISHERMAN_1, "Fisherman's Note"},
         {Item.MESSAGE_1, "6th, 7th March 1927"},
@@ -922,7 +922,7 @@ public static class ItemNames
         {Item.RESEARCHED_EVENT_5, "Large Trawl Net Researched"}
     };
 
-    public static List<Item> ShopItems =
+    public static readonly IReadOnlyList<Item> ShopItems =
     [
         Item.BAIT,
         Item.BAIT_AB,
@@ -985,7 +985,7 @@ public static class ItemNames
         Item.SCRAP
     ];
 
-    public static List<Item> VirtualItems =
+    public static readonly IReadOnlyList<Item> VirtualItems =
     [
         Item.VIRTUAL_LICENSE_GALE_CLIFFS,
         Item.VIRTUAL_LICENSE_STELLAR_BASIN,
@@ -1001,7 +1001,7 @@ public static class ItemNames
         Item.VIRTUAL_PASSAGE_PALE_REACH
     ];
 
-    public static List<Item> PassageItems =
+    public static readonly IReadOnlyList<Item> PassageItems =
     [
         Item.VIRTUAL_PASSAGE_GALE_CLIFFS,
         Item.VIRTUAL_PASSAGE_STELLAR_BASIN,
@@ -1011,17 +1011,17 @@ public static class ItemNames
         Item.VIRTUAL_PASSAGE_PALE_REACH
     ];
 
-    public static Dictionary<string, Item> itemNamesReversed =
-        itemNames.ToDictionary(name => name.Value, name => name.Key);
+    public static readonly IReadOnlyDictionary<string, Item> ItemsByName =
+        Names.ToDictionary(name => name.Value, name => name.Key);
 
     public static Item NameToItem(string itemName)
     {
-        return itemNamesReversed[itemName];
+        return ItemsByName[itemName];
     }
 
     public static bool TryNameToItem(string itemName, out Item item)
     {
-        return itemNamesReversed.TryGetValue(itemName, out item);
+        return ItemsByName.TryGetValue(itemName, out item);
     }
 
     public static string ItemToDredgeId(Item item)

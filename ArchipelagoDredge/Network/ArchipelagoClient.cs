@@ -16,9 +16,19 @@ namespace ArchipelagoDredge.Network;
 
 public static class ArchipelagoClient
 {
+    /// <summary>
+    ///     The AP game name, as used by the APWorld for items, locations and login.
+    /// </summary>
+    public const string GameName = "DREDGE";
+
     public static ArchipelagoSession Session { get; private set; }
-    public static ConnectionState State { get; set; } = ConnectionState.Disconnected;
-    public static SlotData SlotData = new SlotData();
+
+    /// <summary>
+    ///     The connection state machine. Only <see cref="ArchipelagoCommandManager" /> changes it.
+    /// </summary>
+    public static ConnectionState State { get; internal set; } = ConnectionState.Disconnected;
+
+    public static SlotData SlotData { get; private set; } = new SlotData();
 
     /// <summary>
     ///     True when there is a session and its socket is open. Safe to call at any time.
@@ -56,7 +66,7 @@ public static class ArchipelagoClient
         ThrowIfSuperseded(session);
 
         var loginResult = await session.LoginAsync(
-            "DREDGE",
+            GameName,
             slotName,
             ItemsHandlingFlags.AllItems,
             password: password);
@@ -71,11 +81,12 @@ public static class ArchipelagoClient
 
         var successfulLogin = (LoginSuccessful)loginResult;
         var slotData = successfulLogin.SlotData;
-        SlotData.DeathLink = SlotDataParser.GetBool(slotData, "death_link");
-        SlotData.IncludeIronRigDLC = SlotDataParser.GetBool(slotData, "include_iron_rig_dlc");
-        SlotData.IncludePaleReachDLC = SlotDataParser.GetBool(slotData, "include_pale_reach_dlc");
-        SlotData.AddFishingLicenses = SlotDataParser.GetBool(slotData, "add_fishing_licenses");
-        SlotData.AddPassageItems = SlotDataParser.GetBool(slotData, "add_passage_items");
+        SlotData = new SlotData(
+            deathLink: SlotDataParser.GetBool(slotData, "death_link"),
+            includeIronRigDlc: SlotDataParser.GetBool(slotData, "include_iron_rig_dlc"),
+            includePaleReachDlc: SlotDataParser.GetBool(slotData, "include_pale_reach_dlc"),
+            addFishingLicenses: SlotDataParser.GetBool(slotData, "add_fishing_licenses"),
+            addPassageItems: SlotDataParser.GetBool(slotData, "add_passage_items"));
 
         WinchCore.Log.Info($"Slot data: death_link={SlotData.DeathLink}, include_iron_rig_dlc={SlotData.IncludeIronRigDLC}, " +
                            $"include_pale_reach_dlc={SlotData.IncludePaleReachDLC}, add_fishing_licenses={SlotData.AddFishingLicenses}, " +

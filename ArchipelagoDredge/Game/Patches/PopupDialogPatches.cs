@@ -13,6 +13,10 @@ namespace ArchipelagoDredge.Game.Patches;
 [HarmonyPatch(typeof(PopupDialog))]
 internal static class PopupDialogPatches
 {
+    // Button ids on the game's death screen.
+    private const int LoadLastSaveButtonId = 0;
+    private const int ReturnToMenuButtonId = 1;
+
     [HarmonyPrefix]
     [HarmonyPatch(nameof(PopupDialog.Show),
     new[] {typeof(DialogOptions), typeof(Action<DialogButtonOptions>)})]
@@ -71,13 +75,13 @@ internal static class PopupDialogPatches
 
         switch (selectedButton.id)
         {
-            case 0: // Load Last Savee
+            case LoadLastSaveButtonId:
 
                 ArchipelagoStateManager.RevertStateData();
                 ArchipelagoStateManager.AwaitingDeathScreenChoice = false;
                 break;
 
-            case 1: // Return to Menu
+            case ReturnToMenuButtonId:
 
                 ArchipelagoStateManager.AwaitingDeathScreenChoice = false;
                 ArchipelagoCommandManager.Disconnect();

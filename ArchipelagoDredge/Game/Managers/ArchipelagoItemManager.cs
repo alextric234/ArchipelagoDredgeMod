@@ -15,7 +15,7 @@ using Winch.Util;
 
 namespace ArchipelagoDredge.Game.Managers;
 
-public class ArchipelagoItemManager
+public static class ArchipelagoItemManager
 {
     public static void GetItem()
     {
@@ -23,11 +23,11 @@ public class ArchipelagoItemManager
         {
             var indexOfItemToProcess = ArchipelagoStateManager.StateData.LastProcessedIndex + 1;
             var apItem = ArchipelagoClient.Session.Items.AllItemsReceived[indexOfItemToProcess];
-            if (apItem.ItemGame != "DREDGE" ||
+            if (apItem.ItemGame != ArchipelagoClient.GameName ||
                 apItem.ItemName.EndsWith(ItemNames.ResearchedSuffix) ||
                 apItem.ItemName.Contains(ItemNames.StartingGearTag))
             {
-                ArchipelagoStateManager.IncrementLastProcessedIndex(indexOfItemToProcess);
+                ArchipelagoStateManager.SetLastProcessedIndex(indexOfItemToProcess);
                 return;
             }
 
@@ -40,14 +40,14 @@ public class ArchipelagoItemManager
             if (ItemNames.VirtualItems.Contains(item))
             {
                 ReceiveVirtualItem(apItem.ItemName);
-                ArchipelagoStateManager.IncrementLastProcessedIndex(indexOfItemToProcess);
+                ArchipelagoStateManager.SetLastProcessedIndex(indexOfItemToProcess);
                 return;
             }
 
             if (item == Item.PROGRESSIVE_HULL)
             {
                 UpgradeService.ApplyNextHullTier();
-                ArchipelagoStateManager.IncrementLastProcessedIndex(indexOfItemToProcess);
+                ArchipelagoStateManager.SetLastProcessedIndex(indexOfItemToProcess);
                 UpgradeEquipped("Hull Upgraded");
                 return;
             }
@@ -56,7 +56,7 @@ public class ArchipelagoItemManager
             {
                 GameManager.Instance.DialogueRunner.AddItemById(ItemNames.ItemToDredgeId(Item.DREDGE1),
                     GameManager.Instance.SaveData.Inventory);
-                ArchipelagoStateManager.IncrementLastProcessedIndex(indexOfItemToProcess);
+                ArchipelagoStateManager.SetLastProcessedIndex(indexOfItemToProcess);
                 UpgradeEquipped("Dredge Crane Equipped");
                 return;
             }
@@ -65,7 +65,7 @@ public class ArchipelagoItemManager
             {
                 GameManager.Instance.SaveData.SetBoolVariable(BoatSubModelToggler.ICEBREAKER_EQUIP_STRING_KEY, true);
                 GameEvents.Instance.TriggerIcebreakerEquipChanged();
-                ArchipelagoStateManager.IncrementLastProcessedIndex(indexOfItemToProcess);
+                ArchipelagoStateManager.SetLastProcessedIndex(indexOfItemToProcess);
                 UpgradeEquipped("Icebreaker equipped");
                 return;
             }
@@ -96,7 +96,7 @@ public class ArchipelagoItemManager
             GameManager.Instance.ItemManager.AddItemById(dredgeItem.id, validGrid, false);
 
             RestockShops();
-            ArchipelagoStateManager.IncrementLastProcessedIndex(indexOfItemToProcess);
+            ArchipelagoStateManager.SetLastProcessedIndex(indexOfItemToProcess);
         }
         catch (Exception e)
         {
@@ -118,7 +118,7 @@ public class ArchipelagoItemManager
         notification.MessageColor = PaletteColor.Red;
         NotificationHelper.TryToSendNotification(notification);
 
-        ArchipelagoStateManager.IncrementLastProcessedIndex(index);
+        ArchipelagoStateManager.SetLastProcessedIndex(index);
     }
 
     private static void ReceiveVirtualItem(string apItemName)
@@ -142,12 +142,12 @@ public class ArchipelagoItemManager
             Item.VIRTUAL_PASSAGE_OPEN_OCEAN => PassageManager.OpenOceanPassageItemKey,
             Item.VIRTUAL_PASSAGE_PALE_REACH => PassageManager.PaleReachPassageItemKey,
 
-            _ => "unknown"
+            _ => null
         };
 
         if (!ArchipelagoStateManager.AddVirtualItem(itemKey))
         {
-            WinchCore.Log.Error($"{apItemName}");
+            WinchCore.Log.Error($"Couldn't add virtual item '{apItemName}'");
         }
 
         if (ItemNames.PassageItems.Contains(item))
@@ -166,7 +166,7 @@ public class ArchipelagoItemManager
 
     public static List<SpatialItemData> GetItemsForShops()
     {
-        var apItemNames = ArchipelagoClient.Session.Items.AllItemsReceived.Where(item => item.ItemGame == "DREDGE")
+        var apItemNames = ArchipelagoClient.Session.Items.AllItemsReceived.Where(item => item.ItemGame == ArchipelagoClient.GameName)
             .Select(item => item.ItemName).ToList();
         List<Item> shopItems = [];
         List<SpatialItemData> shopDredgeItems = [];

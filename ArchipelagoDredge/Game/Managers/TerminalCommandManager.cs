@@ -10,7 +10,7 @@ using Winch.Core;
 
 namespace ArchipelagoDredge.Game.Managers;
 
-public class TerminalCommandManager
+public static class TerminalCommandManager
 {
     public static void Initialize()
     {

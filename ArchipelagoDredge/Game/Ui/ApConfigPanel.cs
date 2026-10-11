@@ -8,6 +8,9 @@ namespace ArchipelagoDredge.Game.Ui;
 
 public class ApConfigPanel : MonoBehaviour
 {
+    // Unique IMGUI window id for the panel.
+    private const int WindowId = 0xA11CED;
+
     private string _host = "";
 
     private bool _loadedOnce;
@@ -85,7 +88,7 @@ public class ApConfigPanel : MonoBehaviour
         {
             return;
         }
-        _rect = GUILayout.Window(0xA11CED, _rect, Draw, "Archipelago (Config + Connect)");
+        _rect = GUILayout.Window(WindowId, _rect, Draw, "Archipelago (Config + Connect)");
     }
 
     private void Draw(int id)

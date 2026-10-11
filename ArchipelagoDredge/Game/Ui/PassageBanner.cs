@@ -5,8 +5,12 @@ using UnityEngine.Localization.Components;
 using UnityEngine.UI;
 using Winch.Core;
 
+namespace ArchipelagoDredge.Game.Ui;
+
 internal static class PassageBanner
 {
+    private const float BannerHoldSeconds = 4f;
+
     private static readonly AccessTools.FieldRef<BannersUI, BannerUI>
         BannerUiField =
             AccessTools.FieldRefAccess<BannersUI, BannerUI>("bannerUI");
@@ -89,7 +93,7 @@ internal static class PassageBanner
         AnimatorField(bannerUi).SetBool("showing", true);
 
         // BannersUI.Update() now owns the normal hide animation.
-        HoldTimeField(bannersUi) = 4f;
+        HoldTimeField(bannersUi) = BannerHoldSeconds;
 
         return true;
     }

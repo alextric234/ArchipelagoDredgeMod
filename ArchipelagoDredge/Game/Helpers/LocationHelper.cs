@@ -483,9 +483,9 @@ public enum Location
 
 public static class LocationHelper
 {
-    public static readonly HashSet<long> PendingLocationChecks = new();
+    private static readonly HashSet<long> PendingLocationChecks = new();
 
-    public static Dictionary<Location, string> locationNames = new()
+    public static readonly IReadOnlyDictionary<Location, string> LocationNames = new Dictionary<Location, string>
     {
         { Location.ANCHOVY_AB_1, "Anchovy King" },
         { Location.ANCHOVY, "Anchovy" },
@@ -956,14 +956,14 @@ public static class LocationHelper
         { Location.APLACETOREST_ESCORT, "A Place to Rest - Escort Builder" }
     };
 
-    public static List<Location> RelicLocations = new()
+    public static readonly IReadOnlyList<Location> RelicLocations = new List<Location>
     {
         Location.RELIC1_33,
         Location.RELIC2_200,
         Location.RELIC3_224
     };
 
-    public static List<Location> ResearchLocations = new()
+    public static readonly IReadOnlyList<Location> ResearchLocations = new List<Location>
     {
         Location.ENGINE3,
         Location.ENGINE4,
@@ -986,15 +986,15 @@ public static class LocationHelper
         Location.ROD6
     };
 
-    public static Dictionary<string, Location> locationNamesReversed =
-        locationNames.ToDictionary(ln => ln.Value, ln => ln.Key);
+    public static readonly IReadOnlyDictionary<string, Location> LocationsByName =
+        LocationNames.ToDictionary(ln => ln.Value, ln => ln.Key);
 
-    public static Dictionary<long, Location> archipelagoIdToLocation;
-    public static Dictionary<Location, long> locationToArchipelagoId;
+    private static Dictionary<long, Location> archipelagoIdToLocation;
+    private static Dictionary<Location, long> locationToArchipelagoId;
 
     public static Location NameToLocation(string locationName)
     {
-        return locationNamesReversed[locationName];
+        return LocationsByName[locationName];
     }
 
     public static Location DredgeIdToLocation(string locationId)
@@ -1014,9 +1014,9 @@ public static class LocationHelper
         locationToArchipelagoId = new Dictionary<Location, long>();
         var missingLocations = new List<string>();
 
-        foreach (var locationName in locationNames.Select(ln => ln.Value))
+        foreach (var locationName in LocationNames.Select(ln => ln.Value))
         {
-            var archipelagoId = ArchipelagoClient.Session.Locations.GetLocationIdFromName("DREDGE", locationName);
+            var archipelagoId = ArchipelagoClient.Session.Locations.GetLocationIdFromName(ArchipelagoClient.GameName, locationName);
             if (archipelagoId == -1)
             {
                 //skipping "???" for now, it's deep in TIR
@@ -1028,8 +1028,8 @@ public static class LocationHelper
                 continue;
             }
 
-            archipelagoIdToLocation.Add(archipelagoId, locationNamesReversed[locationName]);
-            locationToArchipelagoId.Add(locationNamesReversed[locationName], archipelagoId);
+            archipelagoIdToLocation.Add(archipelagoId, LocationsByName[locationName]);
+            locationToArchipelagoId.Add(LocationsByName[locationName], archipelagoId);
         }
 
         if (missingLocations.Count > 0)

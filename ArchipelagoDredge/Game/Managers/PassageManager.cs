@@ -1,17 +1,38 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
+using ArchipelagoDredge.Game.Ui;
 using ArchipelagoDredge.Utils;
 using UnityEngine;
 
 namespace ArchipelagoDredge.Game.Managers;
 public static class PassageManager
 {
+    // A zone's attempt count resets after this long without entering it.
     private const float ViolationWindowSeconds = 60f;
+    // Attempts within the window that show the warning banner; later ones only push the boat back.
+    private const int WarningsPerWindow = 2;
+    private const float ZoneCheckIntervalSeconds = 0.25f;
+    public const float PushSpeed = 30f;
+    private const string UnknownPassageName = "the required passage";
+
     public const string GaleCliffsPassageItemKey = "passage.gale_cliffs";
     public const string StellarBasinPassageItemKey = "passage.stellar_basin";
     public const string TwistedStrandPassageItemKey = "passage.twisted_strand";
     public const string DevilsSpinePassageItemKey = "passage.devils_spine";
     public const string OpenOceanPassageItemKey = "passage.open_ocean";
     public const string PaleReachPassageItemKey = "passage.pale_reach";
+
+    // Item names must match the APWorld's passage items.
+    private static readonly IReadOnlyDictionary<ZoneEnum, PassageDefinition> Passages =
+        new Dictionary<ZoneEnum, PassageDefinition>
+        {
+            [ZoneEnum.GALE_CLIFFS] = new(GaleCliffsPassageItemKey, "The Windward Litany", "Gale Cliffs"),
+            [ZoneEnum.STELLAR_BASIN] = new(StellarBasinPassageItemKey, "The Astral Testament", "Stellar Basin"),
+            [ZoneEnum.TWISTED_STRAND] = new(TwistedStrandPassageItemKey, "The Mangrove Canticle", "Twisted Strand"),
+            [ZoneEnum.DEVILS_SPINE] = new(DevilsSpinePassageItemKey, "The Cinder Gospel", "Devil's Spine"),
+            [ZoneEnum.OPEN_OCEAN] = new(OpenOceanPassageItemKey, "The Pelagic Psalm", "Open Ocean"),
+            [ZoneEnum.PALE_REACH] = new(PaleReachPassageItemKey, "The Rimebound Chronicle", "Pale Reach")
+        };
 
     private static ZoneEnum previousZone = ZoneEnum.NONE;
     private static Vector3 lastAllowedPosition;
@@ -21,8 +42,6 @@ public static class PassageManager
     private static BannersUI bannersUi;
 
     private static readonly Dictionary<ZoneEnum, ViolationState> violationsByZone = new();
-
-    public static float PushSpeed = 30f;
 
     public static void Reset()
     {
@@ -42,7 +61,7 @@ public static class PassageManager
             return;
         }
 
-        nextZoneCheckTime = Time.time + 0.25f;
+        nextZoneCheckTime = Time.time + ZoneCheckIntervalSeconds;
 
         var currentZone =
             GameManager.Instance.Player.PlayerZoneDetector.GetCurrentZone();
@@ -67,31 +86,9 @@ public static class PassageManager
 
     private static bool HasPassageFor(ZoneEnum zone)
     {
-        return zone switch
-        {
-            ZoneEnum.THE_MARROWS => true,
-            ZoneEnum.NONE => true,
-
-            ZoneEnum.GALE_CLIFFS =>
-                ArchipelagoStateManager.HasVirtualItem(GaleCliffsPassageItemKey),
-
-            ZoneEnum.STELLAR_BASIN =>
-                ArchipelagoStateManager.HasVirtualItem(StellarBasinPassageItemKey),
-
-            ZoneEnum.TWISTED_STRAND =>
-                ArchipelagoStateManager.HasVirtualItem(TwistedStrandPassageItemKey),
-
-            ZoneEnum.DEVILS_SPINE =>
-                ArchipelagoStateManager.HasVirtualItem(DevilsSpinePassageItemKey),
-
-            ZoneEnum.OPEN_OCEAN =>
-                ArchipelagoStateManager.HasVirtualItem(OpenOceanPassageItemKey),
-
-            ZoneEnum.PALE_REACH =>
-                ArchipelagoStateManager.HasVirtualItem(PaleReachPassageItemKey),
-
-            _ => true
-        };
+        // Zones without a passage (The Marrows, none, anything new) are always open.
+        return !Passages.TryGetValue(zone, out var passage) ||
+               ArchipelagoStateManager.HasVirtualItem(passage.StateKey);
     }
 
     private static void RegisterLockedZoneAttempt(ZoneEnum zone)
@@ -110,7 +107,7 @@ public static class PassageManager
         state.Attempts++;
         state.LastAttemptTime = Time.time;
 
-        if (state.Attempts <= 2)
+        if (state.Attempts <= WarningsPerWindow)
         {
             ShowPassageWarning(zone);
             PushBoatToward();
@@ -164,30 +161,26 @@ public static class PassageManager
 
     private static string GetPassageZoneName(string passageItemName)
     {
-        return passageItemName switch
-        {
-            "The Windward Litany" => "Gale Cliffs",
-            "The Astral Testament" => "Stellar Basin",
-            "The Mangrove Canticle" => "Twisted Strand",
-            "The Cinder Gospel" => "Devil's Spine",
-            "The Pelagic Psalm" => "Open Ocean",
-            "The Rimebound Chronicle" => "Pale Reach",
-            _ => "the required passage"
-        };
+        return Passages.Values.FirstOrDefault(p => p.ItemName == passageItemName)?.ZoneName ?? UnknownPassageName;
     }
 
     private static string GetRequiredPassageName(ZoneEnum zone)
     {
-        return zone switch
+        return Passages.TryGetValue(zone, out var passage) ? passage.ItemName : UnknownPassageName;
+    }
+
+    private sealed class PassageDefinition
+    {
+        public PassageDefinition(string stateKey, string itemName, string zoneName)
         {
-            ZoneEnum.GALE_CLIFFS => "The Windward Litany",
-            ZoneEnum.STELLAR_BASIN => "The Astral Testament",
-            ZoneEnum.TWISTED_STRAND => "The Mangrove Canticle",
-            ZoneEnum.DEVILS_SPINE => "The Cinder Gospel",
-            ZoneEnum.OPEN_OCEAN => "The Pelagic Psalm",
-            ZoneEnum.PALE_REACH => "The Rimebound Chronicle",
-            _ => "the required passage"
-        };
+            StateKey = stateKey;
+            ItemName = itemName;
+            ZoneName = zoneName;
+        }
+
+        public string StateKey { get; }
+        public string ItemName { get; }
+        public string ZoneName { get; }
     }
 }
 
