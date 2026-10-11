@@ -4,6 +4,7 @@ using System.Linq;
 using Archipelago.MultiClient.Net.Colors;
 using ArchipelagoDredge.Game.Helpers;
 using ArchipelagoDredge.Game.Models;
+using ArchipelagoDredge.Game.Services;
 using ArchipelagoDredge.Network;
 using ArchipelagoDredge.Utils;
 using CommandTerminal;
