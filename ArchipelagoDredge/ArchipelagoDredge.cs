@@ -1,4 +1,5 @@
 ﻿using System;
+using ArchipelagoDredge.Game.Helpers;
 using ArchipelagoDredge.Game.Managers;
 using ArchipelagoDredge.Game.Ui;
 using ArchipelagoDredge.Network;
@@ -114,6 +115,7 @@ public class ArchipelagoDredge : MonoBehaviour
         ArchipelagoStateManager.RevertStateData();
         WinchCore.Log.Info("Game ended, disconnecting from Archipelago");
         ArchipelagoCommandManager.Disconnect();
+        LocationHelper.ClearPendingLocationChecks();
     }
 
     private void GetConnectionConfigPanel()

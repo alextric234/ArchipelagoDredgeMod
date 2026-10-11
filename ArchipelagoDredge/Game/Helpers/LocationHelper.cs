@@ -1103,6 +1103,19 @@ public static class LocationHelper
         return locationToArchipelagoId != null && locationToArchipelagoId.TryGetValue(location, out apLocationId);
     }
 
+    /// <summary>
+    ///     Drops checks queued while disconnected so they can't be sent to a different save's slot.
+    /// </summary>
+    public static void ClearPendingLocationChecks()
+    {
+        if (PendingLocationChecks.Count > 0)
+        {
+            WinchCore.Log.Info($"Discarding {PendingLocationChecks.Count} pending location check(s) from the previous game");
+        }
+
+        PendingLocationChecks.Clear();
+    }
+
     public static void FlushPendingLocation()
     {
         foreach (var locationId in PendingLocationChecks.ToList())

@@ -9,18 +9,6 @@ namespace ArchipelagoDredge.Game.Patches;
 [HarmonyPatch(typeof(SaveData))]
 public static class SaveDataPatches
 {
-    [HarmonyPrefix]
-    [HarmonyPatch(nameof(SaveData.GetResearchedItemData))]
-    public static bool SaveDataGetResearchedItemData_Prefix()
-    {
-        if (!ArchipelagoClient.IsConnected)
-        {
-            return false;
-        }
-
-        return true;
-    }
-
     [HarmonyPostfix]
     [HarmonyPatch(nameof(SaveData.GetResearchedItemData))]
     public static void SaveDataGetResearchedItemData_Postfix(ref List<SpatialItemData> __result)

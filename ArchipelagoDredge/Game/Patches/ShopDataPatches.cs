@@ -12,9 +12,13 @@ public class ShopDataPatches
     [HarmonyPatch(nameof(ShopData.GetNewStock))]
     public static void PostFix(ref List<SpatialItemData> __result)
     {
+        if (!ArchipelagoClient.IsConnected)
+        {
+            return;
+        }
+
         __result.Clear();
-        if (GameManager.Instance.DataLoader.HasLoaded() &&
-            ArchipelagoClient.IsConnected)
+        if (GameManager.Instance.DataLoader.HasLoaded())
         {
             var items = ArchipelagoItemManager.GetItemsForShops();
             __result.AddRange(items);

@@ -1,3 +1,4 @@
+using ArchipelagoDredge.Network;
 using HarmonyLib;
 
 namespace ArchipelagoDredge.Game.Patches;
@@ -9,6 +10,11 @@ public class GameConfigDataPatches
     [HarmonyPatch("get_MaxAberrationSpawnChance")]
     private static void Postfix(ref float __result)
     {
+        if (!ArchipelagoClient.IsConnected)
+        {
+            return;
+        }
+
         __result = 0.5f;
     }
 }

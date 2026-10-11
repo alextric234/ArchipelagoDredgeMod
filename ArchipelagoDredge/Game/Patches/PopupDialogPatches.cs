@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using ArchipelagoDredge.Game.Helpers;
 using ArchipelagoDredge.Game.Managers;
 using ArchipelagoDredge.Network;
 using ArchipelagoDredge.Utils;
@@ -80,6 +81,7 @@ internal static class PopupDialogPatches
 
                 ArchipelagoStateManager.AwaitingDeathScreenChoice = false;
                 ArchipelagoCommandManager.Disconnect();
+                LocationHelper.ClearPendingLocationChecks();
                 break;
         }
     }
