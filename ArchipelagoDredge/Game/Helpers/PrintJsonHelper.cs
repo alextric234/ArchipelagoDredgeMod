@@ -16,7 +16,8 @@ public static class PrintJsonHelper
         // MultiClient has already resolved player, item and location names into the parts.
         TerminalCommandManager.LogMessage(TerminalLogType.Message, message.ToString());
 
-        if (message is ItemSendLogMessage itemSend)
+        // Hints and server /send messages are ItemSendLogMessage subclasses; only a real send gets a pop-up.
+        if (message is ItemSendLogMessage itemSend and not (HintItemSendLogMessage or ItemCheatLogMessage))
         {
             ShowItemSendNotification(itemSend);
         }
