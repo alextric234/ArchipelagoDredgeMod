@@ -42,6 +42,7 @@ public class ArchipelagoDredge : MonoBehaviour
     {
         try
         {
+#if DEBUG
             if (Input.GetKeyDown(KeyCode.F4))
             {
                 WinchCore.Log.Info("Activating debug mode!");
@@ -59,6 +60,7 @@ public class ArchipelagoDredge : MonoBehaviour
 
                 WinchCore.Log.Info("Debug complete.");
             }
+#endif
 
             if (Input.GetKeyDown(KeyCode.F8))
             {
