@@ -18,7 +18,7 @@ public class PlayerPatches
             return;
         }
 
-        WinchCore.Log.Info($"Player.Die patch");
+        WinchCore.Log.Debug($"Player.Die patch");
         DeathLinkManager.HandleLocalDeath();
     }
 }

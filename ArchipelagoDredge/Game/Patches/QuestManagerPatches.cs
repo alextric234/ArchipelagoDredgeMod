@@ -11,7 +11,7 @@ public class QuestManagerPatches
     [HarmonyPatch(nameof(QuestManager.CompleteQuestStep))]
     public static void CompleteQuestStep(string questStepId)
     {
-        WinchCore.Log.Info($"Quest Step completed: {questStepId}");
+        WinchCore.Log.Debug($"Quest Step completed: {questStepId}");
         LocationHelper.ReportLocationCheck(questStepId);
     }
 }

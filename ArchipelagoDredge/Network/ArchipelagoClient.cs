@@ -68,6 +68,10 @@ public static class ArchipelagoClient
         SlotData.AddFishingLicenses = successfulLogin.SlotData.TryGetValue("add_fishing_licenses", out var addFishingLicensesOption) && int.Parse(addFishingLicensesOption.ToString()) == 1;
         SlotData.AddPassageItems = successfulLogin.SlotData.TryGetValue("add_passage_items", out var addPassageItemsOption) && int.Parse(addPassageItemsOption.ToString()) == 1;
 
+        WinchCore.Log.Info($"Slot data: death_link={SlotData.DeathLink}, include_iron_rig_dlc={SlotData.IncludeIronRigDLC}, " +
+                           $"include_pale_reach_dlc={SlotData.IncludePaleReachDLC}, add_fishing_licenses={SlotData.AddFishingLicenses}, " +
+                           $"add_passage_items={SlotData.AddPassageItems}");
+
         StartupActions();
     }
 

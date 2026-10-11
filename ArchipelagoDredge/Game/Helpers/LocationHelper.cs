@@ -1002,7 +1002,7 @@ public static class LocationHelper
         var formattedString = locationId.ToUpper().Replace('-', '_');
         if (!Enum.TryParse<Location>(formattedString, true, out var location))
         {
-            WinchCore.Log.Error($"Can't find item {formattedString}");
+            WinchCore.Log.Debug($"Can't find location {formattedString}");
         }
 
         return location;
@@ -1012,19 +1012,29 @@ public static class LocationHelper
     {
         archipelagoIdToLocation = new Dictionary<long, Location>();
         locationToArchipelagoId = new Dictionary<Location, long>();
+        var missingLocations = new List<string>();
 
         foreach (var locationName in locationNames.Select(ln => ln.Value))
         {
             var archipelagoId = ArchipelagoClient.Session.Locations.GetLocationIdFromName("DREDGE", locationName);
-            //skipping "???" for now, it's deep in TIR
-            if (archipelagoId == -1 && locationName != "???")
+            if (archipelagoId == -1)
             {
-                WinchCore.Log.Error($"Could not find apId for {locationName}");
+                //skipping "???" for now, it's deep in TIR
+                if (locationName != "???")
+                {
+                    missingLocations.Add(locationName);
+                }
+
                 continue;
             }
 
             archipelagoIdToLocation.Add(archipelagoId, locationNamesReversed[locationName]);
             locationToArchipelagoId.Add(locationNamesReversed[locationName], archipelagoId);
+        }
+
+        if (missingLocations.Count > 0)
+        {
+            WinchCore.Log.Warn($"{missingLocations.Count} mod locations are not in this APWorld: {string.Join(", ", missingLocations)}");
         }
     }
 
@@ -1081,13 +1091,22 @@ public static class LocationHelper
     {
         if (!TryParseLocation(locationName, out var location))
         {
-            WinchCore.Log.Error($"Could not find location: {locationName}");
+            // Most harvests and quest steps aren't AP locations.
+            WinchCore.Log.Debug($"Not an AP location: {locationName}");
             return;
         }
 
         if (!TryGetArchipelagoId(location, out var apLocationId))
         {
-            WinchCore.Log.Warn($"No Archipelago id for location {location} (not connected, or not in this APWorld)");
+            if (locationToArchipelagoId == null)
+            {
+                WinchCore.Log.Warn($"Check for {location} not sent: haven't connected to Archipelago since the game started");
+            }
+            else
+            {
+                WinchCore.Log.Debug($"Location {location} is not in this APWorld");
+            }
+
             return;
         }
 
@@ -1118,6 +1137,11 @@ public static class LocationHelper
 
     public static void FlushPendingLocation()
     {
+        if (PendingLocationChecks.Count > 0)
+        {
+            WinchCore.Log.Info($"Sending {PendingLocationChecks.Count} location check(s) made while disconnected");
+        }
+
         foreach (var locationId in PendingLocationChecks.ToList())
         {
             ArchipelagoClient.Session.Locations.CompleteLocationChecksAsync(locationId);
@@ -1132,7 +1156,7 @@ public static class LocationHelper
     {
         if (!TryParseLocation(itemId, out var location))
         {
-            WinchCore.Log.Error($"Could not find location: {itemId}");
+            WinchCore.Log.Debug($"Not an AP location: {itemId}");
             return false;
         }
 
@@ -1151,7 +1175,7 @@ public static class LocationHelper
     {
         if (!TryParseLocation(itemId, out var location))
         {
-            WinchCore.Log.Error($"Could not find location: {itemId}");
+            WinchCore.Log.Debug($"Not an AP location: {itemId}");
             return false;
         }
 

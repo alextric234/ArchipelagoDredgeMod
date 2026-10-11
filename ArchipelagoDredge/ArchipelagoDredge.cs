@@ -46,7 +46,7 @@ public class ArchipelagoDredge : MonoBehaviour
 #if DEBUG
             if (Input.GetKeyDown(KeyCode.F4))
             {
-                WinchCore.Log.Info("Activating debug mode!");
+                WinchCore.Log.Debug("Activating debug mode!");
                 GameManager.Instance.Player.IsGodModeEnabled = true;
                 GameManager.Instance.Player.IsImmuneModeEnabled = true;
                 Terminal.Shell.RunCommand("player.move 200");
@@ -55,11 +55,11 @@ public class ArchipelagoDredge : MonoBehaviour
 
             if (Input.GetKeyDown(KeyCode.F5))
             {
-                WinchCore.Log.Info("Debug key pressed...");
+                WinchCore.Log.Debug("Debug key pressed...");
 
                 //Debug code goes here
 
-                WinchCore.Log.Info("Debug complete.");
+                WinchCore.Log.Debug("Debug complete.");
             }
 #endif
 

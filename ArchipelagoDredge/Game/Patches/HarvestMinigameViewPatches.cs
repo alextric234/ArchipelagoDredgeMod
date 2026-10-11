@@ -165,7 +165,7 @@ internal static class HarvestMinigameViewFishingLicensePatches
             return true;
         }
 
-        WinchCore.Log.Info("Blocked harvest minigame: missing fishing license.");
+        WinchCore.Log.Debug("Blocked harvest minigame: missing fishing license.");
         return false;
     }
 

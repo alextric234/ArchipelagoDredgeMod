@@ -147,7 +147,7 @@ public static class DeathLinkManager
     {
         if (_isDyingFromDeathLink)
         {
-            WinchCore.Log.Info($"death due to deathlink");
+            WinchCore.Log.Debug($"death due to deathlink");
             return;
         }
 

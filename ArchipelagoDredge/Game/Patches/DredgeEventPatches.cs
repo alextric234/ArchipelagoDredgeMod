@@ -22,7 +22,7 @@ public static class DredgeEventPatches
                 harvestPOI.Harvestable.GetNextHarvestableItem().id == "crate" &&
                 !ArchipelagoClient.SlotData.IncludeIronRigDLC)
             {
-                WinchCore.Log.Info($"It's a crate");
+                WinchCore.Log.Debug($"It's a crate");
                 return;
             }
             LocationHelper.ReportLocationCheck(harvestPOI.Harvestable.GetId());
