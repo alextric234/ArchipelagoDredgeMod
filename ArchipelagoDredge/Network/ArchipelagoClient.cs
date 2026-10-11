@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Archipelago.MultiClient.Net;
 using Archipelago.MultiClient.Net.Enums;
@@ -53,12 +52,7 @@ public static class ArchipelagoClient
         if (!loginResult.Successful)
         {
             LoginFailure loginFailure = (LoginFailure)loginResult;
-            StringBuilder errorsStringBuilder = new StringBuilder();
-            foreach (var loginFailureError in loginFailure.Errors)
-            {
-                errorsStringBuilder.AppendLine(loginFailureError);
-            }
-            throw new Exception($"Errors: {loginFailure.Errors}");
+            throw new Exception($"Login failed: {string.Join(", ", loginFailure.Errors)}");
         }
 
         var successfulLogin = (LoginSuccessful)loginResult;

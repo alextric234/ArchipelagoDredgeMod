@@ -116,6 +116,7 @@ public class TerminalCommandManager
         if (!int.TryParse(args[1].ToString(), out var port) || port <= 0 || port > 65535)
         {
             WinchCore.Log.Error("Invalid port number");
+            return;
         }
 
         var host = args[0].ToString();

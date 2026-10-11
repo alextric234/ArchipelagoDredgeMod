@@ -97,7 +97,7 @@ public static class ArchipelagoCommandManager
         catch (Exception e)
         {
             ArchipelagoClient.State = ConnectionState.Disconnected;
-            TerminalCommandManager.LogMessage(TerminalLogType.Error, "Archipelago Connection failed.");
+            TerminalCommandManager.LogMessage(TerminalLogType.Error, $"Archipelago Connection failed: {e.Message}");
             NotificationHelper.ShowNotificationWithColour(NotificationType.NONE, "Archipelago Connection failed.",
                 DredgeColorTypeEnum.NEGATIVE);
             WinchCore.Log.Error($"Connection failed: {e}");
