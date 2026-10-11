@@ -153,7 +153,8 @@ public static class ArchipelagoClient
     {
         // Socket thread. Also raised for non-fatal errors (e.g. a handler throwing), so only treat it
         // as a lost connection when the socket is actually down.
-        WinchCore.Log.Warn($"Archipelago socket error: {e}");
+        WinchCore.Log.Warn($"Archipelago socket error: {message}");
+        WinchCore.Log.Debug($"Archipelago socket error details: {e}");
 
         var session = Session;
         if (session != null && !session.Socket.Connected)
@@ -196,6 +197,12 @@ public static class ArchipelagoClient
         session.Socket.PacketReceived -= OnPacketReceived;
         session.Socket.ErrorReceived -= OnErrorReceived;
         session.Socket.SocketClosed -= OnSocketClosed;
+
+        // Nothing to close if the socket already dropped or never opened.
+        if (!session.Socket.Connected)
+        {
+            return;
+        }
 
         try
         {
