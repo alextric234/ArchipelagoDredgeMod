@@ -85,7 +85,6 @@ internal static class PopupDialogPatches
 
                 ArchipelagoStateManager.AwaitingDeathScreenChoice = false;
                 ArchipelagoCommandManager.Disconnect();
-                LocationHelper.ClearPendingLocationChecks();
                 break;
         }
     }

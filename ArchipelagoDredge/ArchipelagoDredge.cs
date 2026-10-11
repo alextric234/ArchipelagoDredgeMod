@@ -122,7 +122,6 @@ public class ArchipelagoDredge : MonoBehaviour
         ArchipelagoStateManager.RevertStateData();
         WinchCore.Log.Info("Game ended, disconnecting from Archipelago");
         ArchipelagoCommandManager.Disconnect();
-        LocationHelper.ClearPendingLocationChecks();
     }
 
     private void GetConnectionConfigPanel()

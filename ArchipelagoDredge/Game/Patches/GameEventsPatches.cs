@@ -28,10 +28,9 @@ public static class GameEventsPatches
                 LocationHelper.ResearchLocations.Contains(location))
             {
                 var researchedLocationName = $"{LocationHelper.LocationNames[location]} {ItemNames.ResearchedSuffix}";
-                if (LocationHelper.LocationsByName.TryGetValue(researchedLocationName, out var researchedLocation) &&
-                    LocationHelper.TryGetArchipelagoId(researchedLocation, out var apLocationId))
+                if (LocationHelper.LocationsByName.TryGetValue(researchedLocationName, out var researchedLocation))
                 {
-                    LocationHelper.ReportLocationCheck(apLocationId);
+                    LocationHelper.ReportLocationCheck(researchedLocation);
                 }
             }
 

@@ -129,6 +129,52 @@ public static class ArchipelagoStateManager
         SaveData();
         return true;
     }
+
+    /// <summary>
+    ///     Locations checked in this save, by AP location name. Written as soon as a check happens and
+    ///     never reverted (AP checks only ever add up), so checks made offline survive a restart.
+    /// </summary>
+    public static IReadOnlyList<string> CheckedLocations =>
+        (IReadOnlyList<string>) StateData?.CheckedLocations ?? Array.Empty<string>();
+
+    public static void RecordCheckedLocation(string locationName)
+    {
+        if (StateData == null)
+        {
+            return;
+        }
+
+        StateData.CheckedLocations ??= new List<string>();
+        if (StateData.CheckedLocations.Contains(locationName))
+        {
+            return;
+        }
+
+        StateData.CheckedLocations.Add(locationName);
+        SaveData();
+    }
+
+    /// <summary>
+    ///     Ties this save's recorded checks to the multiworld being played. The first connect claims them
+    ///     for that seed; connecting to a different seed drops them so they aren't sent to the wrong room.
+    /// </summary>
+    public static void BindChecksToSeed(string seed)
+    {
+        if (StateData == null || string.IsNullOrEmpty(seed) || StateData.Seed == seed)
+        {
+            return;
+        }
+
+        if (!string.IsNullOrEmpty(StateData.Seed))
+        {
+            WinchCore.Log.Warn($"This save was used with seed '{StateData.Seed}' but is now connected to '{seed}'; " +
+                               $"discarding {StateData.CheckedLocations?.Count ?? 0} location check(s) recorded for the old seed");
+            StateData.CheckedLocations = new List<string>();
+        }
+
+        StateData.Seed = seed;
+        SaveData();
+    }
 }
 
 [Serializable]
@@ -141,4 +187,8 @@ public class ArchipelagoStateData
 
     public List<string> ReceivedVirtualItemsSinceSave = new();
     public List<string> ReceivedVirtualItems = new();
+
+    // The multiworld seed CheckedLocations belongs to; empty until the save first connects.
+    public string Seed = "";
+    public List<string> CheckedLocations = new();
 }

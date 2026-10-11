@@ -5,6 +5,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using ArchipelagoDredge.Network;
 using ArchipelagoDredge.Network.Enums;
+using ArchipelagoDredge.Utils;
 using Winch.Core;
 
 namespace ArchipelagoDredge.Game.Helpers;
@@ -483,8 +484,6 @@ public enum Location
 
 public static class LocationHelper
 {
-    private static readonly HashSet<long> PendingLocationChecks = new();
-
     public static readonly IReadOnlyDictionary<Location, string> LocationNames = new Dictionary<Location, string>
     {
         { Location.ANCHOVY_AB_1, "Anchovy King" },
@@ -1069,22 +1068,41 @@ public static class LocationHelper
         var questStepIds = questManager.allQuestSteps.Keys;
         var completedQuestSteps = questStepIds.Where(questManager.GetIsQuestStepCompleted).ToList();
         foreach (var completedQuestStep in completedQuestSteps)
-            if (TryParseLocation(completedQuestStep, out var questLocation))
+            if (TryParseLocation(completedQuestStep, out var questLocation) &&
+                TryGetArchipelagoId(questLocation, out var locationId) &&
+                !completedChecks.Contains(locationId))
             {
-                var locationId = locationToArchipelagoId[questLocation];
-                if (!completedChecks.Contains(locationId)) ReportLocationCheck(locationId);
+                ReportLocationCheck(questLocation);
             }
     }
 
-    public static void ReportLocationCheck(long locationId)
+    /// <summary>
+    ///     Records the check in this save and sends it if connected. Checks that can't be sent now go
+    ///     out on the next connect (<see cref="ResendRecordedChecks" />).
+    /// </summary>
+    public static void ReportLocationCheck(Location location)
     {
-        if (ArchipelagoClient.State != ConnectionState.Connected)
+        if (!LocationNames.TryGetValue(location, out var locationName))
         {
-            PendingLocationChecks.Add(locationId);
+            WinchCore.Log.Debug($"Location {location} has no AP name");
             return;
         }
 
-        ArchipelagoClient.Session.Locations.CompleteLocationChecksAsync(locationId);
+        ArchipelagoStateManager.RecordCheckedLocation(locationName);
+
+        if (ArchipelagoClient.State != ConnectionState.Connected)
+        {
+            WinchCore.Log.Debug($"Recorded check for {locationName}; it will be sent on the next connect");
+            return;
+        }
+
+        if (!TryGetArchipelagoId(location, out var apLocationId))
+        {
+            WinchCore.Log.Debug($"Location {location} is not in this APWorld");
+            return;
+        }
+
+        ArchipelagoClient.Session.Locations.CompleteLocationChecksAsync(apLocationId);
     }
 
     public static void ReportLocationCheck(string locationName)
@@ -1096,21 +1114,7 @@ public static class LocationHelper
             return;
         }
 
-        if (!TryGetArchipelagoId(location, out var apLocationId))
-        {
-            if (locationToArchipelagoId == null)
-            {
-                WinchCore.Log.Warn($"Check for {location} not sent: haven't connected to Archipelago since the game started");
-            }
-            else
-            {
-                WinchCore.Log.Debug($"Location {location} is not in this APWorld");
-            }
-
-            return;
-        }
-
-        ReportLocationCheck(apLocationId);
+        ReportLocationCheck(location);
     }
 
     /// <summary>
@@ -1123,30 +1127,30 @@ public static class LocationHelper
     }
 
     /// <summary>
-    ///     Drops checks queued while disconnected so they can't be sent to a different save's slot.
+    ///     On connect: sends every check recorded in this save that the server doesn't have yet,
+    ///     e.g. ones made offline or before a restart.
     /// </summary>
-    public static void ClearPendingLocationChecks()
+    public static void ResendRecordedChecks()
     {
-        if (PendingLocationChecks.Count > 0)
+        var serverChecks = new HashSet<long>(ArchipelagoClient.Session.Locations.AllLocationsChecked);
+        var missing = new List<long>();
+        foreach (var locationName in ArchipelagoStateManager.CheckedLocations)
         {
-            WinchCore.Log.Info($"Discarding {PendingLocationChecks.Count} pending location check(s) from the previous game");
+            if (LocationsByName.TryGetValue(locationName, out var location) &&
+                TryGetArchipelagoId(location, out var apLocationId) &&
+                !serverChecks.Contains(apLocationId))
+            {
+                missing.Add(apLocationId);
+            }
         }
 
-        PendingLocationChecks.Clear();
-    }
-
-    public static void FlushPendingLocation()
-    {
-        if (PendingLocationChecks.Count > 0)
+        if (missing.Count == 0)
         {
-            WinchCore.Log.Info($"Sending {PendingLocationChecks.Count} location check(s) made while disconnected");
+            return;
         }
 
-        foreach (var locationId in PendingLocationChecks.ToList())
-        {
-            ArchipelagoClient.Session.Locations.CompleteLocationChecksAsync(locationId);
-            PendingLocationChecks.Remove(locationId);
-        }
+        WinchCore.Log.Info($"Sending {missing.Count} location check(s) the server doesn't have yet");
+        ArchipelagoClient.Session.Locations.CompleteLocationChecksAsync(missing.ToArray());
     }
 
     /// <summary>

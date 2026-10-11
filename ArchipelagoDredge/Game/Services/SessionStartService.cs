@@ -2,6 +2,8 @@
 using System.Linq;
 using ArchipelagoDredge.Game.Helpers;
 using ArchipelagoDredge.Game.Managers;
+using ArchipelagoDredge.Network;
+using ArchipelagoDredge.Utils;
 using CommandTerminal;
 using Winch.Core;
 using Winch.Util;
@@ -38,9 +40,10 @@ public static class SessionStartService
             RevealEncyclopedia();
 
             LocationHelper.LoadArchipelagoIds();
+            ArchipelagoStateManager.BindChecksToSeed(ArchipelagoClient.Session.RoomState.Seed);
             RemoveCheckedRelicPois();
             LocationHelper.ReconcileArchipelagoChecks();
-            LocationHelper.FlushPendingLocation();
+            LocationHelper.ResendRecordedChecks();
             ArchipelagoItemManager.RestockShops();
         }
         catch (Exception e)
