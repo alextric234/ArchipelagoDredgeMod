@@ -96,8 +96,27 @@ public static class ArchipelagoClient
 
     private static void OnPacketReceived(ArchipelagoPacketBase packet)
     {
-        // Runs on the socket thread; an exception here would stop the library from
-        // dispatching the rest of the packets in the same message.
+        // Runs on the socket thread, so hand the work to the main thread (it touches the terminal
+        // and game UI). Nothing here may throw: that would stop the library from dispatching the
+        // rest of the packets in the same message.
+        switch (packet.PacketType)
+        {
+            case ArchipelagoPacketType.PrintJSON:
+                MainThreadDispatcher.Enqueue(() => HandlePacket(packet));
+                break;
+            default:
+                return;
+        }
+    }
+
+    private static void HandlePacket(ArchipelagoPacketBase packet)
+    {
+        // The session may have closed between receiving the packet and this frame.
+        if (Session == null)
+        {
+            return;
+        }
+
         try
         {
             switch (packet.PacketType)
@@ -105,8 +124,6 @@ public static class ArchipelagoClient
                 case ArchipelagoPacketType.PrintJSON:
                     PrintJsonHelper.ShowPrintJsonMessage((PrintJsonPacket) packet);
                     break;
-                default:
-                    return;
             }
         }
         catch (Exception e)

@@ -14,7 +14,7 @@ public class ApConfigPanel : MonoBehaviour
     private string _host = "";
 
     private bool _loadedOnce;
-    private bool _pendingReload;
+    private volatile bool _pendingReload; // set from the FileSystemWatcher thread
     private string _portText = "";
     private string _pwd = "";
     private Rect _rect = new(60, 60, 460, 230);

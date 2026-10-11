@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using ArchipelagoDredge.Game.Helpers;
 using ArchipelagoDredge.Network;
+using ArchipelagoDredge.Utils;
 using CommandTerminal;
 using Winch.Core;
 
@@ -16,9 +17,12 @@ public class TerminalCommandManager
         Terminal.Shell.AddCommand("ap", ArchipelagoCommands, 1, int.MaxValue, "commands for archipelago multiworld");
     }
 
+    /// <summary>
+    ///     Writes to the in-game terminal. Safe from any thread; off the main thread it's queued for the next frame.
+    /// </summary>
     public static void LogMessage(TerminalLogType logType, string message)
     {
-        Terminal.Log(logType, message);
+        MainThreadDispatcher.RunOnMainThread(() => Terminal.Log(logType, message));
     }
 
     private static void ArchipelagoCommands(CommandArg[] args)

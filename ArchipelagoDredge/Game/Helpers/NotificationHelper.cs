@@ -1,22 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using Archipelago.MultiClient.Net.Colors;
 using ArchipelagoDredge.Game.Models;
 using ArchipelagoDredge.Utils;
+using UnityEngine;
 using Winch.Core;
 
 namespace ArchipelagoDredge.Game.Helpers;
 
 internal static class NotificationHelper
 {
+    private const float SecondsBetweenNotifications = 0.75f;
+
+    // Only touched on the main thread.
     private static readonly Queue<DredgeNotification> _messageQueue = new();
-    private static bool _isProcessing;
+    private static float _nextNotificationTime;
 
     public static void ShowNotificationWithColour(NotificationType notificationType, string text,
         DredgeColorTypeEnum colour)
     {
-        ShowNotificationWithColour(notificationType, text, GameManager.Instance.LanguageManager.GetColorCode(colour));
+        MainThreadDispatcher.RunOnMainThread(() =>
+            ShowNotificationWithColour(notificationType, text,
+                GameManager.Instance.LanguageManager.GetColorCode(colour)));
     }
 
     public static void ShowNotificationWithColour(NotificationType notificationType, string text, string colourCode)
@@ -26,10 +31,10 @@ internal static class NotificationHelper
 
     public static void ShowNotification(NotificationType notificationType, string text)
     {
-        GameEvents.Instance.TriggerNotification(notificationType, text);
+        MainThreadDispatcher.RunOnMainThread(() => GameEvents.Instance.TriggerNotification(notificationType, text));
     }
 
-    public static void BuildAndSendNotification(DredgeNotification notification)
+    private static void BuildAndSendNotification(DredgeNotification notification)
     {
         try
         {
@@ -54,41 +59,33 @@ internal static class NotificationHelper
                     break;
             }
 
-            MainThreadDispatcher.Enqueue(() => ShowNotificationWithColour(type, notification.Message, color));
+            ShowNotificationWithColour(type, notification.Message, color);
         }
         catch (Exception e)
         {
-            WinchCore.Log.Error(e.Message);
+            WinchCore.Log.Error($"Failed to show notification: {e}");
         }
     }
 
+    /// <summary>
+    ///     Queues a notification; they're shown one at a time by <see cref="Update" />. Safe from any thread.
+    /// </summary>
     public static void TryToSendNotification(DredgeNotification notification)
     {
-        _messageQueue.Enqueue(notification);
-        if (!_isProcessing)
-        {
-            _ = ProcessQueue();
-        }
+        MainThreadDispatcher.RunOnMainThread(() => _messageQueue.Enqueue(notification));
     }
 
-    private static async Task ProcessQueue()
+    /// <summary>
+    ///     Shows the next queued notification once the spacing delay has passed. Call every frame from the main thread.
+    /// </summary>
+    public static void Update()
     {
-        _isProcessing = true;
-        while (_messageQueue.Count > 0)
+        if (_messageQueue.Count == 0 || Time.unscaledTime < _nextNotificationTime)
         {
-            var notification = _messageQueue.Dequeue();
-            try
-            {
-                MainThreadDispatcher.Enqueue(() => BuildAndSendNotification(notification));
-            }
-            catch (Exception e)
-            {
-                WinchCore.Log.Error(e);
-            }
-
-            await Task.Delay(750);
+            return;
         }
 
-        _isProcessing = false;
+        BuildAndSendNotification(_messageQueue.Dequeue());
+        _nextNotificationTime = Time.unscaledTime + SecondsBetweenNotifications;
     }
 }

@@ -1,13 +1,21 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections.Concurrent;
+using System.Threading;
 using UnityEngine;
+using Winch.Core;
 
 namespace ArchipelagoDredge.Utils;
 
 public class MainThreadDispatcher : MonoBehaviour
 {
-    private static readonly Queue<Action> _actions = new();
+    // Upper bound on actions run per frame, so a large backlog is spread over several frames.
+    private const int MaxActionsPerFrame = 50;
+
+    private static readonly ConcurrentQueue<Action> _actions = new();
     private static MainThreadDispatcher _instance;
+    private static int _mainThreadId = -1;
+
+    public static bool IsMainThread => Thread.CurrentThread.ManagedThreadId == _mainThreadId;
 
     private void Awake()
     {
@@ -18,23 +26,24 @@ public class MainThreadDispatcher : MonoBehaviour
         }
 
         _instance = this;
+        _mainThreadId = Thread.CurrentThread.ManagedThreadId;
         DontDestroyOnLoad(gameObject);
     }
 
     private void Update()
     {
-        lock (_actions)
+        // Only run what was queued before this frame's drain started; anything an action
+        // enqueues runs next frame.
+        var count = Math.Min(_actions.Count, MaxActionsPerFrame);
+        for (var i = 0; i < count && _actions.TryDequeue(out var action); i++)
         {
-            while (_actions.Count > 0)
+            try
             {
-                try
-                {
-                    _actions.Dequeue()?.Invoke();
-                }
-                catch (Exception e)
-                {
-                    Debug.LogError("MainThreadDispatcher Error: " + e);
-                }
+                action();
+            }
+            catch (Exception e)
+            {
+                WinchCore.Log.Error($"MainThreadDispatcher error: {e}");
             }
         }
     }
@@ -46,9 +55,25 @@ public class MainThreadDispatcher : MonoBehaviour
             return;
         }
 
-        lock (_actions)
+        _actions.Enqueue(action);
+    }
+
+    /// <summary>
+    ///     Runs the action now when called on the main thread, otherwise queues it for the next frame.
+    /// </summary>
+    public static void RunOnMainThread(Action action)
+    {
+        if (action == null)
         {
-            _actions.Enqueue(action);
+            return;
         }
+
+        if (IsMainThread)
+        {
+            action();
+            return;
+        }
+
+        _actions.Enqueue(action);
     }
 }
