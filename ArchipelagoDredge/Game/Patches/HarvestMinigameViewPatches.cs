@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Reflection.Emit;
 using ArchipelagoDredge.Game.Helpers;
 using ArchipelagoDredge.Game.Managers;
+using ArchipelagoDredge.Game.Services;
 using HarmonyLib;
 using UnityEngine.Localization.Components;
 using Winch.Core;
@@ -88,12 +89,12 @@ public class HarvestMinigameViewPatches
 
             if (LocationHelper.DoesApWorldContainLocation(locationToCheck) && !LocationHelper.HasThisLocationBeenChecked(locationToCheck))
             {
-                var spatialItemInstance = new SpatialItemInstance();
-                spatialItemInstance.id = ___itemDataToHarvest.id;
-                spatialItemInstance._itemData = ___itemDataToHarvest;
-                GameEvents.Instance.TriggerFishCaught(spatialItemInstance);
-                DredgeEvent.TriggerPOIHarvested(__instance.currentPOI,  spatialItemInstance);
+                // The AP check replaces the item, so report it directly instead of raising Winch's
+                // catch/harvest events for an item the player never gets.
+                LocationCheckService.Report(locationToCheck);
                 __instance.currentPOI.OnHarvested(true);
+                // Vanilla SpawnItem raises the game's (argument-less) fish-caught event for every harvest.
+                GameEvents.Instance.TriggerFishCaught();
                 return false;
             }
 
@@ -101,8 +102,9 @@ public class HarvestMinigameViewPatches
         }
         catch (Exception e)
         {
-            WinchCore.Log.Error($"Error in HarvestMinigameViewPatches.SpawnItem_Prefix: {e.Message}");
-            throw;
+            // Fall back to the normal harvest rather than throwing into the game.
+            WinchCore.Log.Error($"Error in HarvestMinigameViewPatches.SpawnItem_Prefix: {e}");
+            return true;
         }
     }
 }

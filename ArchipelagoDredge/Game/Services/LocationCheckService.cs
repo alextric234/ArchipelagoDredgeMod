@@ -49,13 +49,21 @@ public static class LocationCheckService
 
     private static void OnFishCaught(SpatialItemInstance itemInstance)
     {
+        Report(itemInstance?.id);
+    }
+
+    /// <summary>
+    ///     Reports a location check by its DREDGE id. Never throws.
+    /// </summary>
+    public static void Report(string locationId)
+    {
         try
         {
-            LocationHelper.ReportLocationCheck(itemInstance.id);
+            LocationHelper.ReportLocationCheck(locationId);
         }
         catch (Exception e)
         {
-            WinchCore.Log.Error($"Error sending location check for {itemInstance?.id}: {e}");
+            WinchCore.Log.Error($"Error sending location check for {locationId}: {e}");
         }
     }
 }
