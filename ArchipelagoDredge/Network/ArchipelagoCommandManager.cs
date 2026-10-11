@@ -16,6 +16,7 @@ public static class ArchipelagoCommandManager
     private static string _slotName;
     private static string _password;
     private static bool _deathLink;
+    private static int _connectAttempt;
 
     public static void ConfigConnect()
     {
@@ -57,6 +58,7 @@ public static class ArchipelagoCommandManager
         _password = password;
         _deathLink = deathLink;
 
+        var attempt = ++_connectAttempt;
         ArchipelagoClient.State = ConnectionState.Connecting;
         TerminalCommandManager.LogMessage(TerminalLogType.Message, "Connecting to Archipelago...");
 
@@ -93,11 +95,23 @@ public static class ArchipelagoCommandManager
             }
             else
             {
+                ArchipelagoClient.Disconnect();
                 ArchipelagoClient.State = ConnectionState.Disconnected;
             }
         }
+        catch (OperationCanceledException) when (attempt != _connectAttempt)
+        {
+            // Disconnect() was called while connecting; it has already cleaned up and notified.
+            WinchCore.Log.Info("Connection attempt cancelled");
+        }
         catch (Exception e)
         {
+            if (attempt != _connectAttempt)
+            {
+                return;
+            }
+
+            ArchipelagoClient.Disconnect();
             ArchipelagoClient.State = ConnectionState.Disconnected;
             TerminalCommandManager.LogMessage(TerminalLogType.Error, $"Archipelago Connection failed: {e.Message}");
             NotificationHelper.ShowNotificationWithColour(NotificationType.NONE, "Archipelago Connection failed.",
@@ -108,16 +122,45 @@ public static class ArchipelagoCommandManager
 
     public static void Disconnect()
     {
+        if (ArchipelagoClient.State == ConnectionState.Disconnected && ArchipelagoClient.Session == null)
+        {
+            return;
+        }
+
+        TearDown();
+        WinchCore.Log.Info("Disconnected from Archipelago");
+        TerminalCommandManager.LogMessage(TerminalLogType.Message, "Disconnected from Archipelago");
+        NotificationHelper.ShowNotificationWithColour(NotificationType.NONE, "Disconnected from Archipelago",
+            DredgeColorTypeEnum.NEUTRAL);
+    }
+
+    /// <summary>
+    ///     Called on the main thread when the server closes the connection or the socket drops.
+    /// </summary>
+    public static void HandleConnectionLost(string reason)
+    {
+        // While connecting, TryConnect sees the failure itself.
         if (ArchipelagoClient.State != ConnectionState.Connected)
         {
             return;
         }
 
+        TearDown();
+
+        var detail = string.IsNullOrEmpty(reason) ? "" : $": {reason}";
+        WinchCore.Log.Warn($"Lost connection to Archipelago{detail}");
+        TerminalCommandManager.LogMessage(TerminalLogType.Error,
+            $"Lost connection to Archipelago{detail}. Reconnect with F8 or 'ap connect'.");
+        NotificationHelper.ShowNotificationWithColour(NotificationType.NONE, "Lost connection to Archipelago",
+            DredgeColorTypeEnum.NEGATIVE);
+    }
+
+    private static void TearDown()
+    {
+        // Invalidates any connect attempt still in flight.
+        _connectAttempt++;
         ArchipelagoClient.Disconnect();
         ArchipelagoClient.State = ConnectionState.Disconnected;
         PassageManager.Reset();
-        TerminalCommandManager.LogMessage(TerminalLogType.Message, "Disconnected from Archipelago");
-        NotificationHelper.ShowNotificationWithColour(NotificationType.NONE, "Disconnected from Archipelago",
-            DredgeColorTypeEnum.NEUTRAL);
     }
 }

@@ -36,24 +36,32 @@ public static class ArchipelagoClient
 
         Disconnect(); // Ensure clean state
 
-        Session = ArchipelagoSessionFactory.CreateSession(apHost, apPort);
+        var session = ArchipelagoSessionFactory.CreateSession(apHost, apPort);
+        Session = session;
 
-        Session.Socket.PacketReceived += OnPacketReceived;
+        session.Socket.PacketReceived += OnPacketReceived;
+        session.Socket.ErrorReceived += OnErrorReceived;
+        session.Socket.SocketClosed += OnSocketClosed;
 
         try
         {
-            await Session.ConnectAsync();
+            await session.ConnectAsync();
         }
         catch (Exception e)
         {
+            ThrowIfSuperseded(session);
             throw new Exception("Failed to connect to Archipelago", e);
         }
 
-        var loginResult = await Session.LoginAsync(
+        ThrowIfSuperseded(session);
+
+        var loginResult = await session.LoginAsync(
             "DREDGE",
             slotName,
             ItemsHandlingFlags.AllItems,
             password: password);
+
+        ThrowIfSuperseded(session);
 
         if (!loginResult.Successful)
         {
@@ -132,10 +140,73 @@ public static class ArchipelagoClient
         }
     }
 
+    // A disconnect while ConnectAsync is awaiting replaces or clears Session; stop that connect attempt.
+    private static void ThrowIfSuperseded(ArchipelagoSession session)
+    {
+        if (Session != session)
+        {
+            throw new OperationCanceledException("Connection attempt was cancelled");
+        }
+    }
+
+    private static void OnErrorReceived(Exception e, string message)
+    {
+        // Socket thread. Also raised for non-fatal errors (e.g. a handler throwing), so only treat it
+        // as a lost connection when the socket is actually down.
+        WinchCore.Log.Warn($"Archipelago socket error: {e}");
+
+        var session = Session;
+        if (session != null && !session.Socket.Connected)
+        {
+            MainThreadDispatcher.Enqueue(() => OnConnectionLost(session, message));
+        }
+    }
+
+    private static void OnSocketClosed(string reason)
+    {
+        // Socket thread. Only raised for a server-side close here: Disconnect() unsubscribes first.
+        var session = Session;
+        if (session != null)
+        {
+            MainThreadDispatcher.Enqueue(() => OnConnectionLost(session, reason));
+        }
+    }
+
+    private static void OnConnectionLost(ArchipelagoSession session, string reason)
+    {
+        // Ignore reports from a session that has already been replaced or torn down.
+        if (Session != session)
+        {
+            return;
+        }
+
+        ArchipelagoCommandManager.HandleConnectionLost(reason);
+    }
+
     public static void Disconnect()
     {
-        Session?.Socket?.DisconnectAsync();
+        var session = Session;
         Session = null;
+
+        if (session == null)
+        {
+            return;
+        }
+
+        session.Socket.PacketReceived -= OnPacketReceived;
+        session.Socket.ErrorReceived -= OnErrorReceived;
+        session.Socket.SocketClosed -= OnSocketClosed;
+
+        try
+        {
+            session.Socket.DisconnectAsync().ContinueWith(
+                t => WinchCore.Log.Debug($"Archipelago socket close failed: {t.Exception?.GetBaseException().Message}"),
+                TaskContinuationOptions.OnlyOnFaulted);
+        }
+        catch (Exception e)
+        {
+            WinchCore.Log.Debug($"Archipelago socket close failed: {e.Message}");
+        }
     }
 
     public static bool HasItemsToProcess()
