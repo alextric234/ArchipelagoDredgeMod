@@ -22,6 +22,11 @@ public static class UpgradeService
         {4, ["tier-4-engines-1", "tier-4-fishing-1", "tier-4-lights-1", "tier-4-storage-1", IronRigHullUpgradeId]}
     };
 
+    // The tier that grants tier-4-hull, the last base-game hull. Without the Iron Rig there's no
+    // further Progressive Hull, so this tier also grants the tier-4 slot upgrades.
+    private const int LastBaseGameHullTier = 3;
+    private const int IronRigHullTier = 4;
+
     public static void ApplyNextHullTier()
     {
         var nextHullTier = ArchipelagoStateManager.StateData.CurrentHullUpgrade + 1;
@@ -41,6 +46,14 @@ public static class UpgradeService
             }
 
             AddUpgrade(upgradeId);
+        }
+
+        if (nextHullTier == LastBaseGameHullTier && !ArchipelagoClient.SlotData.IncludeIronRigDLC)
+        {
+            foreach (var upgradeId in HullTierUpgrades[IronRigHullTier].Where(id => id != IronRigHullUpgradeId))
+            {
+                AddUpgrade(upgradeId);
+            }
         }
     }
 
