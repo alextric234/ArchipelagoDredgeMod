@@ -15,26 +15,49 @@ public static class ArchipelagoStateManager
 
     public static bool AwaitingDeathScreenChoice { get; internal set; }
 
+    private static string GetSaveFilePath(int slot)
+    {
+        return Path.Combine(Application.persistentDataPath, SaveFile, $"{SaveFile}-{slot}.json");
+    }
+
+    /// <summary>
+    ///     Loads the state for the save slot being played. Creates a default state if none exists.
+    /// </summary>
     public static void Load(int slot)
     {
         try
         {
-            SaveFilePath = Path.Combine(Application.persistentDataPath, SaveFile, $"{SaveFile}-{slot}.json");
-            if (File.Exists(SaveFilePath))
+            var path = GetSaveFilePath(slot);
+            if (!File.Exists(path))
             {
-                var json = File.ReadAllText(SaveFilePath);
-                StateData = JsonUtility.FromJson<ArchipelagoStateData>(json);
-                StateData.LastProcessedIndex = StateData.LastProcessedIndexSinceSave;
+                CreateNew(slot);
+                return;
             }
-            else
-            {
-                StateData = new ArchipelagoStateData();
 
-                Directory.CreateDirectory(Path.GetDirectoryName(SaveFilePath)!);
+            SaveFilePath = path;
+            var json = File.ReadAllText(SaveFilePath);
+            StateData = JsonUtility.FromJson<ArchipelagoStateData>(json);
+            StateData.LastProcessedIndex = StateData.LastProcessedIndexSinceSave;
+            WinchCore.Log.Info($"Loaded Archipelago state for slot {slot} (last processed item index {StateData.LastProcessedIndex})");
+        }
+        catch (Exception ex)
+        {
+            WinchCore.Log.Error(ex);
+        }
+    }
 
-                var defaultJson = JsonUtility.ToJson(StateData, true);
-                File.WriteAllText(SaveFilePath, defaultJson);
-            }
+    /// <summary>
+    ///     Starts a fresh state for a new game in this slot, replacing any leftover file.
+    /// </summary>
+    public static void CreateNew(int slot)
+    {
+        try
+        {
+            SaveFilePath = GetSaveFilePath(slot);
+            StateData = new ArchipelagoStateData();
+            Directory.CreateDirectory(Path.GetDirectoryName(SaveFilePath)!);
+            SaveData();
+            WinchCore.Log.Info($"Created new Archipelago state for slot {slot}");
         }
         catch (Exception ex)
         {
@@ -50,10 +73,10 @@ public static class ArchipelagoStateManager
 
     public static void Delete(int slot)
     {
-        SaveFilePath = Path.Combine(Application.persistentDataPath, SaveFile, $"{SaveFile}-{slot}.json");
-        if (File.Exists(SaveFilePath))
+        var path = GetSaveFilePath(slot);
+        if (File.Exists(path))
         {
-            File.Delete(SaveFilePath);
+            File.Delete(path);
         }
     }
 

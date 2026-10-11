@@ -22,17 +22,27 @@ public static class SaveManagerPatches
         }
     }
 
+    // LoadIntoMemory runs for every slot (title screen, save-slot previews), so load AP state
+    // only from the calls that actually start a game: Load(slot) or CreateSaveData(slot).
     [HarmonyPostfix]
-    [HarmonyPatch(nameof(SaveManager.LoadIntoMemory))]
-    public static void LoadIntoMemoryPost(int slot)
+    [HarmonyPatch(nameof(SaveManager.Load))]
+    public static void LoadPost(int slot, bool __result)
     {
-        try
+        if (!__result)
         {
-            ArchipelagoStateManager.Load(slot);
+            return;
         }
-        catch (Exception ex)
-        {
-        }
+
+        ArchipelagoStateManager.Load(slot);
+    }
+
+    // Prefix: CreateSaveData saves the new game internally, and SaveGameFilePost must
+    // persist the fresh state rather than whatever was loaded before.
+    [HarmonyPrefix]
+    [HarmonyPatch(nameof(SaveManager.CreateSaveData))]
+    public static void CreateSaveDataPre(int slot)
+    {
+        ArchipelagoStateManager.CreateNew(slot);
     }
 
     [HarmonyPostfix]
