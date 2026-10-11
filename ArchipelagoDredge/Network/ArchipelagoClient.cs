@@ -3,7 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Archipelago.MultiClient.Net;
 using Archipelago.MultiClient.Net.Enums;
-using Archipelago.MultiClient.Net.Packets;
+using Archipelago.MultiClient.Net.MessageLog.Messages;
 using ArchipelagoDredge.Game.Helpers;
 using ArchipelagoDredge.Game.Managers;
 using ArchipelagoDredge.Network.Enums;
@@ -39,7 +39,7 @@ public static class ArchipelagoClient
         var session = ArchipelagoSessionFactory.CreateSession(apHost, apPort);
         Session = session;
 
-        session.Socket.PacketReceived += OnPacketReceived;
+        session.MessageLog.OnMessageReceived += OnMessageReceived;
         session.Socket.ErrorReceived += OnErrorReceived;
         session.Socket.SocketClosed += OnSocketClosed;
 
@@ -103,24 +103,17 @@ public static class ArchipelagoClient
         ArchipelagoItemManager.RestockShops();
     }
 
-    private static void OnPacketReceived(ArchipelagoPacketBase packet)
+    private static void OnMessageReceived(LogMessage message)
     {
         // Runs on the socket thread, so hand the work to the main thread (it touches the terminal
         // and game UI). Nothing here may throw: that would stop the library from dispatching the
-        // rest of the packets in the same message.
-        switch (packet.PacketType)
-        {
-            case ArchipelagoPacketType.PrintJSON:
-                MainThreadDispatcher.Enqueue(() => HandlePacket(packet));
-                break;
-            default:
-                return;
-        }
+        // rest of the packets in the same websocket message.
+        MainThreadDispatcher.Enqueue(() => ShowMessage(message));
     }
 
-    private static void HandlePacket(ArchipelagoPacketBase packet)
+    private static void ShowMessage(LogMessage message)
     {
-        // The session may have closed between receiving the packet and this frame.
+        // The session may have closed between receiving the message and this frame.
         if (Session == null)
         {
             return;
@@ -128,16 +121,11 @@ public static class ArchipelagoClient
 
         try
         {
-            switch (packet.PacketType)
-            {
-                case ArchipelagoPacketType.PrintJSON:
-                    PrintJsonHelper.ShowPrintJsonMessage((PrintJsonPacket) packet);
-                    break;
-            }
+            PrintJsonHelper.ShowMessage(message);
         }
         catch (Exception e)
         {
-            WinchCore.Log.Error($"Error handling {packet.PacketType} packet: {e}");
+            WinchCore.Log.Error($"Error showing server message: {e}");
         }
     }
 
@@ -195,7 +183,7 @@ public static class ArchipelagoClient
             return;
         }
 
-        session.Socket.PacketReceived -= OnPacketReceived;
+        session.MessageLog.OnMessageReceived -= OnMessageReceived;
         session.Socket.ErrorReceived -= OnErrorReceived;
         session.Socket.SocketClosed -= OnSocketClosed;
 

@@ -1,104 +1,58 @@
-﻿using System.Linq;
-using System.Text;
-using Archipelago.MultiClient.Net.Colors;
-using Archipelago.MultiClient.Net.Enums;
-using Archipelago.MultiClient.Net.Models;
-using Archipelago.MultiClient.Net.Packets;
+﻿using Archipelago.MultiClient.Net.Colors;
+using Archipelago.MultiClient.Net.MessageLog.Messages;
 using ArchipelagoDredge.Game.Managers;
 using ArchipelagoDredge.Game.Models;
-using ArchipelagoDredge.Network;
 using CommandTerminal;
 
 namespace ArchipelagoDredge.Game.Helpers;
 
 public static class PrintJsonHelper
 {
-    public static void ShowPrintJsonMessage(PrintJsonPacket printJsonPacket)
+    /// <summary>
+    ///     Shows a server message (from <c>Session.MessageLog</c>). Call on the main thread.
+    /// </summary>
+    public static void ShowMessage(LogMessage message)
     {
-        switch (printJsonPacket.MessageType)
+        // MultiClient has already resolved player, item and location names into the parts.
+        TerminalCommandManager.LogMessage(TerminalLogType.Message, message.ToString());
+
+        if (message is ItemSendLogMessage itemSend)
         {
-            case JsonMessageType.ItemSend:
-                HandleItemSendMessage((ItemPrintJsonPacket) printJsonPacket);
-                break;
+            ShowItemSendNotification(itemSend);
         }
     }
 
-    private static void HandleItemSendMessage(ItemPrintJsonPacket itemPrintJsonPacket)
+    private static void ShowItemSendNotification(ItemSendLogMessage message)
     {
-        var sendingPlayer = ArchipelagoClient.Session.Players
-            .AllPlayers.FirstOrDefault(player => player.Slot == itemPrintJsonPacket.Item.Player);
-
-        var receivingPlayer = ArchipelagoClient.Session.Players
-            .AllPlayers.FirstOrDefault(player => player.Slot == itemPrintJsonPacket.ReceivingPlayer);
-
-        BuildAndSendTerminalMessage(itemPrintJsonPacket.Data, sendingPlayer?.Game, receivingPlayer?.Game);
-
-        var activePlayer = ArchipelagoClient.Session.Players.ActivePlayer.Slot;
-        if (activePlayer != itemPrintJsonPacket.ReceivingPlayer &&
-            activePlayer != itemPrintJsonPacket.Item.Player)
+        if (!message.IsReceiverTheActivePlayer && !message.IsSenderTheActivePlayer)
         {
             return;
         }
 
-        var itemName =
-            ArchipelagoClient.Session.Items.GetItemName(itemPrintJsonPacket.Item.Item, receivingPlayer?.Game);
+        var itemName = message.Item.ItemDisplayName;
 
         if (itemName.EndsWith("Researched"))
         {
             return;
         }
 
-
-        var itemNameColor = ColorUtils.GetColor(itemPrintJsonPacket.Item.Flags);
         var notification = new DredgeNotification();
 
-        if (activePlayer == itemPrintJsonPacket.ReceivingPlayer && activePlayer == sendingPlayer?.Slot)
+        if (message.IsReceiverTheActivePlayer && message.IsSenderTheActivePlayer)
         {
             notification.Message = $"Found {itemName}";
         }
-        else if (activePlayer == itemPrintJsonPacket.ReceivingPlayer && activePlayer != sendingPlayer?.Slot)
+        else if (message.IsReceiverTheActivePlayer)
         {
             notification.Message = $"Received {itemName}";
         }
         else
         {
-            notification.Message = $"Found {receivingPlayer?.Name}'s {itemName}";
+            notification.Message = $"Found {message.Receiver.Name}'s {itemName}";
         }
 
-        notification.MessageColor = itemNameColor ?? PaletteColor.White;
+        notification.MessageColor = ColorUtils.GetColor(message.Item.Flags) ?? PaletteColor.White;
 
         NotificationHelper.TryToSendNotification(notification);
-    }
-
-    private static void BuildAndSendTerminalMessage(JsonMessagePart[] messageParts, string locationGameName,
-        string receivingGameName)
-    {
-        var sb = new StringBuilder();
-        foreach (var part in messageParts)
-        {
-            var text = "";
-
-            switch (part.Type)
-            {
-                case JsonMessagePartType.PlayerId:
-                    text = ArchipelagoClient.Session.Players
-                        .AllPlayers.FirstOrDefault(player => player.Slot == int.Parse(part.Text))?.Name;
-                    break;
-                case JsonMessagePartType.ItemId:
-                    text = ArchipelagoClient.Session.Items.GetItemName(long.Parse(part.Text), receivingGameName);
-                    break;
-                case JsonMessagePartType.LocationId:
-                    text = ArchipelagoClient.Session.Locations.GetLocationNameFromId(long.Parse(part.Text),
-                        locationGameName);
-                    break;
-                default:
-                    text = part.Text;
-                    break;
-            }
-
-            sb.Append(text);
-        }
-
-        TerminalCommandManager.LogMessage(TerminalLogType.Message, sb.ToString());
     }
 }
