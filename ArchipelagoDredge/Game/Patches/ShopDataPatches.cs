@@ -14,7 +14,7 @@ public class ShopDataPatches
     {
         __result.Clear();
         if (GameManager.Instance.DataLoader.HasLoaded() &&
-            ArchipelagoClient.Session.Socket.Connected)
+            ArchipelagoClient.IsConnected)
         {
             var items = ArchipelagoItemManager.GetItemsForShops();
             __result.AddRange(items);

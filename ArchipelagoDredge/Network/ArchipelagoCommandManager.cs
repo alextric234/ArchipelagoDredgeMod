@@ -69,9 +69,7 @@ public static class ArchipelagoCommandManager
                 _deathLink
             );
 
-            if (ArchipelagoClient.Session != null &&
-                ArchipelagoClient.Session.Socket != null &&
-                ArchipelagoClient.Session.Socket.Connected)
+            if (ArchipelagoClient.IsConnected)
             {
                 ArchipelagoClient.State = ConnectionState.Connected;
                 DeathLinkManager.SetupDredgeDeathLinkService();

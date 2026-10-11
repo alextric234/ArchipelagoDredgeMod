@@ -72,7 +72,7 @@ public class ArchipelagoDredge : MonoBehaviour
                 ArchipelagoCommandManager.Disconnect();
             }
 
-            var connected = ArchipelagoClient.Session?.Socket?.Connected == true;
+            var connected = ArchipelagoClient.IsConnected;
             var ready = GameManager.Instance.DataLoader.HasLoaded();
 
             if (ready && connected && ArchipelagoClient.SlotData.AddPassageItems)

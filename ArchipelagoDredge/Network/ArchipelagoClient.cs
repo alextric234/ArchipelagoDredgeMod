@@ -20,6 +20,11 @@ public static class ArchipelagoClient
     public static ConnectionState State { get; set; } = ConnectionState.Disconnected;
     public static SlotData SlotData = new SlotData();
 
+    /// <summary>
+    ///     True when there is a session and its socket is open. Safe to call at any time.
+    /// </summary>
+    public static bool IsConnected => Session?.Socket?.Connected == true;
+
     public static async Task ConnectAsync(string apHost, int apPort, string slotName, string password, bool deathLink)
     {
         if (!GameManager.Instance.DataLoader.HasLoaded())
@@ -114,7 +119,7 @@ public static class ArchipelagoClient
 
     public static bool HasItemsToProcess()
     {
-        if (Session == null || Session.Socket == null || !Session.Socket.Connected)
+        if (!IsConnected)
         {
             return false;
         }

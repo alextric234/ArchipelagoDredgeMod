@@ -13,7 +13,7 @@ public static class SaveDataPatches
     [HarmonyPatch(nameof(SaveData.GetResearchedItemData))]
     public static bool SaveDataGetResearchedItemData_Prefix()
     {
-        if (ArchipelagoClient.Session == null || !ArchipelagoClient.Session.Socket.Connected)
+        if (!ArchipelagoClient.IsConnected)
         {
             return false;
         }
@@ -25,7 +25,7 @@ public static class SaveDataPatches
     [HarmonyPatch(nameof(SaveData.GetResearchedItemData))]
     public static void SaveDataGetResearchedItemData_Postfix(ref List<SpatialItemData> __result)
     {
-        if (ArchipelagoClient.Session == null || !ArchipelagoClient.Session.Socket.Connected)
+        if (!ArchipelagoClient.IsConnected)
         {
             return;
         }
