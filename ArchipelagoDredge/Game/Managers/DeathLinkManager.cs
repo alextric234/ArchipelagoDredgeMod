@@ -16,8 +16,9 @@ public static class DeathLinkManager
     private static bool _hasPendingDeath;
     private static string _pendingDeathMessage;
 
-    private static bool _suppressNextOutgoingDeathLink;
-
+    // Main thread only: set while we are killing the player because of a received DeathLink.
+    private static bool _isDyingFromDeathLink;
+    private static string _deathScreenMessage;
 
     public static void SetupDredgeDeathLinkService()
     {
@@ -34,7 +35,6 @@ public static class DeathLinkManager
 
     private static void OnDeathLinkReceived(DeathLink deathLink)
     {
-        _suppressNextOutgoingDeathLink = true;
         if (!IsDeathLinkEnabled)
         {
             return;
@@ -53,15 +53,45 @@ public static class DeathLinkManager
         }
     }
 
-    public static bool HasPendingDeathLink()
+    /// <summary>
+    ///     Called every frame on the main thread. Kills the player once for a received DeathLink,
+    ///     or drops it if the player can't die right now (menu, death screen, god mode).
+    /// </summary>
+    public static void ProcessPendingDeathLink()
     {
-        lock (PendingDeathLinkLock)
+        if (!TryConsumePendingDeathLink(out var deathLinkMessage))
         {
-            return _hasPendingDeath;
+            return;
+        }
+
+        var player = GameManager.Instance.Player;
+        if (!GameManager.Instance.IsPlaying || player == null || !player.IsAlive || player.IsGodModeEnabled)
+        {
+            WinchCore.Log.Info($"Ignoring {deathLinkMessage}: player can't die right now");
+            return;
+        }
+
+        _isDyingFromDeathLink = true;
+        _deathScreenMessage = deathLinkMessage;
+        try
+        {
+            // Synchronous all the way to the death popup, which reads _deathScreenMessage.
+            player.Die();
+        }
+        finally
+        {
+            _isDyingFromDeathLink = false;
+            _deathScreenMessage = null;
         }
     }
 
-    public static bool TryConsumePendingDeathLink(out string deathLinkMessage)
+    public static bool TryGetDeathScreenMessage(out string deathLinkMessage)
+    {
+        deathLinkMessage = _deathScreenMessage;
+        return !string.IsNullOrWhiteSpace(deathLinkMessage);
+    }
+
+    private static bool TryConsumePendingDeathLink(out string deathLinkMessage)
     {
         lock (PendingDeathLinkLock)
         {
@@ -98,30 +128,34 @@ public static class DeathLinkManager
 
     public static void SendDeathLink()
     {
-        var playerName = ArchipelagoClient.Session.Players.ActivePlayer.Name;
-        var cause = "Took on too much water";
-        var deathlink = new DeathLink(playerName, cause);
-
-        WinchCore.Log.Info($"sending death link");
         try
         {
+            var playerName = ArchipelagoClient.Session.Players.ActivePlayer.Name;
+            var cause = "Took on too much water";
+            var deathlink = new DeathLink(playerName, cause);
+
+            WinchCore.Log.Info($"sending death link");
             DredgeDeathLinkService.SendDeathLink(deathlink);
         }
         catch (Exception e)
         {
-            WinchCore.Log.Info($"Deathlink Exception: {e}");
+            WinchCore.Log.Error($"Deathlink Exception: {e}");
         }
     }
 
     public static void HandleLocalDeath()
     {
-        WinchCore.Log.Info($"Handling player death");
-        if (_suppressNextOutgoingDeathLink)
+        if (_isDyingFromDeathLink)
         {
             WinchCore.Log.Info($"death due to deathlink");
-            _suppressNextOutgoingDeathLink = false;
             return;
         }
+
+        if (!IsDeathLinkEnabled || DredgeDeathLinkService == null || !ArchipelagoClient.IsConnected)
+        {
+            return;
+        }
+
         SendDeathLink();
     }
 }

@@ -87,10 +87,7 @@ public class ArchipelagoDredge : MonoBehaviour
                 ArchipelagoItemManager.GetItem();
             }
 
-            if (DeathLinkManager.HasPendingDeathLink())
-            {
-                GameManager.Instance.Player.Die();
-            }
+            DeathLinkManager.ProcessPendingDeathLink();
         }
         catch (Exception ex)
         {

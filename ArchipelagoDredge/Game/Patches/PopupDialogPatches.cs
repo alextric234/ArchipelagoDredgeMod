@@ -22,8 +22,7 @@ internal static class PopupDialogPatches
         __state = null;
 
         if (!dialogOptions.useDeathScreenPopup ||
-            !DeathLinkManager.IsDeathLinkEnabled ||
-            !DeathLinkManager.TryConsumePendingDeathLink(out string deathLinkMessage))
+            !DeathLinkManager.TryGetDeathScreenMessage(out string deathLinkMessage))
         {
             return;
         }
