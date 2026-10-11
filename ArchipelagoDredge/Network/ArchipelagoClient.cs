@@ -9,6 +9,7 @@ using ArchipelagoDredge.Game.Managers;
 using ArchipelagoDredge.Network.Enums;
 using ArchipelagoDredge.Utils;
 using CommandTerminal;
+using Winch.Core;
 using Winch.Util;
 
 namespace ArchipelagoDredge.Network;
@@ -86,13 +87,22 @@ public static class ArchipelagoClient
 
     private static void OnPacketReceived(ArchipelagoPacketBase packet)
     {
-        switch (packet.PacketType)
+        // Runs on the socket thread; an exception here would stop the library from
+        // dispatching the rest of the packets in the same message.
+        try
         {
-            case ArchipelagoPacketType.PrintJSON:
-                PrintJsonHelper.ShowPrintJsonMessage((ItemPrintJsonPacket) packet);
-                break;
-            default:
-                return;
+            switch (packet.PacketType)
+            {
+                case ArchipelagoPacketType.PrintJSON:
+                    PrintJsonHelper.ShowPrintJsonMessage((PrintJsonPacket) packet);
+                    break;
+                default:
+                    return;
+            }
+        }
+        catch (Exception e)
+        {
+            WinchCore.Log.Error($"Error handling {packet.PacketType} packet: {e}");
         }
     }
 
