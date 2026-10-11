@@ -49,7 +49,20 @@ public static class LocationCheckService
 
     private static void OnFishCaught(SpatialItemInstance itemInstance)
     {
-        Report(itemInstance?.id);
+        try
+        {
+            // Winch raises this for every harvest, not just fish. Non-fish checks are keyed by the
+            // spot and reported from OnPOIHarvested.
+            if (itemInstance?.ToItemData()?.itemSubtype != ItemSubtype.FISH)
+                return;
+        }
+        catch (Exception e)
+        {
+            WinchCore.Log.Error($"Error reading caught item {itemInstance?.id}: {e}");
+            return;
+        }
+
+        Report(itemInstance.id);
     }
 
     /// <summary>
