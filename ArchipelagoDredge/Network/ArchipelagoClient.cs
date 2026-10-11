@@ -70,11 +70,12 @@ public static class ArchipelagoClient
         }
 
         var successfulLogin = (LoginSuccessful)loginResult;
-        SlotData.DeathLink = successfulLogin.SlotData.TryGetValue("death_link", out var deathLinkOption) && int.Parse(deathLinkOption.ToString()) == 1;
-        SlotData.IncludeIronRigDLC = successfulLogin.SlotData.TryGetValue("include_iron_rig_dlc", out var ironRigDlcOption) && int.Parse(ironRigDlcOption.ToString()) == 1;
-        SlotData.IncludePaleReachDLC = successfulLogin.SlotData.TryGetValue("include_pale_reach_dlc", out var paleReachDlcOption) && int.Parse(paleReachDlcOption.ToString()) == 1;
-        SlotData.AddFishingLicenses = successfulLogin.SlotData.TryGetValue("add_fishing_licenses", out var addFishingLicensesOption) && int.Parse(addFishingLicensesOption.ToString()) == 1;
-        SlotData.AddPassageItems = successfulLogin.SlotData.TryGetValue("add_passage_items", out var addPassageItemsOption) && int.Parse(addPassageItemsOption.ToString()) == 1;
+        var slotData = successfulLogin.SlotData;
+        SlotData.DeathLink = SlotDataParser.GetBool(slotData, "death_link");
+        SlotData.IncludeIronRigDLC = SlotDataParser.GetBool(slotData, "include_iron_rig_dlc");
+        SlotData.IncludePaleReachDLC = SlotDataParser.GetBool(slotData, "include_pale_reach_dlc");
+        SlotData.AddFishingLicenses = SlotDataParser.GetBool(slotData, "add_fishing_licenses");
+        SlotData.AddPassageItems = SlotDataParser.GetBool(slotData, "add_passage_items");
 
         WinchCore.Log.Info($"Slot data: death_link={SlotData.DeathLink}, include_iron_rig_dlc={SlotData.IncludeIronRigDLC}, " +
                            $"include_pale_reach_dlc={SlotData.IncludePaleReachDLC}, add_fishing_licenses={SlotData.AddFishingLicenses}, " +
