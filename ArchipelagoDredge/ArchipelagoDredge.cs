@@ -107,6 +107,8 @@ public class ArchipelagoDredge : MonoBehaviour
 
     public void OnGameEnded()
     {
+        PassageManager.Reset();
+
         if (ArchipelagoStateManager.AwaitingDeathScreenChoice)
         {
             return;

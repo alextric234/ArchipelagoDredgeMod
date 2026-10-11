@@ -1,4 +1,5 @@
 ﻿using ArchipelagoDredge.Game.Managers;
+using ArchipelagoDredge.Network;
 using HarmonyLib;
 using UnityEngine;
 
@@ -14,6 +15,11 @@ internal static class PlayerControllerRegionGatePatch
     [HarmonyPostfix]
     private static void Postfix(PlayerController __instance)
     {
+        if (!ArchipelagoClient.IsConnected || !ArchipelagoClient.SlotData.AddPassageItems)
+        {
+            return;
+        }
+
         if (!PassageManager.TryGetActiveEjectionTarget(
                 out var targetPosition))
         {

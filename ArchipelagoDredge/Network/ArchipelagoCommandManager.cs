@@ -115,6 +115,7 @@ public static class ArchipelagoCommandManager
 
         ArchipelagoClient.Disconnect();
         ArchipelagoClient.State = ConnectionState.Disconnected;
+        PassageManager.Reset();
         TerminalCommandManager.LogMessage(TerminalLogType.Message, "Disconnected from Archipelago");
         NotificationHelper.ShowNotificationWithColour(NotificationType.NONE, "Disconnected from Archipelago",
             DredgeColorTypeEnum.NEUTRAL);

@@ -24,6 +24,17 @@ public static class PassageManager
 
     public static float PushSpeed = 30f;
 
+    public static void Reset()
+    {
+        previousZone = ZoneEnum.NONE;
+        lastAllowedPosition = Vector3.zero;
+        nextZoneCheckTime = 0f;
+        activeEjectionTarget = Vector3.zero;
+        isEjecting = false;
+        bannersUi = null;
+        violationsByZone.Clear();
+    }
+
     public static void Update()
     {
         if (Time.time < nextZoneCheckTime)
