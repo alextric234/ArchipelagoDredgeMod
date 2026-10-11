@@ -1,6 +1,7 @@
 ﻿using System;
 using ArchipelagoDredge.Game.Helpers;
 using ArchipelagoDredge.Game.Managers;
+using ArchipelagoDredge.Game.Services;
 using ArchipelagoDredge.Game.Ui;
 using ArchipelagoDredge.Network;
 using ArchipelagoDredge.Network.Enums;
@@ -24,6 +25,7 @@ public class ArchipelagoDredge : MonoBehaviour
             WinchCore.Log.Info($"{nameof(ArchipelagoDredge)} has loaded!");
 
             TerminalCommandManager.Initialize();
+            LocationCheckService.Initialize();
 
             _harmony = new Harmony("com.alextric234.archipelago.dredge");
             _harmony.PatchAll();
