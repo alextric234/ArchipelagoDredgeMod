@@ -28,7 +28,11 @@ public static class ArchipelagoClient
     /// </summary>
     public static ConnectionState State { get; internal set; } = ConnectionState.Disconnected;
 
-    public static SlotData SlotData { get; private set; } = new SlotData();
+    /// <summary>
+    ///     The seed's options: from slot data on login, or from the save's snapshot while offline
+    ///     (see <see cref="ArchipelagoStateManager" />).
+    /// </summary>
+    public static SlotData SlotData { get; internal set; } = new SlotData();
 
     /// <summary>
     ///     True when there is a session and its socket is open. Safe to call at any time.

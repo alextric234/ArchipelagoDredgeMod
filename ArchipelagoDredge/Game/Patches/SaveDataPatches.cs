@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using ArchipelagoDredge.Game.Helpers;
-using ArchipelagoDredge.Network;
+using ArchipelagoDredge.Utils;
 using HarmonyLib;
 
 namespace ArchipelagoDredge.Game.Patches;
@@ -13,12 +13,12 @@ public static class SaveDataPatches
     [HarmonyPatch(nameof(SaveData.GetResearchedItemData))]
     public static void SaveDataGetResearchedItemData_Postfix(ref List<SpatialItemData> __result)
     {
-        if (!ArchipelagoClient.IsConnected)
+        if (!ApSave.IsActive)
         {
             return;
         }
 
-        var apItems = ArchipelagoClient.Session.Items.AllItemsReceived.Select(i => i.ItemDisplayName).ToList();
+        var apItems = ApSave.ReceivedItemNames;
         var unlockedItemIds = ItemNames.ItemsByName.Where(itemName => apItems.Contains(itemName.Key))
             .Select(itemName => ItemNames.ItemToDredgeId(itemName.Value));
         __result = __result.Where(r => unlockedItemIds.Contains(r.id)).ToList();

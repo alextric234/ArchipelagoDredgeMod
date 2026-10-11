@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using ArchipelagoDredge.Network;
+using ArchipelagoDredge.Network.Enums;
 using UnityEngine;
 using Winch.Core;
 
@@ -41,8 +43,10 @@ public static class ArchipelagoStateManager
             // without saving, death screen). Go back to the values recorded at the last game save so
             // the item index, hull tier and virtual items all match it.
             RevertStateData();
+            ApplySavedSlotOptions();
             WinchCore.Log.Info($"Loaded Archipelago state for slot {slot} (last processed item index {StateData.LastProcessedIndex}, " +
-                               $"hull tier {StateData.CurrentHullUpgrade}, {StateData.ReceivedVirtualItems.Count} virtual item(s))");
+                               $"hull tier {StateData.CurrentHullUpgrade}, {StateData.ReceivedVirtualItems.Count} virtual item(s), " +
+                               (IsBound ? $"bound to seed '{StateData.Seed}' as '{StateData.SlotName}')" : "not bound to a multiworld)"));
         }
         catch (Exception ex)
         {
@@ -59,6 +63,7 @@ public static class ArchipelagoStateManager
         {
             SaveFilePath = GetSaveFilePath(slot);
             StateData = new ArchipelagoStateData();
+            ApplySavedSlotOptions();
             Directory.CreateDirectory(Path.GetDirectoryName(SaveFilePath)!);
             SaveData();
             WinchCore.Log.Info($"Created new Archipelago state for slot {slot}");
@@ -155,26 +160,96 @@ public static class ArchipelagoStateManager
     }
 
     /// <summary>
-    ///     Ties this save's recorded checks to the multiworld being played. The first connect claims them
-    ///     for that seed; connecting to a different seed drops them so they aren't sent to the wrong room.
+    ///     True once this save has connected to a multiworld. A bound save follows AP rules even offline.
     /// </summary>
-    public static void BindChecksToSeed(string seed)
+    public static bool IsBound => !string.IsNullOrEmpty(StateData?.Seed);
+
+    /// <summary>
+    ///     Binds this save to the multiworld being played. The first connect claims it. Returns a description
+    ///     of the previous binding when the save was bound to a different seed or slot (it's rebound, not
+    ///     blocked), otherwise null. Checks recorded for a different seed are dropped so they aren't sent
+    ///     to the wrong room.
+    /// </summary>
+    public static string BindToRoom(string seed, string slotName)
     {
-        if (StateData == null || string.IsNullOrEmpty(seed) || StateData.Seed == seed)
+        if (StateData == null || string.IsNullOrEmpty(seed))
+        {
+            return null;
+        }
+
+        if (StateData.Seed == seed && StateData.SlotName == slotName)
+        {
+            return null;
+        }
+
+        string previousBinding = null;
+        if (IsBound)
+        {
+            previousBinding = $"seed '{StateData.Seed}', slot '{StateData.SlotName}'";
+            if (StateData.Seed != seed)
+            {
+                WinchCore.Log.Warn($"Discarding {StateData.CheckedLocations?.Count ?? 0} location check(s) recorded for seed '{StateData.Seed}'");
+                StateData.CheckedLocations = new List<string>();
+            }
+        }
+
+        StateData.Seed = seed;
+        StateData.SlotName = slotName ?? "";
+        SaveData();
+        return previousBinding;
+    }
+
+    /// <summary>
+    ///     Saves what an offline session needs to keep following AP rules: the seed's options and the names
+    ///     of the AP items received so far. Call while connected.
+    /// </summary>
+    public static void SaveSessionSnapshot(SlotData slotData, IEnumerable<string> receivedItemNames)
+    {
+        if (StateData == null)
         {
             return;
         }
 
-        if (!string.IsNullOrEmpty(StateData.Seed))
+        StateData.SlotOptions = new SavedSlotOptions
         {
-            WinchCore.Log.Warn($"This save was used with seed '{StateData.Seed}' but is now connected to '{seed}'; " +
-                               $"discarding {StateData.CheckedLocations?.Count ?? 0} location check(s) recorded for the old seed");
-            StateData.CheckedLocations = new List<string>();
-        }
-
-        StateData.Seed = seed;
+            DeathLink = slotData.DeathLink,
+            IncludeIronRigDLC = slotData.IncludeIronRigDLC,
+            IncludePaleReachDLC = slotData.IncludePaleReachDLC,
+            AddFishingLicenses = slotData.AddFishingLicenses,
+            AddPassageItems = slotData.AddPassageItems
+        };
+        StateData.ReceivedItemNames = receivedItemNames.ToList();
         SaveData();
     }
+
+    /// <summary>
+    ///     AP item names received as of the last snapshot; used for shop stock and research while offline.
+    /// </summary>
+    public static IReadOnlyList<string> SavedReceivedItemNames =>
+        (IReadOnlyList<string>) StateData?.ReceivedItemNames ?? Array.Empty<string>();
+
+    // Use the saved seed options until (and unless) a connect replaces them, so slot-dependent rules
+    // (passages, licences, DLC content) apply offline. An unbound save gets the all-off defaults.
+    private static void ApplySavedSlotOptions()
+    {
+        var options = StateData?.SlotOptions ?? new SavedSlotOptions();
+        ArchipelagoClient.SlotData = new SlotData(
+            options.DeathLink,
+            options.IncludeIronRigDLC,
+            options.IncludePaleReachDLC,
+            options.AddFishingLicenses,
+            options.AddPassageItems);
+    }
+}
+
+[Serializable]
+public class SavedSlotOptions
+{
+    public bool DeathLink;
+    public bool IncludeIronRigDLC;
+    public bool IncludePaleReachDLC;
+    public bool AddFishingLicenses;
+    public bool AddPassageItems;
 }
 
 [Serializable]
@@ -188,7 +263,12 @@ public class ArchipelagoStateData
     public List<string> ReceivedVirtualItemsSinceSave = new();
     public List<string> ReceivedVirtualItems = new();
 
-    // The multiworld seed CheckedLocations belongs to; empty until the save first connects.
+    // The multiworld this save is bound to; empty until the save first connects.
     public string Seed = "";
+    public string SlotName = "";
     public List<string> CheckedLocations = new();
+
+    // Snapshot from the last connected session, so a bound save follows AP rules offline.
+    public SavedSlotOptions SlotOptions = new();
+    public List<string> ReceivedItemNames = new();
 }

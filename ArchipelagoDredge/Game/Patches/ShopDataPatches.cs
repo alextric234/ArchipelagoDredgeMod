@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using ArchipelagoDredge.Game.Managers;
-using ArchipelagoDredge.Network;
+using ArchipelagoDredge.Utils;
 using HarmonyLib;
 
 namespace ArchipelagoDredge.Game.Patches;
@@ -12,7 +12,7 @@ public class ShopDataPatches
     [HarmonyPatch(nameof(ShopData.GetNewStock))]
     public static void PostFix(ref List<SpatialItemData> __result)
     {
-        if (!ArchipelagoClient.IsConnected)
+        if (!ApSave.IsActive)
         {
             return;
         }

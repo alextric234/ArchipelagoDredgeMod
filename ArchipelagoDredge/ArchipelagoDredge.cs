@@ -81,7 +81,9 @@ public class ArchipelagoDredge : MonoBehaviour
             var connected = ArchipelagoClient.IsConnected;
             var ready = GameManager.Instance.DataLoader.HasLoaded();
 
-            if (ready && connected && ArchipelagoClient.SlotData.AddPassageItems)
+            // Passages are enforced for any AP save, offline included; Player is null on the title screen.
+            if (ready && ApSave.IsActive && ArchipelagoClient.SlotData.AddPassageItems &&
+                GameManager.Instance.Player != null)
             {
                 PassageManager.Update();
             }
@@ -103,11 +105,21 @@ public class ArchipelagoDredge : MonoBehaviour
 
     public void OnGameStarted()
     {
-        if (ArchipelagoClient.State != ConnectionState.Connected && ArchipelagoClient.State != ConnectionState.Connecting)
+        if (ArchipelagoClient.State == ConnectionState.Connected || ArchipelagoClient.State == ConnectionState.Connecting)
         {
-            WinchCore.Log.Info($"Game started, connecting with Archipelago configuration");
-            ArchipelagoCommandManager.ConfigConnect();
+            return;
         }
+
+        // Only saves already bound to a multiworld connect by themselves; anything else connects on
+        // F8, the F7 panel or 'ap connect', so vanilla saves never try.
+        if (!ArchipelagoStateManager.IsBound)
+        {
+            WinchCore.Log.Info("Game started with a save not bound to Archipelago; connect with F8, F7 or 'ap connect'");
+            return;
+        }
+
+        WinchCore.Log.Info($"Game started, connecting with Archipelago configuration");
+        ArchipelagoCommandManager.ConfigConnect();
     }
 
     public void OnGameEnded()

@@ -166,8 +166,7 @@ public static class ArchipelagoItemManager
 
     public static List<SpatialItemData> GetItemsForShops()
     {
-        var apItemNames = ArchipelagoClient.Session.Items.AllItemsReceived.Where(item => item.ItemGame == ArchipelagoClient.GameName)
-            .Select(item => item.ItemName).ToList();
+        var apItemNames = ApSave.ReceivedItemNames;
         List<Item> shopItems = [];
         List<SpatialItemData> shopDredgeItems = [];
         foreach (var apItemName in apItemNames)

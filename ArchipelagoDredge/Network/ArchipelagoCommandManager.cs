@@ -161,6 +161,8 @@ public static class ArchipelagoCommandManager
     {
         // Invalidates any connect attempt still in flight.
         _connectAttempt++;
+        // Keep the latest received items for offline play before the session goes away.
+        SessionStartService.SaveSessionSnapshot();
         ArchipelagoClient.Disconnect();
         ArchipelagoClient.State = ConnectionState.Disconnected;
         PassageManager.Reset();

@@ -3,6 +3,7 @@ using System.Linq;
 using ArchipelagoDredge.Game.Helpers;
 using ArchipelagoDredge.Game.Managers;
 using ArchipelagoDredge.Network;
+using ArchipelagoDredge.Network.Enums;
 using ArchipelagoDredge.Utils;
 using CommandTerminal;
 using Winch.Core;
@@ -23,6 +24,9 @@ public static class SessionStartService
     {
         try
         {
+            BindSaveToRoom();
+            SaveSessionSnapshot();
+
             var saveData = GameManager.Instance.SaveData;
 
             saveData.CanCatchAberrations = true;
@@ -40,7 +44,6 @@ public static class SessionStartService
             RevealEncyclopedia();
 
             LocationHelper.LoadArchipelagoIds();
-            ArchipelagoStateManager.BindChecksToSeed(ArchipelagoClient.Session.RoomState.Seed);
             RemoveCheckedRelicPois();
             LocationHelper.ReconcileArchipelagoChecks();
             LocationHelper.ResendRecordedChecks();
@@ -52,6 +55,54 @@ public static class SessionStartService
             TerminalCommandManager.LogMessage(TerminalLogType.Error,
                 "Archipelago session setup failed; some features may not work. See the log for details.");
         }
+    }
+
+    /// <summary>
+    ///     Saves the current session's seed options and received items, so the save keeps following AP
+    ///     rules offline. Call on connect and just before the session is torn down (the socket may already
+    ///     be closed then, but the session still holds the received items).
+    /// </summary>
+    public static void SaveSessionSnapshot()
+    {
+        try
+        {
+            var session = ArchipelagoClient.Session;
+            if (session == null || ArchipelagoClient.State != ConnectionState.Connected)
+            {
+                return;
+            }
+
+            var receivedItemNames = session.Items.AllItemsReceived
+                .Where(item => item.ItemGame == ArchipelagoClient.GameName)
+                .Select(item => item.ItemName);
+            ArchipelagoStateManager.SaveSessionSnapshot(ArchipelagoClient.SlotData, receivedItemNames);
+        }
+        catch (Exception e)
+        {
+            WinchCore.Log.Error($"Couldn't save the Archipelago session snapshot: {e}");
+        }
+    }
+
+    // Binds the save to this room on its first connect. A save bound to a different seed or slot is
+    // rebound with a warning rather than blocked.
+    private static void BindSaveToRoom()
+    {
+        var session = ArchipelagoClient.Session;
+        var seed = session.RoomState.Seed;
+        var slotName = session.Players.ActivePlayer.Name;
+
+        var previousBinding = ArchipelagoStateManager.BindToRoom(seed, slotName);
+        if (previousBinding == null)
+        {
+            return;
+        }
+
+        var message = $"This save was used with a different multiworld ({previousBinding}). " +
+                      $"It's now bound to seed '{seed}', slot '{slotName}'; received items may not line up.";
+        WinchCore.Log.Warn(message);
+        TerminalCommandManager.LogMessage(TerminalLogType.Warning, message);
+        NotificationHelper.ShowNotificationWithColour(NotificationType.NONE,
+            "This save was used with a different multiworld", DredgeColorTypeEnum.WARNING);
     }
 
     /// <summary>
