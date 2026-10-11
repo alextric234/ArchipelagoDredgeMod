@@ -48,7 +48,8 @@ public static class PrintJsonHelper
         }
         else
         {
-            notification.Message = $"Found {message.Receiver.Name}'s {itemName}";
+            // PlayerInfo.ToString() is the alias when one is set, otherwise the slot name.
+            notification.Message = $"Found {message.Receiver}'s {itemName}";
         }
 
         notification.MessageColor = ColorUtils.GetColor(message.Item.Flags) ?? PaletteColor.White;
