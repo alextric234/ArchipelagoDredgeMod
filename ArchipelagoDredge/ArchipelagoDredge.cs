@@ -26,6 +26,7 @@ public class ArchipelagoDredge : MonoBehaviour
 
             TerminalCommandManager.Initialize();
             LocationCheckService.Initialize();
+            DeathLinkManager.Initialize();
 
             _harmony = new Harmony("com.alextric234.archipelago.dredge");
             _harmony.PatchAll();

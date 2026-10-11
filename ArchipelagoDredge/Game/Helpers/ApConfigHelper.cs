@@ -1,95 +1,52 @@
 ﻿using System;
-using System.IO;
-using System.Reflection;
-using Newtonsoft.Json.Linq;
+using Winch.Config;
 using Winch.Core;
 
 namespace ArchipelagoDredge.Game.Helpers;
 
+/// <summary>
+///     The mod's settings, read and written through Winch's <see cref="ModConfig" /> so the mod menu,
+///     the F7 panel and the mod all share one in-memory copy of <c>config.json</c>.
+/// </summary>
 public static class ApConfigHelper
 {
-    private static string ModDir
-    {
-        get { return Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!; }
-    }
+    private const string ModGuid = "alextric234.archipelagodredge";
 
-    public static string ConfigPath
-    {
-        get { return Path.Combine(ModDir, "Config.json"); }
-    }
+    public const string HostKey = "apIpAddress";
+    public const string PortKey = "apPort";
+    public const string SlotKey = "apSlotName";
+    public const string PasswordKey = "apPassword";
+    public const string DeathLinkKey = "apEnableDeathLink";
 
-    public static string DefaultPath
-    {
-        get { return Path.Combine(ModDir, "default_config.json"); }
-    }
+    private const int DefaultPort = 38281;
 
-    private static JObject LoadConfigObject(out bool isUserConfig)
-    {
-        isUserConfig = File.Exists(ConfigPath);
-        var path = isUserConfig ? ConfigPath : DefaultPath;
-        if (!File.Exists(path))
-        {
-            throw new FileNotFoundException($"Config not found: {path}");
-        }
-
-        return JObject.Parse(File.ReadAllText(path));
-    }
+    public static ModConfig Config => ModConfig.GetConfig(ModGuid);
 
     public static (string host, int port, string slot, string pwd, bool deathLink) Read()
     {
-        var cfg = LoadConfigObject(out _);
+        var host = Get(HostKey, "");
+        var port = Get(PortKey, DefaultPort);
+        var slot = Get(SlotKey, "");
+        var pwd = Get(PasswordKey, "");
+        var deathLink = Get(DeathLinkKey, false);
 
-        var host = cfg["apIpAddress"]?["value"]?.ToString() ?? "";
-        var port = (int?) cfg["apPort"]?["value"] ?? 38281;
-        var slot = cfg["apSlotName"]?["value"]?.ToString() ?? "";
-        var pwd = cfg["apPassword"]?["value"]?.ToString() ?? "";
-        var deathLink = (bool?) cfg["apEnableDeathLink"]?["value"] ?? false;
-
-        return (host.Trim(), port, (slot ?? "").Trim(), pwd ?? "", deathLink);
+        return ((host ?? "").Trim(), port, (slot ?? "").Trim(), pwd ?? "", deathLink);
     }
 
     public static bool ReadDeathLink()
     {
-        var cfg = LoadConfigObject(out _);
-
-        var deathLink = (bool?)cfg["apEnableDeathLink"]?["value"] ?? false;
-
-        return deathLink;
+        return Get(DeathLinkKey, false);
     }
 
     public static bool SaveValues(string host, int port, string slot, string pwd)
     {
         try
         {
-            JObject cfg;
-
-            var modDir = ModDir;
-            Directory.CreateDirectory(modDir);
-
-            if (File.Exists(ConfigPath))
-            {
-                cfg = JObject.Parse(File.ReadAllText(ConfigPath));
-            }
-            else if (File.Exists(DefaultPath))
-            {
-                cfg = JObject.Parse(File.ReadAllText(DefaultPath));
-            }
-            else
-            {
-                cfg = new JObject();
-            }
-
-            EnsureSetting(cfg, "apIpAddress", "text");
-            EnsureSetting(cfg, "apPort", "integer");
-            EnsureSetting(cfg, "apSlotName", "text");
-            EnsureSetting(cfg, "apPassword", "text");
-
-            cfg["apIpAddress"]["value"] = host ?? "";
-            cfg["apPort"]["value"] = port;
-            cfg["apSlotName"]["value"] = slot ?? "";
-            cfg["apPassword"]["value"] = pwd ?? "";
-
-            File.WriteAllText(ConfigPath, cfg.ToString());
+            var config = Config;
+            config.SetProperty(HostKey, host ?? "");
+            config.SetProperty(PortKey, port);
+            config.SetProperty(SlotKey, slot ?? "");
+            config.SetProperty(PasswordKey, pwd ?? "");
             return true;
         }
         catch (Exception ex)
@@ -103,29 +60,7 @@ public static class ApConfigHelper
     {
         try
         {
-            JObject cfg;
-
-            var modDir = ModDir;
-            Directory.CreateDirectory(modDir);
-
-            if (File.Exists(ConfigPath))
-            {
-                cfg = JObject.Parse(File.ReadAllText(ConfigPath));
-            }
-            else if (File.Exists(DefaultPath))
-            {
-                cfg = JObject.Parse(File.ReadAllText(DefaultPath));
-            }
-            else
-            {
-                cfg = new JObject();
-            }
-
-            EnsureSetting(cfg, "apEnableDeathLink", "toggle");
-
-            cfg["apEnableDeathLink"]["value"] = deathLink;
-
-            File.WriteAllText(ConfigPath, cfg.ToString());
+            Config.SetProperty(DeathLinkKey, deathLink);
             return true;
         }
         catch (Exception ex)
@@ -135,20 +70,17 @@ public static class ApConfigHelper
         }
     }
 
-
-    private static void EnsureSetting(JObject root, string key, string typeIfNew)
+    private static T Get<T>(string key, T fallback)
     {
-        if (root[key] is JObject obj)
+        try
         {
-            return;
+            var value = Config.GetProperty<T>(key);
+            return value == null ? fallback : value;
         }
-
-        root[key] = new JObject
+        catch (Exception ex)
         {
-            ["type"] = typeIfNew,
-            ["title"] = key,
-            ["tooltip"] = key,
-            ["value"] = typeIfNew == "integer" ? 0 : ""
-        };
+            WinchCore.Log.Warn($"Couldn't read config value '{key}', using {fallback}: {ex.Message}");
+            return fallback;
+        }
     }
 }

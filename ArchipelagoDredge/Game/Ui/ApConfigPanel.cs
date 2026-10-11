@@ -1,9 +1,6 @@
 ﻿using System;
-using System.IO;
 using ArchipelagoDredge.Game.Helpers;
-using ArchipelagoDredge.Game.Managers;
 using ArchipelagoDredge.Network;
-using ArchipelagoDredge.Network.Enums;
 using UnityEngine;
 using Winch.Core;
 
@@ -14,14 +11,13 @@ public class ApConfigPanel : MonoBehaviour
     private string _host = "";
 
     private bool _loadedOnce;
-    private volatile bool _pendingReload; // set from the FileSystemWatcher thread
+    private bool _pendingReload;
     private string _portText = "";
     private string _pwd = "";
     private Rect _rect = new(60, 60, 460, 230);
 
     private bool _show;
     private string _slot = "";
-    private FileSystemWatcher _watcher;
 
     private void Update()
     {
@@ -57,19 +53,12 @@ public class ApConfigPanel : MonoBehaviour
     {
         try
         {
-            _watcher = new FileSystemWatcher(
-                Path.GetDirectoryName(ApConfigHelper.ConfigPath)!,
-                Path.GetFileName(ApConfigHelper.ConfigPath))
-            {
-                NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.Size | NotifyFilters.CreationTime
-            };
-            _watcher.Changed += (_, __) => _pendingReload = true;
-            _watcher.Created += (_, __) => _pendingReload = true;
-            _watcher.EnableRaisingEvents = true;
+            // Refresh the fields when a setting changes elsewhere, e.g. in the mod menu.
+            ApConfigHelper.Config.OnConfigValueChanged += OnConfigValueChanged;
         }
         catch (Exception ex)
         {
-            WinchCore.Log.Error("Config watcher init failed: " + ex);
+            WinchCore.Log.Error("Config change subscription failed: " + ex);
         }
     }
 
@@ -77,12 +66,17 @@ public class ApConfigPanel : MonoBehaviour
     {
         try
         {
-            _watcher?.Dispose();
+            ApConfigHelper.Config.OnConfigValueChanged -= OnConfigValueChanged;
         }
         catch
         {
             /* ignore */
         }
+    }
+
+    private void OnConfigValueChanged(string key)
+    {
+        _pendingReload = true;
     }
 
     private void OnGUI()
@@ -126,31 +120,16 @@ public class ApConfigPanel : MonoBehaviour
     {
         try
         {
-            var (host, port, slot, pwd, deathLink) = ApConfigHelper.Read();
+            var (host, port, slot, pwd, _) = ApConfigHelper.Read();
             _host = host;
             _portText = port.ToString();
             _slot = slot;
             _pwd = pwd;
-            SetDeathLink(deathLink);
         }
         catch (Exception ex)
         {
             WinchCore.Log.Error("Reload failed: " + ex);
         }
-    }
-
-    private void SetDeathLink(bool deathLink)
-    {
-        if (ArchipelagoClient.State != ConnectionState.Connected || deathLink == DeathLinkManager.IsDeathLinkEnabled)
-        {
-            return;
-        }
-        if (deathLink)
-        {
-            DeathLinkManager.EnableDeathLink();
-            return;
-        }
-        DeathLinkManager.DisableDeathLink();
     }
 
     private void ConnectUsingFields()

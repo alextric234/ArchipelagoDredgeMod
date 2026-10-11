@@ -2,6 +2,7 @@
 using Archipelago.MultiClient.Net.BounceFeatures.DeathLink;
 using ArchipelagoDredge.Game.Helpers;
 using ArchipelagoDredge.Network;
+using ArchipelagoDredge.Network.Enums;
 using Winch.Core;
 
 namespace ArchipelagoDredge.Game.Managers;
@@ -19,6 +20,44 @@ public static class DeathLinkManager
     // Main thread only: set while we are killing the player because of a received DeathLink.
     private static bool _isDyingFromDeathLink;
     private static string _deathScreenMessage;
+
+    /// <summary>
+    ///     Follows the DeathLink setting: a change from the mod menu or the config applies live while connected.
+    /// </summary>
+    public static void Initialize()
+    {
+        try
+        {
+            ApConfigHelper.Config.OnConfigValueChanged += OnConfigValueChanged;
+        }
+        catch (Exception e)
+        {
+            WinchCore.Log.Error($"Couldn't watch the DeathLink setting: {e}");
+        }
+    }
+
+    private static void OnConfigValueChanged(string key)
+    {
+        if (key != ApConfigHelper.DeathLinkKey || ArchipelagoClient.State != ConnectionState.Connected)
+        {
+            return;
+        }
+
+        var enabled = ApConfigHelper.ReadDeathLink();
+        if (enabled == IsDeathLinkEnabled)
+        {
+            return;
+        }
+
+        if (enabled)
+        {
+            EnableDeathLink();
+        }
+        else
+        {
+            DisableDeathLink();
+        }
+    }
 
     public static void SetupDredgeDeathLinkService()
     {
