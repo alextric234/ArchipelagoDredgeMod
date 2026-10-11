@@ -30,7 +30,8 @@ public static class SessionStartService
             }
 
             // Hulls arrive as AP items, so the player may never have the shipwright conversation that
-            // normally opens the dry docks; open them so slot upgrades can still be bought.
+            // normally opens the dry docks; open them, and the shipwright, so slot upgrades can still be bought.
+            saveData.availableDestinations.Add("destination.gm-shipwright");
             saveData.availableDestinations.Add("destination.gm-shipwright-upgrades");
             saveData.availableDestinations.Add("destination.tm-upgrades");
 
