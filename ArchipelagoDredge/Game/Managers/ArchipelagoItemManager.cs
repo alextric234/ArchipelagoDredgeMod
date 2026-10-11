@@ -159,69 +159,6 @@ public class ArchipelagoItemManager
         return shopDredgeItems;
     }
 
-    private static bool TryGetValidShopItem(string dredgeItemId, out SpatialItemData dredgeSpatialItemData)
-    {
-        dredgeSpatialItemData = null;
-        var dredgeItem = ItemUtil.GetItemData(dredgeItemId);
-        if (!dredgeItem)
-        {
-            return false;
-        }
-
-        var invalidShopItems = new List<string>
-        {
-            "rod19",
-            "rod8",
-            "rod16",
-            "rod17",
-            "rod20",
-            "pot8",
-            "engine10",
-            "net7"
-        };
-        var gearSubTypes = new HashSet<ItemSubtype>
-        {
-            ItemSubtype.ENGINE,
-            ItemSubtype.LIGHT,
-            ItemSubtype.NET,
-            ItemSubtype.POT,
-            ItemSubtype.ROD,
-            ItemSubtype.GENERAL
-        };
-
-        var validGeneralItems = new List<string>
-        {
-            "explosives",
-            "bait",
-            "bait-ab",
-            "bait-crab",
-            "bait-exotic"
-        };
-
-        if (dredgeItem.id.StartsWith("tir"))
-        {
-            return false;
-        }
-
-        if (invalidShopItems.Contains(dredgeItem.id))
-        {
-            return false;
-        }
-
-        if (!gearSubTypes.Contains(dredgeItem.itemSubtype))
-        {
-            return false;
-        }
-
-        if (dredgeItem.itemSubtype == ItemSubtype.GENERAL && !validGeneralItems.Contains(dredgeItem.id))
-        {
-            return false;
-        }
-
-        dredgeSpatialItemData = (SpatialItemData) dredgeItem;
-        return true;
-    }
-
     private static SerializableGrid GetValidGrid(ItemData dredgeItem)
     {
         Vector3Int foundPosition;

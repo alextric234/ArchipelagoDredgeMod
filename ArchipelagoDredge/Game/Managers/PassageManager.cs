@@ -16,8 +16,6 @@ public static class PassageManager
     private static ZoneEnum previousZone = ZoneEnum.NONE;
     private static Vector3 lastAllowedPosition;
     private static float nextZoneCheckTime;
-    private static int violationCount;
-    private static float nextWarningTime;
     private static Vector3 activeEjectionTarget;
     private static bool isEjecting;
     private static BannersUI bannersUi;
@@ -108,7 +106,6 @@ public static class PassageManager
             return;
         }
 
-        //SummonBoundaryMonster(zone);
         PushBoatToward();
     }
 
@@ -187,6 +184,4 @@ sealed class ViolationState
 {
     public int Attempts;
     public float LastAttemptTime;
-    public float NextWarningTime;
-    public float NextMonsterTime;
 }

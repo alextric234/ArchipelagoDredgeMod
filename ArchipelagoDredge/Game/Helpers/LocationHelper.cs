@@ -986,31 +986,15 @@ public static class LocationHelper
         Location.ROD6
     };
 
-    public static List<Location> QuestLocations = new()
-    {
-        Location.APLACETOREST_DELIVER,
-        Location.APLACETOREST_ESCORT
-    };
-
     public static Dictionary<string, Location> locationNamesReversed =
         locationNames.ToDictionary(ln => ln.Value, ln => ln.Key);
 
     public static Dictionary<long, Location> archipelagoIdToLocation;
     public static Dictionary<Location, long> locationToArchipelagoId;
 
-    public static string LocationToName(Location location)
-    {
-        return locationNames[location];
-    }
-
     public static Location NameToLocation(string locationName)
     {
         return locationNamesReversed[locationName];
-    }
-
-    public static string LocationToDredgeId(Location location)
-    {
-        return location.ToString().ToLower().Replace('_', '-');
     }
 
     public static Location DredgeIdToLocation(string locationId)

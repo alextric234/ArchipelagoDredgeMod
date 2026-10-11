@@ -1,14 +1,8 @@
-using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using Winch.Core;
 
 namespace ArchipelagoDredge.Game.Helpers;
-
-public class ItemHelper
-{
-}
 
 [SuppressMessage("ReSharper", "InconsistentNaming")]
 public enum Item
@@ -1015,11 +1009,6 @@ public static class ItemNames
     public static Dictionary<string, Item> itemNamesReversed =
         itemNames.ToDictionary(name => name.Value, name => name.Key);
 
-    public static string ItemToName(Item item)
-    {
-        return itemNames[item];
-    }
-
     public static Item NameToItem(string itemName)
     {
         return itemNamesReversed[itemName];
@@ -1028,16 +1017,5 @@ public static class ItemNames
     public static string ItemToDredgeId(Item item)
     {
         return item.ToString().ToLower().Replace('_', '-');
-    }
-
-    public static Item DredgeIdToItem(string itemId)
-    {
-        var formattedString = itemId.ToUpper().Replace('-', '_');
-        if (!Enum.TryParse<Item>(formattedString, true, out var item))
-        {
-            WinchCore.Log.Error($"Can't find item {formattedString}");
-        }
-
-        return item;
     }
 }

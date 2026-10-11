@@ -37,7 +37,7 @@ public static class ArchipelagoClient
 
         try
         {
-            var roomInfoPacket = await Session.ConnectAsync();
+            await Session.ConnectAsync();
         }
         catch (Exception e)
         {
