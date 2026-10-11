@@ -17,7 +17,6 @@ namespace ArchipelagoDredge.Network.Patches;
 [HarmonyPatch(typeof(JsonConvert))]
 public class PacketSerializationPatches
 {
-    // JsonSerializer.Create, unlike JsonConvert.SerializeObject(value, settings), doesn't merge in DefaultSettings.
     private static readonly JsonSerializer PacketSerializer = JsonSerializer.Create(new JsonSerializerSettings());
 
     [HarmonyPrefix]

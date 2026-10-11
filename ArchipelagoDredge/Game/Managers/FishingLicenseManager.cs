@@ -63,7 +63,6 @@ public static class FishingLicenseManager
             return false;
         }
 
-        // HasLicenseForZone only says no for zones in the table.
         missingLicense = FishingLicenses[item.zonesFoundIn];
         return true;
     }

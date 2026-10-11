@@ -1,4 +1,3 @@
-using ArchipelagoDredge.Utils;
 using HarmonyLib;
 
 namespace ArchipelagoDredge.Game.Patches;
@@ -6,7 +5,6 @@ namespace ArchipelagoDredge.Game.Patches;
 [HarmonyPatch(typeof(GameConfigData))]
 public class GameConfigDataPatches
 {
-    // Aberration spawn chance for an AP save.
     private const float ApMaxAberrationSpawnChance = 0.5f;
 
     [HarmonyPostfix]

@@ -5,13 +5,8 @@ using Winch.Core;
 using Winch.Core.API;
 
 namespace ArchipelagoDredge.Game.Services;
-
-/// <summary>
-///     Reports AP location checks from Winch's catch and harvest events.
-/// </summary>
 public static class LocationCheckService
 {
-    // Iron Rig salvage crates; only checks when the seed includes the Iron Rig.
     private const string IronRigCrateItemId = "crate";
 
     private static bool _initialized;
@@ -28,7 +23,6 @@ public static class LocationCheckService
         _initialized = true;
     }
 
-    // Event handlers must not throw: a throwing subscriber stops Winch from invoking the rest.
     private static void OnPOIHarvested(HarvestPOI harvestPOI, SpatialItemInstance itemInstance)
     {
         try
@@ -54,8 +48,6 @@ public static class LocationCheckService
     {
         try
         {
-            // Winch raises this for every harvest, not just fish. Non-fish checks are keyed by the
-            // spot and reported from OnPOIHarvested.
             if (itemInstance?.ToItemData()?.itemSubtype != ItemSubtype.FISH)
                 return;
         }
@@ -68,9 +60,6 @@ public static class LocationCheckService
         Report(itemInstance.id);
     }
 
-    /// <summary>
-    ///     Reports a location check by its DREDGE id. Never throws.
-    /// </summary>
     public static void Report(string locationId)
     {
         try

@@ -8,7 +8,6 @@ namespace ArchipelagoDredge.Game.Patches
     [HarmonyPatch(typeof(HarvestPOIDataModel))]
     public class HarvestPOIDataModelPatches
     {
-        // Used by the spyglass and other UI to show what a spot holds: swap in the AP icon.
         [HarmonyPostfix]
         [HarmonyPatch(nameof(HarvestPOIDataModel.GetActiveFirstHarvestableItem))]
         private static void GetActiveFirstHarvestableItem_PostFix(HarvestPOIDataModel __instance,

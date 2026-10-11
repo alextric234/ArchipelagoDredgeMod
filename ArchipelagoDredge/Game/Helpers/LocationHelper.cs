@@ -1109,7 +1109,6 @@ public static class LocationHelper
     {
         if (!TryParseLocation(locationName, out var location))
         {
-            // Most harvests and quest steps aren't AP locations.
             WinchCore.Log.Debug($"Not an AP location: {locationName}");
             return;
         }
@@ -1125,11 +1124,6 @@ public static class LocationHelper
         apLocationId = 0;
         return locationToArchipelagoId != null && locationToArchipelagoId.TryGetValue(location, out apLocationId);
     }
-
-    /// <summary>
-    ///     On connect: sends every check recorded in this save that the server doesn't have yet,
-    ///     e.g. ones made offline or before a restart.
-    /// </summary>
     public static void ResendRecordedChecks()
     {
         var serverChecks = new HashSet<long>(ArchipelagoClient.Session.Locations.AllLocationsChecked);
@@ -1152,10 +1146,6 @@ public static class LocationHelper
         WinchCore.Log.Info($"Sending {missing.Count} location check(s) the server doesn't have yet");
         ArchipelagoClient.Session.Locations.CompleteLocationChecksAsync(missing.ToArray());
     }
-
-    /// <summary>
-    ///     False when not connected, so callers fall back to vanilla behavior.
-    /// </summary>
     public static bool HasThisLocationBeenChecked(string itemId)
     {
         if (!TryParseLocation(itemId, out var location))
@@ -1171,10 +1161,6 @@ public static class LocationHelper
 
         return ArchipelagoClient.Session.Locations.AllLocationsChecked.Contains(apLocationId);
     }
-
-    /// <summary>
-    ///     False when not connected, so callers fall back to vanilla behavior.
-    /// </summary>
     public static bool DoesApWorldContainLocation(string itemId)
     {
         if (!TryParseLocation(itemId, out var location))

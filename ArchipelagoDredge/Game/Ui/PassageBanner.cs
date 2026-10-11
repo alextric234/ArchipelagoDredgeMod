@@ -49,10 +49,6 @@ internal static class PassageBanner
         AnimatorField =
             AccessTools.FieldRefAccess<BannerUI, Animator>("animator");
 
-    /// <summary>
-    /// Returns false when DREDGE is already showing a normal banner.
-    /// In that case, do not overwrite it.
-    /// </summary>
     public static bool TryShow(BannersUI bannersUi, string titleText, string subtitleText, DredgeColorTypeEnum color)
     {
         if ((Object)bannersUi == null)
@@ -73,8 +69,6 @@ internal static class PassageBanner
         var titleLocalized = TitleLocalizedField(bannerUi);
         var subtitleLocalized = SubtitleLocalizedField(bannerUi);
 
-        // Disable the existing localization event before assigning raw prototype text.
-        // Replace these with your own localized string references later.
         titleLocalized.enabled = false;
         subtitleLocalized.enabled = false;
 
@@ -92,7 +86,6 @@ internal static class PassageBanner
         bannerUi.isShowing = true;
         AnimatorField(bannerUi).SetBool("showing", true);
 
-        // BannersUI.Update() now owns the normal hide animation.
         HoldTimeField(bannersUi) = BannerHoldSeconds;
 
         return true;

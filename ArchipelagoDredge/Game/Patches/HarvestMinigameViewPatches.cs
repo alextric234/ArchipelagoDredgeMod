@@ -129,11 +129,8 @@ public static class HarvestMinigameViewPatches
 
             if (LocationHelper.DoesApWorldContainLocation(locationToCheck) && !LocationHelper.HasThisLocationBeenChecked(locationToCheck))
             {
-                // The AP check replaces the item, so report it directly instead of raising Winch's
-                // catch/harvest events for an item the player never gets.
                 LocationCheckService.Report(locationToCheck);
                 __instance.currentPOI.OnHarvested(true);
-                // Vanilla SpawnItem raises the game's (argument-less) fish-caught event for every harvest.
                 GameEvents.Instance.TriggerFishCaught();
                 return false;
             }
@@ -142,18 +139,10 @@ public static class HarvestMinigameViewPatches
         }
         catch (Exception e)
         {
-            // Fall back to the normal harvest rather than throwing into the game.
             WinchCore.Log.Error($"Error in HarvestMinigameViewPatches.SpawnItem_Prefix: {e}");
             return true;
         }
     }
-
-    /// <summary>
-    ///     True if the player may harvest the spot's next item. <b>Also picks that item</b> when vanilla
-    ///     hasn't yet, storing it in <c>itemDataToHarvest</c> exactly as vanilla does later in
-    ///     RefreshHarvestTarget. The pick is random, so choosing it here is what makes the license check
-    ///     apply to the fish that will actually be caught.
-    /// </summary>
     private static bool ChooseItemAndCheckLicense(HarvestMinigameView view)
     {
         try

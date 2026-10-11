@@ -5,10 +5,6 @@ using ArchipelagoDredge.Utils;
 using Winch.Core;
 
 namespace ArchipelagoDredge.Game.Services;
-
-/// <summary>
-///     Grants boat upgrades through the game's <see cref="UpgradeManager" />.
-/// </summary>
 public static class UpgradeService
 {
     private const string IronRigHullUpgradeId = "tier-5-hull";
@@ -57,9 +53,6 @@ public static class UpgradeService
         }
     }
 
-    /// <summary>
-    ///     Gives the upgrade for free. Returns false if the game has no upgrade with that id.
-    /// </summary>
     public static bool AddUpgrade(string upgradeId)
     {
         var upgradeManager = GameManager.Instance.UpgradeManager;
@@ -74,7 +67,6 @@ public static class UpgradeService
         return true;
     }
 
-    // The seed must include the Iron Rig and the player must own it.
     private static bool CanGrantIronRigHull()
     {
         if (!ArchipelagoClient.SlotData.IncludeIronRigDLC)

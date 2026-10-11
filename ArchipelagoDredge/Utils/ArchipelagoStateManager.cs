@@ -22,9 +22,6 @@ public static class ArchipelagoStateManager
         return Path.Combine(Application.persistentDataPath, SaveFile, $"{SaveFile}-{slot}.json");
     }
 
-    /// <summary>
-    ///     Loads the state for the save slot being played. Creates a default state if none exists.
-    /// </summary>
     public static void Load(int slot)
     {
         try
@@ -39,9 +36,6 @@ public static class ArchipelagoStateManager
             SaveFilePath = path;
             var json = File.ReadAllText(SaveFilePath);
             StateData = JsonUtility.FromJson<ArchipelagoStateData>(json);
-            // The file is rewritten after every processed item, but the game save may be older (quit
-            // without saving, death screen). Go back to the values recorded at the last game save so
-            // the item index, hull tier and virtual items all match it.
             RevertStateData();
             ApplySavedSlotOptions();
             WinchCore.Log.Info($"Loaded Archipelago state for slot {slot} (last processed item index {StateData.LastProcessedIndex}, " +
@@ -54,9 +48,6 @@ public static class ArchipelagoStateManager
         }
     }
 
-    /// <summary>
-    ///     Starts a fresh state for a new game in this slot, replacing any leftover file.
-    /// </summary>
     public static void CreateNew(int slot)
     {
         try
@@ -135,10 +126,6 @@ public static class ArchipelagoStateManager
         return true;
     }
 
-    /// <summary>
-    ///     Locations checked in this save, by AP location name. Written as soon as a check happens and
-    ///     never reverted (AP checks only ever add up), so checks made offline survive a restart.
-    /// </summary>
     public static IReadOnlyList<string> CheckedLocations =>
         (IReadOnlyList<string>) StateData?.CheckedLocations ?? Array.Empty<string>();
 
@@ -199,10 +186,6 @@ public static class ArchipelagoStateManager
         return previousBinding;
     }
 
-    /// <summary>
-    ///     Saves what an offline session needs to keep following AP rules: the seed's options and the names
-    ///     of the AP items received so far. Call while connected.
-    /// </summary>
     public static void SaveSessionSnapshot(SlotData slotData, IEnumerable<string> receivedItemNames)
     {
         if (StateData == null)
@@ -222,14 +205,9 @@ public static class ArchipelagoStateManager
         SaveData();
     }
 
-    /// <summary>
-    ///     AP item names received as of the last snapshot; used for shop stock and research while offline.
-    /// </summary>
     public static IReadOnlyList<string> SavedReceivedItemNames =>
         (IReadOnlyList<string>) StateData?.ReceivedItemNames ?? Array.Empty<string>();
 
-    // Use the saved seed options until (and unless) a connect replaces them, so slot-dependent rules
-    // (passages, licences, DLC content) apply offline. An unbound save gets the all-off defaults.
     private static void ApplySavedSlotOptions()
     {
         var options = StateData?.SlotOptions ?? new SavedSlotOptions();
@@ -262,13 +240,9 @@ public class ArchipelagoStateData
 
     public List<string> ReceivedVirtualItemsSinceSave = new();
     public List<string> ReceivedVirtualItems = new();
-
-    // The multiworld this save is bound to; empty until the save first connects.
     public string Seed = "";
     public string SlotName = "";
     public List<string> CheckedLocations = new();
-
-    // Snapshot from the last connected session, so a bound save follows AP rules offline.
     public SavedSlotOptions SlotOptions = new();
     public List<string> ReceivedItemNames = new();
 }

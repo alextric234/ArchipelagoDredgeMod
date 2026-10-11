@@ -7,8 +7,6 @@ namespace ArchipelagoDredge.Game.Patches;
 [HarmonyPatch(typeof(ShopRestocker))]
 public class ShopRestockerPatches
 {
-    // For an AP save (connected, or bound to a multiworld), a refresh replaces everything with AP stock.
-    // Otherwise keep the vanilla "always keep in stock" items so the save behaves like a normal save.
     [HarmonyPrefix]
     [HarmonyPatch(nameof(ShopRestocker.TryRefreshShops))]
     public static void TryRefreshShopsPrefix(

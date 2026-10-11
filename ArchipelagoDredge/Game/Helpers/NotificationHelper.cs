@@ -11,8 +11,6 @@ namespace ArchipelagoDredge.Game.Helpers;
 internal static class NotificationHelper
 {
     private const float SecondsBetweenNotifications = 0.75f;
-
-    // Only touched on the main thread.
     private static readonly Queue<DredgeNotification> _messageQueue = new();
     private static float _nextNotificationTime;
 
@@ -67,17 +65,11 @@ internal static class NotificationHelper
         }
     }
 
-    /// <summary>
-    ///     Queues a notification; they're shown one at a time by <see cref="Update" />. Safe from any thread.
-    /// </summary>
     public static void TryToSendNotification(DredgeNotification notification)
     {
         MainThreadDispatcher.RunOnMainThread(() => _messageQueue.Enqueue(notification));
     }
 
-    /// <summary>
-    ///     Shows the next queued notification once the spacing delay has passed. Call every frame from the main thread.
-    /// </summary>
     public static void Update()
     {
         if (_messageQueue.Count == 0 || Time.unscaledTime < _nextNotificationTime)

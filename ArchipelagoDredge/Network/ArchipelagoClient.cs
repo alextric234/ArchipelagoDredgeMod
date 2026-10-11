@@ -48,7 +48,7 @@ public static class ArchipelagoClient
             return;
         }
 
-        Disconnect(); // Ensure clean state
+        Disconnect(); 
 
         var session = ArchipelagoSessionFactory.CreateSession(apHost, apPort);
         Session = session;
@@ -99,15 +99,11 @@ public static class ArchipelagoClient
 
     private static void OnMessageReceived(LogMessage message)
     {
-        // Runs on the socket thread, so hand the work to the main thread (it touches the terminal
-        // and game UI). Nothing here may throw: that would stop the library from dispatching the
-        // rest of the packets in the same websocket message.
         MainThreadDispatcher.Enqueue(() => ShowMessage(message));
     }
 
     private static void ShowMessage(LogMessage message)
     {
-        // The session may have closed between receiving the message and this frame.
         if (Session == null)
         {
             return;
@@ -123,7 +119,6 @@ public static class ArchipelagoClient
         }
     }
 
-    // A disconnect while ConnectAsync is awaiting replaces or clears Session; stop that connect attempt.
     private static void ThrowIfSuperseded(ArchipelagoSession session)
     {
         if (Session != session)
@@ -134,8 +129,6 @@ public static class ArchipelagoClient
 
     private static void OnErrorReceived(Exception e, string message)
     {
-        // Socket thread. Also raised for non-fatal errors (e.g. a handler throwing), so only treat it
-        // as a lost connection when the socket is actually down.
         WinchCore.Log.Warn($"Archipelago socket error: {message}");
         WinchCore.Log.Debug($"Archipelago socket error details: {e}");
 
@@ -148,7 +141,6 @@ public static class ArchipelagoClient
 
     private static void OnSocketClosed(string reason)
     {
-        // Socket thread. Only raised for a server-side close here: Disconnect() unsubscribes first.
         var session = Session;
         if (session != null)
         {
@@ -158,7 +150,6 @@ public static class ArchipelagoClient
 
     private static void OnConnectionLost(ArchipelagoSession session, string reason)
     {
-        // Ignore reports from a session that has already been replaced or torn down.
         if (Session != session)
         {
             return;
@@ -181,7 +172,6 @@ public static class ArchipelagoClient
         session.Socket.ErrorReceived -= OnErrorReceived;
         session.Socket.SocketClosed -= OnSocketClosed;
 
-        // Nothing to close if the socket already dropped or never opened.
         if (!session.Socket.Connected)
         {
             return;

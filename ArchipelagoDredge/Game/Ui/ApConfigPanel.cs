@@ -56,7 +56,6 @@ public class ApConfigPanel : MonoBehaviour
     {
         try
         {
-            // Refresh the fields when a setting changes elsewhere, e.g. in the mod menu.
             ApConfigHelper.Config.OnConfigValueChanged += OnConfigValueChanged;
         }
         catch (Exception ex)

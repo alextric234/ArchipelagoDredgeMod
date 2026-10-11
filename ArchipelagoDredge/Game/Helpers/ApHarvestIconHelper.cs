@@ -12,7 +12,6 @@ public static class ApHarvestIconHelper
     private const string ApIcon = "archipelago_icon";
     private const string AberrationApIcon = "aberration_archipelago_icon";
 
-    // One copy per (item, icon), so we don't instantiate a new ScriptableObject on every call.
     private static readonly Dictionary<(string itemId, string iconName), HarvestableItemData> IconItemCopies = new();
 
     /// <summary>
@@ -74,7 +73,6 @@ public static class ApHarvestIconHelper
 
     private static bool IsUncheckedApLocation(string id)
     {
-        // TryParseLocation first: most ids aren't AP locations, and the other two log each miss.
         return id != null &&
                LocationHelper.TryParseLocation(id, out _) &&
                LocationHelper.DoesApWorldContainLocation(id) &&

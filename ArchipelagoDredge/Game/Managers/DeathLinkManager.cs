@@ -17,13 +17,9 @@ public static class DeathLinkManager
     private static bool _hasPendingDeath;
     private static string _pendingDeathMessage;
 
-    // Main thread only: set while we are killing the player because of a received DeathLink.
     private static bool _isDyingFromDeathLink;
     private static string _deathScreenMessage;
 
-    /// <summary>
-    ///     Follows the DeathLink setting: a change from the mod menu or the config applies live while connected.
-    /// </summary>
     public static void Initialize()
     {
         try
@@ -92,10 +88,6 @@ public static class DeathLinkManager
         }
     }
 
-    /// <summary>
-    ///     Called every frame on the main thread. Kills the player once for a received DeathLink,
-    ///     or drops it if the player can't die right now (menu, death screen, god mode).
-    /// </summary>
     public static void ProcessPendingDeathLink()
     {
         if (!TryConsumePendingDeathLink(out var deathLinkMessage))
@@ -114,7 +106,6 @@ public static class DeathLinkManager
         _deathScreenMessage = deathLinkMessage;
         try
         {
-            // Synchronous all the way to the death popup, which reads _deathScreenMessage.
             player.Die();
         }
         finally

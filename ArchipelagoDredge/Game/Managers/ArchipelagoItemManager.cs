@@ -4,7 +4,6 @@ using System.Linq;
 using Archipelago.MultiClient.Net.Colors;
 using ArchipelagoDredge.Game.Helpers;
 using ArchipelagoDredge.Game.Models;
-using ArchipelagoDredge.Game.Services;
 using ArchipelagoDredge.Network;
 using ArchipelagoDredge.Utils;
 using CommandTerminal;
@@ -105,8 +104,6 @@ public static class ArchipelagoItemManager
         }
     }
 
-    // Skips an item this version of the mod can't give (e.g. the APWorld added or renamed it),
-    // so the items after it are still delivered.
     private static void SkipUnknownItem(string apItemName, int index)
     {
         WinchCore.Log.Warn($"Skipping unknown item '{apItemName}' at index {index}; the mod may be out of date.");

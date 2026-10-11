@@ -103,7 +103,6 @@ public static class ArchipelagoCommandManager
         }
         catch (OperationCanceledException) when (attempt != _connectAttempt)
         {
-            // Disconnect() was called while connecting; it has already cleaned up and notified.
             WinchCore.Log.Info("Connection attempt cancelled");
         }
         catch (Exception e)
@@ -136,12 +135,8 @@ public static class ArchipelagoCommandManager
             DredgeColorTypeEnum.NEUTRAL);
     }
 
-    /// <summary>
-    ///     Called on the main thread when the server closes the connection or the socket drops.
-    /// </summary>
     public static void HandleConnectionLost(string reason)
     {
-        // While connecting, TryConnect sees the failure itself.
         if (ArchipelagoClient.State != ConnectionState.Connected)
         {
             return;
@@ -159,9 +154,7 @@ public static class ArchipelagoCommandManager
 
     private static void TearDown()
     {
-        // Invalidates any connect attempt still in flight.
         _connectAttempt++;
-        // Keep the latest received items for offline play before the session goes away.
         SessionStartService.SaveSessionSnapshot();
         ArchipelagoClient.Disconnect();
         ArchipelagoClient.State = ConnectionState.Disconnected;

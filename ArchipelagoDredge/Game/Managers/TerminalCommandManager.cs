@@ -17,9 +17,6 @@ public static class TerminalCommandManager
         Terminal.Shell.AddCommand("ap", ArchipelagoCommands, 1, int.MaxValue, "commands for archipelago multiworld");
     }
 
-    /// <summary>
-    ///     Writes to the in-game terminal. Safe from any thread; off the main thread it's queued for the next frame.
-    /// </summary>
     public static void LogMessage(TerminalLogType logType, string message)
     {
         MainThreadDispatcher.RunOnMainThread(() => Terminal.Log(logType, message));

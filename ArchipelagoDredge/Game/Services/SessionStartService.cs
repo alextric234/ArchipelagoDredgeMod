@@ -10,16 +10,8 @@ using Winch.Core;
 using Winch.Util;
 
 namespace ArchipelagoDredge.Game.Services;
-
-/// <summary>
-///     Game-side setup to run each time an AP session connects.
-/// </summary>
 public static class SessionStartService
 {
-    /// <summary>
-    ///     Call on the main thread once the connection is up. Never throws: a failure here is logged
-    ///     but doesn't drop a working connection.
-    /// </summary>
     public static void OnSessionStarted()
     {
         try
@@ -34,9 +26,7 @@ public static class SessionStartService
             {
                 saveData.WorldPhase = 1;
             }
-
-            // Hulls arrive as AP items, so the player may never have the shipwright conversation that
-            // normally opens the dry docks; open them, and the shipwright, so slot upgrades can still be bought.
+            
             saveData.availableDestinations.Add("destination.gm-shipwright");
             saveData.availableDestinations.Add("destination.gm-shipwright-upgrades");
             saveData.availableDestinations.Add("destination.tm-upgrades");
@@ -56,12 +46,6 @@ public static class SessionStartService
                 "Archipelago session setup failed; some features may not work. See the log for details.");
         }
     }
-
-    /// <summary>
-    ///     Saves the current session's seed options and received items, so the save keeps following AP
-    ///     rules offline. Call on connect and just before the session is torn down (the socket may already
-    ///     be closed then, but the session still holds the received items).
-    /// </summary>
     public static void SaveSessionSnapshot()
     {
         try
@@ -83,8 +67,6 @@ public static class SessionStartService
         }
     }
 
-    // Binds the save to this room on its first connect. A save bound to a different seed or slot is
-    // rebound with a warning rather than blocked.
     private static void BindSaveToRoom()
     {
         var session = ArchipelagoClient.Session;
@@ -105,11 +87,6 @@ public static class SessionStartService
             "This save was used with a different multiworld", DredgeColorTypeEnum.WARNING);
     }
 
-    /// <summary>
-    ///     Shows every fish's name, picture and value in the encyclopedia, which needs a caught count and a
-    ///     sold count above zero. Only fills counters that are still zero, so reconnecting doesn't inflate
-    ///     them (the <c>ency.all</c> debug command used before added one to each on every connect).
-    /// </summary>
     private static void RevealEncyclopedia()
     {
         var saveData = GameManager.Instance.SaveData;

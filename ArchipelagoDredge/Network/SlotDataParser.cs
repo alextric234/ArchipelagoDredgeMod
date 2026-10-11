@@ -6,9 +6,6 @@ using Winch.Core;
 
 namespace ArchipelagoDredge.Network;
 
-/// <summary>
-///     Reads slot-data values without caring whether the APWorld sent them as an int, a bool or a string.
-/// </summary>
 public static class SlotDataParser
 {
     public static bool GetBool(Dictionary<string, object> slotData, string key, bool defaultValue = false)

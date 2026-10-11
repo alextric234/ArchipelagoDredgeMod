@@ -7,9 +7,7 @@ using UnityEngine;
 namespace ArchipelagoDredge.Game.Managers;
 public static class PassageManager
 {
-    // A zone's attempt count resets after this long without entering it.
     private const float ViolationWindowSeconds = 60f;
-    // Attempts within the window that show the warning banner; later ones only push the boat back.
     private const int WarningsPerWindow = 2;
     private const float ZoneCheckIntervalSeconds = 0.25f;
     public const float PushSpeed = 30f;
@@ -22,7 +20,6 @@ public static class PassageManager
     public const string OpenOceanPassageItemKey = "passage.open_ocean";
     public const string PaleReachPassageItemKey = "passage.pale_reach";
 
-    // Item names must match the APWorld's passage items.
     private static readonly IReadOnlyDictionary<ZoneEnum, PassageDefinition> Passages =
         new Dictionary<ZoneEnum, PassageDefinition>
         {
@@ -86,7 +83,6 @@ public static class PassageManager
 
     private static bool HasPassageFor(ZoneEnum zone)
     {
-        // Zones without a passage (The Marrows, none, anything new) are always open.
         return !Passages.TryGetValue(zone, out var passage) ||
                ArchipelagoStateManager.HasVirtualItem(passage.StateKey);
     }
