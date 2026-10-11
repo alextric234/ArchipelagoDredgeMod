@@ -37,8 +37,12 @@ public static class ArchipelagoStateManager
             SaveFilePath = path;
             var json = File.ReadAllText(SaveFilePath);
             StateData = JsonUtility.FromJson<ArchipelagoStateData>(json);
-            StateData.LastProcessedIndex = StateData.LastProcessedIndexSinceSave;
-            WinchCore.Log.Info($"Loaded Archipelago state for slot {slot} (last processed item index {StateData.LastProcessedIndex})");
+            // The file is rewritten after every processed item, but the game save may be older (quit
+            // without saving, death screen). Go back to the values recorded at the last game save so
+            // the item index, hull tier and virtual items all match it.
+            RevertStateData();
+            WinchCore.Log.Info($"Loaded Archipelago state for slot {slot} (last processed item index {StateData.LastProcessedIndex}, " +
+                               $"hull tier {StateData.CurrentHullUpgrade}, {StateData.ReceivedVirtualItems.Count} virtual item(s))");
         }
         catch (Exception ex)
         {
@@ -98,7 +102,7 @@ public static class ArchipelagoStateManager
     {
         StateData.LastProcessedIndex = StateData.LastProcessedIndexSinceSave;
         StateData.CurrentHullUpgrade = StateData.HullUpgradeSinceSave;
-        StateData.ReceivedVirtualItems = StateData.ReceivedVirtualItemsSinceSave.ToList();
+        StateData.ReceivedVirtualItems = StateData.ReceivedVirtualItemsSinceSave?.ToList() ?? new List<string>();
     }
 
     public static bool HasVirtualItem(string itemKey)
