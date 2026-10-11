@@ -1,5 +1,7 @@
-﻿using ArchipelagoDredge.Game.Helpers;
+﻿using System;
+using ArchipelagoDredge.Game.Helpers;
 using HarmonyLib;
+using Winch.Core;
 
 namespace ArchipelagoDredge.Game.Patches;
 
@@ -10,19 +12,29 @@ public static class GameEventsPatches
     [HarmonyPatch(nameof(GameEvents.TriggerResearchCompleted))]
     public static void TriggerResearchCompletedPre(SpatialItemData spatialItemData)
     {
-        if (spatialItemData.id == "net1")
+        try
         {
-            return;
-        }
-        LocationHelper.TryParseLocation(spatialItemData.id, out var location);
+            if (spatialItemData.id == "net1")
+            {
+                return;
+            }
 
-        if (LocationHelper.ResearchLocations.Contains(location))
-        {
-            var researchedLocationName = LocationHelper.locationNames[location] + " Researched";
-            var researchedLocation = LocationHelper.NameToLocation(researchedLocationName);
-            var apLocationId = LocationHelper.locationToArchipelagoId[researchedLocation];
-            LocationHelper.ReportLocationCheck(apLocationId);
+            if (LocationHelper.TryParseLocation(spatialItemData.id, out var location) &&
+                LocationHelper.ResearchLocations.Contains(location))
+            {
+                var researchedLocationName = LocationHelper.locationNames[location] + " Researched";
+                if (LocationHelper.locationNamesReversed.TryGetValue(researchedLocationName, out var researchedLocation) &&
+                    LocationHelper.TryGetArchipelagoId(researchedLocation, out var apLocationId))
+                {
+                    LocationHelper.ReportLocationCheck(apLocationId);
+                }
+            }
+
+            LocationHelper.ReportLocationCheck(spatialItemData.id);
         }
-        LocationHelper.ReportLocationCheck(spatialItemData.id);
+        catch (Exception e)
+        {
+            WinchCore.Log.Error($"Error sending research check for {spatialItemData?.id}: {e}");
+        }
     }
 }

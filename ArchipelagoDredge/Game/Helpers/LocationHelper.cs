@@ -1079,15 +1079,28 @@ public static class LocationHelper
 
     public static void ReportLocationCheck(string locationName)
     {
-        if (TryParseLocation(locationName, out var location))
-        {
-            var apLocationId = locationToArchipelagoId[location];
-            ReportLocationCheck(apLocationId);
-        }
-        else
+        if (!TryParseLocation(locationName, out var location))
         {
             WinchCore.Log.Error($"Could not find location: {locationName}");
+            return;
         }
+
+        if (!TryGetArchipelagoId(location, out var apLocationId))
+        {
+            WinchCore.Log.Warn($"No Archipelago id for location {location} (not connected, or not in this APWorld)");
+            return;
+        }
+
+        ReportLocationCheck(apLocationId);
+    }
+
+    /// <summary>
+    ///     Looks up the AP id for a location. False when not connected yet or the APWorld has no such location.
+    /// </summary>
+    public static bool TryGetArchipelagoId(Location location, out long apLocationId)
+    {
+        apLocationId = 0;
+        return locationToArchipelagoId != null && locationToArchipelagoId.TryGetValue(location, out apLocationId);
     }
 
     public static void FlushPendingLocation()
