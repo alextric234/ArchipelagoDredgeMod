@@ -17,6 +17,8 @@ namespace ArchipelagoDredge.Game.Managers;
 
 public static class ArchipelagoItemManager
 {
+    private const int CrabPotStockCount = 3;
+
     public static void GetItem()
     {
         try
@@ -218,8 +220,9 @@ public static class ArchipelagoItemManager
                 }
                 shopItems.Add(item);
                 var dredgeItemId = ItemNames.ItemToDredgeId(item);
-                var dredgeItem = ItemUtil.GetItemData(dredgeItemId);
-                shopDredgeItems.Add((SpatialItemData)dredgeItem);
+                var dredgeItem = (SpatialItemData)ItemUtil.GetItemData(dredgeItemId);
+                var copies = dredgeItem.itemSubtype == ItemSubtype.POT ? CrabPotStockCount : 1;
+                shopDredgeItems.AddRange(Enumerable.Repeat(dredgeItem, copies));
             }
         }
 
