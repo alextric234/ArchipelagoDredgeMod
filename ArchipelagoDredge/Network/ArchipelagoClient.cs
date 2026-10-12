@@ -6,6 +6,7 @@ using Archipelago.MultiClient.Net.Enums;
 using Archipelago.MultiClient.Net.MessageLog.Messages;
 using ArchipelagoDredge.Game.Helpers;
 using ArchipelagoDredge.Game.Managers;
+using ArchipelagoDredge.Game.Tracker;
 using ArchipelagoDredge.Network.Enums;
 using ArchipelagoDredge.Utils;
 using CommandTerminal;
@@ -100,6 +101,8 @@ public static class ArchipelagoClient
                            $"add_passage_items={SlotData.AddPassageItems}, " +
                            $"progressive_aberration_chance_items={SlotData.ProgressiveAberrationChanceItems}, " +
                            $"logical_nets={SlotData.LogicalNets}, require_boat_performance={SlotData.RequireBoatPerformance}");
+
+        TrackerService.TrackHints(session);
     }
 
     private static void OnMessageReceived(LogMessage message)

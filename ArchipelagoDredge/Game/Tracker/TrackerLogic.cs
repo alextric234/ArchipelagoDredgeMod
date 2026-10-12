@@ -15,7 +15,7 @@ public class TrackerOptions
 
 /// <summary>
 ///     Port of the apworld's rules.py and region graph. Given received items, works out which locations are in logic.
-///     Keep in step with the apworld; "ap tracker verify" compares the two.
+///     Keep in step with the apworld; tools/LogicParity compares the two.
 /// </summary>
 public class TrackerLogic
 {

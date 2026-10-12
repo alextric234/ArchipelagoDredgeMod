@@ -8,6 +8,7 @@
   "alextric234.archipelagodredge.password.title": "Password",
   "alextric234.archipelagodredge.password.tooltip": "Optional password if the server requires one.",
   "alextric234.archipelagodredge.deathlink.title": "Enable DeathLink",
+  "alextric234.archipelagodredge.tracker.tab": "Archipelago",
   "alextric234.archipelagodredge.boosted-aberrations.title": "Boosted Aberration Chance",
   "alextric234.archipelagodredge.boosted-aberrations.tooltip": "Use the aberration chance from Progressive Aberration Chance and Guaranteed Aberrations items. Saved with each AP save.",
   "alextric234.archipelagodredge.poi-label.missing-license.gale-cliffs": "Missing Gale Cliffs Fishing License",
