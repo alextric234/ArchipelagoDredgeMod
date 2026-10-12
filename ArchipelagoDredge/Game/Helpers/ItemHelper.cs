@@ -457,6 +457,10 @@ public enum Item
     TRAP_LIGHTS_OUT,
     TRAP_CARGO_SCRAMBLE,
     TRAP_REVERSE_CONTROLS,
+    ABILITY_HASTE,
+    ABILITY_MANIFEST,
+    ABILITY_BANISH,
+    ABILITY_ATROPHY,
     RESEARCHED_EVENT_ROD4,
     RESEARCHED_EVENT_ROD12,
     RESEARCHED_EVENT_ROD13,
@@ -932,6 +936,10 @@ public static class ItemNames
         {Item.TRAP_LIGHTS_OUT, "Lights Out Trap"},
         {Item.TRAP_CARGO_SCRAMBLE, "Cargo Scramble Trap"},
         {Item.TRAP_REVERSE_CONTROLS, "Reverse Controls Trap"},
+        {Item.ABILITY_HASTE, "Haste"},
+        {Item.ABILITY_MANIFEST, "Manifest"},
+        {Item.ABILITY_BANISH, "Banish"},
+        {Item.ABILITY_ATROPHY, "Atrophy"},
         {Item.RESEARCHED_EVENT_ROD4, "Flexible Fishing Pole Researched"},
         {Item.RESEARCHED_EVENT_ROD12, "Heat-Resistant Line Researched"},
         {Item.RESEARCHED_EVENT_ROD13, "Anti-Tangle Line Researched"},
@@ -949,6 +957,15 @@ public static class ItemNames
         {Item.RESEARCHED_EVENT_POT6, "Massive Crab Pot Researched"},
         {Item.RESEARCHED_EVENT_NET2, "Improved Trawl Net Researched"},
         {Item.RESEARCHED_EVENT_5, "Large Trawl Net Researched"}
+    };
+
+    // The Collector's abilities, by the id the game unlocks them with.
+    public static readonly IReadOnlyDictionary<Item, string> AbilityIds = new Dictionary<Item, string>
+    {
+        [Item.ABILITY_HASTE] = "haste",
+        [Item.ABILITY_MANIFEST] = "manifest",
+        [Item.ABILITY_BANISH] = "banish",
+        [Item.ABILITY_ATROPHY] = "atrophy"
     };
 
     public static readonly IReadOnlyList<Item> ShopItems =

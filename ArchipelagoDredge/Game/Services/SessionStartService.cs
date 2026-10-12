@@ -41,7 +41,7 @@ public static class SessionStartService
             LocationHelper.LoadArchipelagoIds();
             RemoveCheckedRelicPois();
             LocationHelper.ReconcileArchipelagoChecks();
-            QuestManagerPatches.OfferPursuitsWithoutPrerequisites();
+            QuestManagerPatches.PreparePursuits();
             LocationHelper.ResendRecordedChecks();
             ArchipelagoItemManager.RestockShops();
         }

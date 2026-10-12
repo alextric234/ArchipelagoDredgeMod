@@ -256,7 +256,9 @@ public class TrackerLogic
         var hasRod = location.CanCatchRod && ToolsFor(catchType, "Rod").Any(CanEquip);
         var allowNetLogic = location.CanCatchNet && (!location.CanCatchRod || options.LogicalNets);
         var hasNet = allowNetLogic && ToolsFor(catchType, "Net").Any(CanEquip);
-        return hasRod || hasNet;
+        // Atrophy harvests a whole fishing spot without any tackle.
+        var hasAtrophy = location.CanCatchRod && Has("Atrophy");
+        return hasRod || hasNet || hasAtrophy;
     }
 
     private static string[] ToolsFor(string catchType, string group)

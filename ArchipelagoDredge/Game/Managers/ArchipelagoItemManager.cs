@@ -54,6 +54,14 @@ public static class ArchipelagoItemManager
                 return;
             }
 
+            if (ItemNames.AbilityIds.TryGetValue(item, out var abilityId))
+            {
+                GameManager.Instance.PlayerAbilities.UnlockAbility(abilityId);
+                ArchipelagoStateManager.SetLastProcessedIndex(indexOfItemToProcess);
+                UpgradeEquipped($"{apItem.ItemName} unlocked");
+                return;
+            }
+
             if (ItemNames.VirtualItems.Contains(item))
             {
                 ReceiveVirtualItem(apItem.ItemName);

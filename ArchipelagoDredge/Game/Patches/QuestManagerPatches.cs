@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using ArchipelagoDredge.Game.Helpers;
 using ArchipelagoDredge.Game.Models;
 using ArchipelagoDredge.Utils;
@@ -12,6 +13,10 @@ namespace ArchipelagoDredge.Game.Patches;
 public class QuestManagerPatches
 {
     private const string APlaceToRestQuestId = "Quest_APlaceToRest";
+    private const string StrangeFishQuestId = "Quest_StrangeFish";
+    private const string HandkerchiefId = "handkerchief";
+
+    private static bool isPreparingPursuits;
 
     private sealed class Rollback(string questId, string failingStepId, string pickupStepId, string message)
     {
@@ -84,30 +89,93 @@ public class QuestManagerPatches
     [HarmonyPatch("EvaluateUnavailableQuests")]
     public static void EvaluateUnavailableQuests_Postfix()
     {
-        OfferPursuitsWithoutPrerequisites();
+        PreparePursuits();
     }
 
     /// <summary>
-    ///     A Place to Rest is normally offered only after Strange Fish, which needs an aberration. In AP saves it's
-    ///     offered from the start so its check only needs the Dredge Crane.
+    ///     Removes the aberration that pursuits normally hinge on. Strange Fish (Grotesque Fish) needs an aberrant fish
+    ///     traded to the fishmonger for a handkerchief before the Collector will meet you, and A Place to Rest waits for
+    ///     it. In AP saves those steps are done for you and the handkerchief handed over, so meeting the Collector at
+    ///     Outcast Isle is all Grotesque Fish needs, and A Place to Rest is offered from the start.
     /// </summary>
-    public static void OfferPursuitsWithoutPrerequisites()
+    public static void PreparePursuits()
     {
+        var questManager = GameManager.Instance?.QuestManager;
+        if (!ApSave.IsActive || questManager == null || isPreparingPursuits)
+        {
+            return;
+        }
+
+        // Offering and completing steps raise quest events that come back through EvaluateUnavailableQuests.
+        isPreparingPursuits = true;
         try
         {
-            var questManager = GameManager.Instance?.QuestManager;
-            if (!ApSave.IsActive || questManager == null ||
-                questManager.GetQuestStateById(APlaceToRestQuestId) != QuestState.UNAVAILABLE)
+            if (questManager.GetQuestStateById(APlaceToRestQuestId) == QuestState.UNAVAILABLE)
             {
-                return;
+                WinchCore.Log.Info($"Offering {APlaceToRestQuestId} without Strange Fish");
+                questManager.OfferQuest(APlaceToRestQuestId);
             }
 
-            WinchCore.Log.Info($"Offering {APlaceToRestQuestId} without Strange Fish");
-            questManager.OfferQuest(APlaceToRestQuestId);
+            SkipToCollectorMeeting(questManager);
         }
         catch (Exception e)
         {
-            WinchCore.Log.Error($"Error offering pursuits: {e}");
+            WinchCore.Log.Error($"Error preparing pursuits: {e}");
         }
+        finally
+        {
+            isPreparingPursuits = false;
+        }
+    }
+
+    private static void SkipToCollectorMeeting(QuestManager questManager)
+    {
+        if (questManager.GetQuestStateById(StrangeFishQuestId) == QuestState.UNAVAILABLE)
+        {
+            questManager.OfferQuest(StrangeFishQuestId);
+        }
+
+        if (questManager.GetIsQuestStepActive("StrangeFish_Catch"))
+        {
+            questManager.CompleteQuestStep("StrangeFish_Catch", suppressNotifications: true);
+        }
+
+        if (questManager.GetIsQuestStepActive("StrangeFish_Fishmonger"))
+        {
+            questManager.CompleteQuestStep("StrangeFish_Fishmonger", suppressNotifications: true);
+            GameManager.Instance.SaveData.AddMapMarker("blackstone-isle");
+        }
+
+        if (questManager.GetIsQuestStepActive("StrangeFish_CollectorMeet") && !HasHandkerchief())
+        {
+            GiveHandkerchief();
+        }
+    }
+
+    private static bool HasHandkerchief()
+    {
+        var saveData = GameManager.Instance.SaveData;
+        return saveData.Inventory.spatialItems.Any(i => i.id == HandkerchiefId) ||
+               saveData.Storage.spatialItems.Any(i => i.id == HandkerchiefId);
+    }
+
+    private static void GiveHandkerchief()
+    {
+        var saveData = GameManager.Instance.SaveData;
+        var item = GameManager.Instance.ItemManager.GetItemDataById<SpatialItemData>(HandkerchiefId);
+        var grid = saveData.Inventory.FindPositionForObject(item, out _) ? saveData.Inventory
+            : saveData.Storage.FindPositionForObject(item, out _) ? saveData.Storage
+            : null;
+        if (grid == null)
+        {
+            WinchCore.Log.Warn("No room for the handkerchief; trying again later");
+            return;
+        }
+
+        GameManager.Instance.ItemManager.AddItemById(HandkerchiefId, grid);
+        NotificationHelper.TryToSendNotification(new DredgeNotification
+        {
+            Message = "Take the handkerchief to the Collector at Outcast Isle."
+        });
     }
 }

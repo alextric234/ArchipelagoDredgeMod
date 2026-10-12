@@ -502,7 +502,13 @@ public enum Location
     PURSUIT_FIGURE_IN_RED,
     PURSUIT_FIGURE_IN_WHITE,
     PURSUIT_RESEARCH_ASSISTANT,
-    PURSUIT_A_PLACE_TO_REST
+    PURSUIT_A_PLACE_TO_REST,
+    PURSUIT_GROTESQUE_FISH,
+    COLLECTOR_ORNATE_KEY,
+    COLLECTOR_RUSTED_MUSIC_BOX,
+    COLLECTOR_JEWEL_ENCRUSTED_BAND,
+    COLLECTOR_SHIMMERING_NECKLACE,
+    COLLECTOR_ANTIQUE_POCKET_WATCH
 }
 
 public static class LocationHelper
@@ -998,15 +1004,22 @@ public static class LocationHelper
         { Location.PURSUIT_FIGURE_IN_RED, "Figure in Red" },
         { Location.PURSUIT_FIGURE_IN_WHITE, "Figure in White" },
         { Location.PURSUIT_RESEARCH_ASSISTANT, "Research Assistant" },
-        { Location.PURSUIT_A_PLACE_TO_REST, "A Place to Rest" }
+        { Location.PURSUIT_A_PLACE_TO_REST, "A Place to Rest" },
+        { Location.PURSUIT_GROTESQUE_FISH, "Grotesque Fish" },
+        { Location.COLLECTOR_ORNATE_KEY, "The Collector - Ornate Key" },
+        { Location.COLLECTOR_RUSTED_MUSIC_BOX, "The Collector - Rusted Music Box" },
+        { Location.COLLECTOR_JEWEL_ENCRUSTED_BAND, "The Collector - Jewel Encrusted Band" },
+        { Location.COLLECTOR_SHIMMERING_NECKLACE, "The Collector - Shimmering Necklace" },
+        { Location.COLLECTOR_ANTIQUE_POCKET_WATCH, "The Collector - Antique Pocket Watch" }
     };
 
     /// <summary>
-    ///     The pursuit or character that hands out each research book. Every book has one vanilla source, and the
-    ///     book itself is an AP item, so in AP saves giving the book becomes the check.
+    ///     Items dialogue hands out that are AP items, by the pursuit or character that gives them. Each has one vanilla
+    ///     source, so in AP saves giving the item becomes the check.
     /// </summary>
-    public static readonly IReadOnlyDictionary<string, Location> BookRewardLocations = new Dictionary<string, Location>
+    public static readonly IReadOnlyDictionary<string, Location> DialogueRewardLocations = new Dictionary<string, Location>
     {
+        { "dredge1", Location.PURSUIT_GROTESQUE_FISH },
         { "book-fishing-1", Location.GIFT_FISHMONGER },
         { "book-speed-1", Location.GIFT_SHIPWRIGHT },
         { "book-sanity-1", Location.GIFT_LITTLE_MARROW_TRADER },
@@ -1022,11 +1035,17 @@ public static class LocationHelper
         { "book-equip-1", Location.PURSUIT_A_PLACE_TO_REST }
     };
 
-    // The Builder hands over his book only once his house is built, days after the pursuit ends, so the check is
-    // sent when the escort finishes.
+    // Pursuit steps that send a check. The Builder hands over her book only once her house is built, days after the
+    // pursuit ends, so A Place to Rest is sent when the escort finishes.
     private static readonly IReadOnlyDictionary<string, Location> QuestStepLocations = new Dictionary<string, Location>
     {
-        { "APlaceToRest_Escort", Location.PURSUIT_A_PLACE_TO_REST }
+        { "APlaceToRest_Escort", Location.PURSUIT_A_PLACE_TO_REST },
+        { "StrangeFish_CollectorAgree", Location.PURSUIT_GROTESQUE_FISH },
+        { "RelicSub1_Return", Location.COLLECTOR_ORNATE_KEY },
+        { "RelicSub2_Return", Location.COLLECTOR_RUSTED_MUSIC_BOX },
+        { "RelicSub3_Return", Location.COLLECTOR_JEWEL_ENCRUSTED_BAND },
+        { "RelicSub4_Return", Location.COLLECTOR_SHIMMERING_NECKLACE },
+        { "RelicSub5_Return", Location.COLLECTOR_ANTIQUE_POCKET_WATCH }
     };
 
     public static bool TryGetQuestStepLocation(string questStepId, out Location location)

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using ArchipelagoDredge.Game.Helpers;
 using ArchipelagoDredge.Network;
 using ArchipelagoDredge.Utils;
@@ -18,13 +19,13 @@ public class DredgeDialogueRunnerPatches
     {
         try
         {
-            if (!ApSave.IsActive || !LocationHelper.BookRewardLocations.TryGetValue(id, out var location) ||
+            if (!ApSave.IsActive || !LocationHelper.DialogueRewardLocations.TryGetValue(id, out var location) ||
                 !IsInSeed(location))
             {
                 return true;
             }
 
-            WinchCore.Log.Info($"Pursuit reward {id} withheld; sending {LocationHelper.LocationNames[location]} instead");
+            WinchCore.Log.Info($"Dialogue reward {id} withheld; sending {LocationHelper.LocationNames[location]} instead");
             LocationHelper.ReportLocationCheck(location);
             return false;
         }
@@ -33,6 +34,20 @@ public class DredgeDialogueRunnerPatches
             WinchCore.Log.Error($"Error in DredgeDialogueRunnerPatches.AddItemById_Prefix: {e}");
             return true;
         }
+    }
+
+    // The Collector's abilities are AP items in AP saves.
+    [HarmonyPrefix]
+    [HarmonyPatch(nameof(DredgeDialogueRunner.UnlockAbility))]
+    public static bool UnlockAbility_Prefix(string abilityName)
+    {
+        if (!ApSave.IsActive || !ItemNames.AbilityIds.Values.Contains(abilityName))
+        {
+            return true;
+        }
+
+        WinchCore.Log.Info($"Ability {abilityName} withheld; it comes from the multiworld");
+        return false;
     }
 
     // Without the Pale Reach in the seed its book isn't an AP item, so the game should still hand it out.
