@@ -1009,6 +1009,13 @@ public static class ItemNames
         Item.VIRTUAL_PASSAGE_PALE_REACH
     ];
 
+    public static readonly IReadOnlyList<Item> IcebreakerParts =
+    [
+        Item.QUEST_ICEBREAKER_1,
+        Item.QUEST_ICEBREAKER_2,
+        Item.QUEST_ICEBREAKER_3
+    ];
+
     public static readonly IReadOnlyDictionary<string, Item> ItemsByName =
         Names.ToDictionary(name => name.Value, name => name.Key);
 

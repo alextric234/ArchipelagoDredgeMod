@@ -70,6 +70,12 @@ public static class ArchipelagoItemManager
                 return;
             }
 
+            if (ItemNames.IcebreakerParts.Contains(item) && GameManager.Instance.SaveData.GetIsIcebreakerEquipped())
+            {
+                ArchipelagoStateManager.SetLastProcessedIndex(indexOfItemToProcess);
+                return;
+            }
+
             if (GameManager.Instance.GridManager.IsCurrentlyHoldingObject())
             {
                 return;
