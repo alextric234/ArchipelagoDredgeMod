@@ -111,6 +111,11 @@ public static class FishingLicenseManager
             return true;
         }
 
+        if (zone == ZoneEnum.PALE_REACH && !ArchipelagoClient.SlotData.IncludePaleReachDLC)
+        {
+            return true;
+        }
+
         if (FishingLicenses.TryGetValue(zone, out var license))
         {
             return ArchipelagoStateManager.HasVirtualItem(license.StateKey);

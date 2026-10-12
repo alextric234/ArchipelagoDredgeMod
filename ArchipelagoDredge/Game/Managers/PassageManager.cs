@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using ArchipelagoDredge.Game.Ui;
+using ArchipelagoDredge.Network;
 using ArchipelagoDredge.Utils;
 using UnityEngine;
 
@@ -83,6 +84,11 @@ public static class PassageManager
 
     private static bool HasPassageFor(ZoneEnum zone)
     {
+        if (zone == ZoneEnum.PALE_REACH && !ArchipelagoClient.SlotData.IncludePaleReachDLC)
+        {
+            return true;
+        }
+
         return !Passages.TryGetValue(zone, out var passage) ||
                ArchipelagoStateManager.HasVirtualItem(passage.StateKey);
     }
