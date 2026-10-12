@@ -74,6 +74,11 @@ public static class TerminalCommandManager
             case "aberrations":
                 AberrationsCommand(commandArgs);
                 break;
+#if DEBUG
+            case "trap":
+                TrapDebugCommands.Run(commandArgs, Print);
+                break;
+#endif
             default:
                 Print(TerminalLogType.Error, $"Unknown command '{command}'. Type 'ap help' for the list.");
                 break;

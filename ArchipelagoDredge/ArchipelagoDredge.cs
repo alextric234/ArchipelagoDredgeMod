@@ -48,6 +48,7 @@ public class ArchipelagoDredge : MonoBehaviour
         try
         {
             NotificationHelper.Update();
+            EventTrapQueue.Update();
 
 #if DEBUG
             if (Input.GetKeyDown(KeyCode.F4))
