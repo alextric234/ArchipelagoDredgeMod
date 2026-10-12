@@ -193,14 +193,11 @@ public static class ArchipelagoStateManager
             return;
         }
 
-        StateData.SlotOptions = new SavedSlotOptions
-        {
-            DeathLink = slotData.DeathLink,
-            IncludeIronRigDLC = slotData.IncludeIronRigDLC,
-            IncludePaleReachDLC = slotData.IncludePaleReachDLC,
-            AddFishingLicenses = slotData.AddFishingLicenses,
-            AddPassageItems = slotData.AddPassageItems
-        };
+        StateData.SlotDeathLink = slotData.DeathLink;
+        StateData.SlotIncludeIronRigDLC = slotData.IncludeIronRigDLC;
+        StateData.SlotIncludePaleReachDLC = slotData.IncludePaleReachDLC;
+        StateData.SlotAddFishingLicenses = slotData.AddFishingLicenses;
+        StateData.SlotAddPassageItems = slotData.AddPassageItems;
         StateData.ReceivedItemNames = receivedItemNames.ToList();
         SaveData();
     }
@@ -210,24 +207,14 @@ public static class ArchipelagoStateManager
 
     private static void ApplySavedSlotOptions()
     {
-        var options = StateData?.SlotOptions ?? new SavedSlotOptions();
+        var state = StateData ?? new ArchipelagoStateData();
         ArchipelagoClient.SlotData = new SlotData(
-            options.DeathLink,
-            options.IncludeIronRigDLC,
-            options.IncludePaleReachDLC,
-            options.AddFishingLicenses,
-            options.AddPassageItems);
+            state.SlotDeathLink,
+            state.SlotIncludeIronRigDLC,
+            state.SlotIncludePaleReachDLC,
+            state.SlotAddFishingLicenses,
+            state.SlotAddPassageItems);
     }
-}
-
-[Serializable]
-public class SavedSlotOptions
-{
-    public bool DeathLink;
-    public bool IncludeIronRigDLC;
-    public bool IncludePaleReachDLC;
-    public bool AddFishingLicenses;
-    public bool AddPassageItems;
 }
 
 [Serializable]
@@ -243,6 +230,13 @@ public class ArchipelagoStateData
     public string Seed = "";
     public string SlotName = "";
     public List<string> CheckedLocations = new();
-    public SavedSlotOptions SlotOptions = new();
     public List<string> ReceivedItemNames = new();
+
+    // Slot options from the last connection, so AP rules still apply offline and before the connection finishes.
+    // Kept as plain fields: Unity's JsonUtility silently drops a nested options object from a mod assembly.
+    public bool SlotDeathLink;
+    public bool SlotIncludeIronRigDLC;
+    public bool SlotIncludePaleReachDLC;
+    public bool SlotAddFishingLicenses;
+    public bool SlotAddPassageItems;
 }
