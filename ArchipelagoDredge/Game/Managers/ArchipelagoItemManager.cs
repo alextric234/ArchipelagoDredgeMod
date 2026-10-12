@@ -89,6 +89,12 @@ public static class ArchipelagoItemManager
                 return;
             }
 
+            if (!HasEntitlementsFor(dredgeItem))
+            {
+                SkipUnownedDlcItem(apItem.ItemName, indexOfItemToProcess);
+                return;
+            }
+
             if (dredgeItem is SpatialItemData)
             {
                 validGrid = GetValidGrid(dredgeItem);
@@ -119,6 +125,26 @@ public static class ArchipelagoItemManager
 
         var notification = new DredgeNotification();
         notification.Message = $"Unknown item '{apItemName}'. Is the mod out of date?";
+        notification.MessageColor = PaletteColor.Red;
+        NotificationHelper.TryToSendNotification(notification);
+
+        ArchipelagoStateManager.SetLastProcessedIndex(index);
+    }
+
+    private static bool HasEntitlementsFor(ItemData itemData)
+    {
+        return itemData.entitlementsRequired == null ||
+               itemData.entitlementsRequired.All(entitlement =>
+                   entitlement == Entitlement.NONE ||
+                   GameManager.Instance.EntitlementManager.GetHasEntitlement(entitlement));
+    }
+
+    private static void SkipUnownedDlcItem(string apItemName, int index)
+    {
+        WinchCore.Log.Warn($"Skipping '{apItemName}' at index {index}; it needs DLC this game doesn't own.");
+
+        var notification = new DredgeNotification();
+        notification.Message = $"Couldn't receive '{apItemName}': it needs DLC you don't own.";
         notification.MessageColor = PaletteColor.Red;
         NotificationHelper.TryToSendNotification(notification);
 
