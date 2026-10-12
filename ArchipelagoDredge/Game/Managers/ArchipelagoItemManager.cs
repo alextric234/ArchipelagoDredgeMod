@@ -107,7 +107,11 @@ public static class ArchipelagoItemManager
                 }
             }
 
-            GameManager.Instance.ItemManager.AddItemById(dredgeItem.id, validGrid, false);
+            var itemInstance = GameManager.Instance.ItemManager.AddItemById(dredgeItem.id, validGrid, false);
+            if (itemInstance is FishItemInstance fish)
+            {
+                MultiworldFish.Mark(fish);
+            }
 
             RestockShops();
             ArchipelagoStateManager.SetLastProcessedIndex(indexOfItemToProcess);
