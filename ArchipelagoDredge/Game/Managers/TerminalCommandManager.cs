@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Archipelago.MultiClient.Net.Enums;
 using ArchipelagoDredge.Game.Helpers;
 using ArchipelagoDredge.Network;
 using ArchipelagoDredge.Utils;
@@ -19,13 +20,26 @@ public static class TerminalCommandManager
 
     public static void LogMessage(TerminalLogType logType, string message)
     {
-        MainThreadDispatcher.RunOnMainThread(() => Terminal.Log(logType, message));
+        MainThreadDispatcher.RunOnMainThread(() => Print(logType, message));
+    }
+
+    // Terminal.Log treats its text as a format string, so text with braces (like server help) must go in as an argument.
+    private static void Print(TerminalLogType logType, string text)
+    {
+        Terminal.Log(logType, "{0}", text);
     }
 
     private static void ArchipelagoCommands(CommandArg[] args)
     {
+        var command = args[0].ToString();
         var commandArgs = args.Skip(1).ToArray();
-        switch (args[0].ToString().ToLower())
+        if (command.StartsWith("!"))
+        {
+            SendToServer(JoinArgs(args));
+            return;
+        }
+
+        switch (command.ToLower())
         {
             case "help":
                 HelpCommand(commandArgs);
@@ -49,50 +63,110 @@ public static class TerminalCommandManager
                 ReadyCommand(commandArgs);
                 break;
             case "hint":
-                HintCommand(commandArgs);
+                SendToServer($"!hint {JoinArgs(commandArgs)}".TrimEnd());
                 break;
             case "hint_location":
-                HintLocationCommand(commandArgs);
+                SendToServer($"!hint_location {JoinArgs(commandArgs)}".TrimEnd());
                 break;
             case "say":
                 SayCommand(commandArgs);
                 break;
             default:
-                UnrecognizedCommand(commandArgs);
+                Print(TerminalLogType.Error, $"Unknown command '{command}'. Type 'ap help' for the list.");
                 break;
         }
     }
 
-    private static void SayCommand(CommandArg[] commandArgs)
+    private static string JoinArgs(CommandArg[] args)
     {
+        return string.Join(" ", args.Select(arg => arg.ToString())).Trim();
     }
 
-    private static void UnrecognizedCommand(CommandArg[] args)
+    // The server answers chat and !commands with a message, which shows up in the terminal like any other.
+    private static void SendToServer(string text)
     {
+        if (!RequireConnection())
+        {
+            return;
+        }
+
+        ArchipelagoClient.Session.Say(text);
     }
 
-    private static void HintLocationCommand(CommandArg[] args)
+    private static bool RequireConnection()
     {
+        if (ArchipelagoClient.IsConnected)
+        {
+            return true;
+        }
+
+        Print(TerminalLogType.Error, "Not connected to a multiworld. Use 'ap connect' first.");
+        return false;
     }
 
-    private static void HintCommand(CommandArg[] args)
+    private static void SayCommand(CommandArg[] args)
     {
+        var message = JoinArgs(args);
+        if (message.Length == 0)
+        {
+            Print(TerminalLogType.Error, "Usage: ap say <message>");
+            return;
+        }
+
+        SendToServer(message);
     }
 
     private static void ReadyCommand(CommandArg[] args)
     {
+        if (!RequireConnection())
+        {
+            return;
+        }
+
+        ArchipelagoClient.Session.SetClientState(ArchipelagoClientState.ClientReady);
+        Print(TerminalLogType.Message, "Sent ready status.");
     }
 
     private static void LocationsCommand(CommandArg[] args)
     {
+        if (!RequireConnection())
+        {
+            return;
+        }
+
+        var locations = ArchipelagoClient.Session.Locations;
+        var names = locations.AllMissingLocations
+            .Select(id => locations.GetLocationNameFromId(id, ArchipelagoClient.GameName) ?? $"Location {id}");
+        LogList("Unchecked locations", names, JoinArgs(args));
     }
 
     private static void ItemsCommand(CommandArg[] args)
     {
+        var names = ItemNames.ItemsByName.Keys
+            .Where(name => !name.EndsWith(ItemNames.ResearchedSuffix) && !name.Contains(ItemNames.StartingGearTag));
+        LogList("DREDGE items", names, JoinArgs(args));
     }
 
     private static void ReceivedCommand(CommandArg[] args)
     {
+        if (!RequireConnection())
+        {
+            return;
+        }
+
+        var lines = ArchipelagoClient.Session.Items.AllItemsReceived
+            .Where(item => !item.ItemDisplayName.EndsWith(ItemNames.ResearchedSuffix))
+            .Select(item => $"{item.ItemDisplayName} (from {item.Player.Alias})");
+        LogList("Received items", lines, JoinArgs(args), sort: false);
+    }
+
+    private static void LogList(string title, IEnumerable<string> lines, string filter, bool sort = true)
+    {
+        var matching = lines.Where(line => line.IndexOf(filter, StringComparison.OrdinalIgnoreCase) >= 0);
+        var list = (sort ? matching.OrderBy(line => line) : matching).ToList();
+
+        var heading = filter.Length == 0 ? $"{title} ({list.Count}):" : $"{title} matching '{filter}' ({list.Count}):";
+        Print(TerminalLogType.Message, heading + Environment.NewLine + string.Join(Environment.NewLine, list));
     }
 
     private static void DisconnectCommand(CommandArg[] args)
@@ -173,14 +247,15 @@ public static class TerminalCommandManager
         helpMessage.AppendLine("help: lists commands");
         helpMessage.AppendLine("connect <ip> <port> <slotname> <password>: connects to archipelago multiworld");
         helpMessage.AppendLine("disconnect: disconnects from multiworld");
-        helpMessage.AppendLine("received: lists all received items (not implemented)");
-        helpMessage.AppendLine("items: lists all items (not implemented)");
-        helpMessage.AppendLine("locations: lists all locations (not implemented)");
-        helpMessage.AppendLine("ready: sends ready status to server (not implemented)");
-        helpMessage.AppendLine("hint <itemname>: spends hint points for item hint (not implemented)");
-        helpMessage.AppendLine("hint_location <locationname>: spends hint points for location hint (not implemented)");
-        helpMessage.AppendLine("say <message>: broadcasts message to server (not implemented)");
+        helpMessage.AppendLine("received [filter]: lists items you've received");
+        helpMessage.AppendLine("items [filter]: lists DREDGE item names, for hints");
+        helpMessage.AppendLine("locations [filter]: lists locations you haven't checked yet");
+        helpMessage.AppendLine("ready: sends ready status to server");
+        helpMessage.AppendLine("hint [itemname]: hints an item, or lists your hints with no name");
+        helpMessage.AppendLine("hint_location <locationname>: hints what's at a location");
+        helpMessage.AppendLine("say <message>: sends a chat message to the multiworld");
+        helpMessage.AppendLine("!<command>: runs any server command, e.g. ap !missing or ap !remaining");
 
-        Terminal.Log(TerminalLogType.Message, helpMessage.ToString());
+        Print(TerminalLogType.Message, helpMessage.ToString());
     }
 }
