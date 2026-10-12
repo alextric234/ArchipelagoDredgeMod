@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using ArchipelagoDredge.Game.Tracker;
@@ -19,6 +20,7 @@ internal class TrackerPanel : TabbedPanel
     {
         InLogic,
         Unchecked,
+        Hinted,
         All
     }
 
@@ -148,6 +150,7 @@ internal class TrackerPanel : TabbedPanel
         {
             Filter.InLogic => "Showing: In logic",
             Filter.Unchecked => "Showing: Unchecked",
+            Filter.Hinted => "Showing: Hinted",
             _ => "Showing: All"
         }, "Change filter");
 
@@ -167,12 +170,15 @@ internal class TrackerPanel : TabbedPanel
 
         var inLogic = entries.Count(e => e.Status == TrackerStatus.InLogic);
         var uncheckedCount = entries.Count(e => e.Status != TrackerStatus.Checked);
-        summaryText.text = $"{inLogic} in logic, {uncheckedCount} unchecked, {entries.Count - uncheckedCount}/{entries.Count} checked";
+        var hinted = entries.Count(IsHintedAndUnchecked);
+        summaryText.text = $"{inLogic} in logic, {uncheckedCount} unchecked, {hinted} hinted, " +
+                           $"{entries.Count - uncheckedCount}/{entries.Count} checked";
 
         var shown = entries.Where(e => filter switch
         {
             Filter.InLogic => e.Status == TrackerStatus.InLogic,
             Filter.Unchecked => e.Status != TrackerStatus.Checked,
+            Filter.Hinted => IsHintedAndUnchecked(e),
             _ => true
         }).ToList();
 
@@ -193,9 +199,12 @@ internal class TrackerPanel : TabbedPanel
         if (shown.Count == 0)
         {
             var empty = NewText(listContent, 26);
-            empty.text = filter == Filter.InLogic
-                ? "Nothing in logic right now. Switch the filter to see everything else."
-                : "Nothing to show.";
+            empty.text = filter switch
+            {
+                Filter.InLogic => "Nothing in logic right now. Switch the filter to see everything else.",
+                Filter.Hinted => "None of your unchecked locations have been hinted.",
+                _ => "Nothing to show."
+            };
             empty.gameObject.AddComponent<LayoutElement>().preferredHeight = 80;
         }
 
@@ -214,6 +223,11 @@ internal class TrackerPanel : TabbedPanel
         row.Button.OnClick += () => Select(name);
         row.Button.OnSelectAction += () => Select(name);
         rows.Add(row);
+    }
+
+    private static bool IsHintedAndUnchecked(TrackerEntry entry)
+    {
+        return entry.HintText != null && entry.Status != TrackerStatus.Checked;
     }
 
     private static string Subtitle(TrackerEntry entry)
@@ -298,7 +312,7 @@ internal class TrackerPanel : TabbedPanel
 
     private void CycleFilter()
     {
-        filter = (Filter) (((int) filter + 1) % 3);
+        filter = (Filter) (((int) filter + 1) % Enum.GetValues(typeof(Filter)).Length);
         Rebuild(force: true);
         scroll.verticalNormalizedPosition = 1;
     }

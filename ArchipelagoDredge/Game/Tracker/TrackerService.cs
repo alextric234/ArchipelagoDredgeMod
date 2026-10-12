@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Archipelago.MultiClient.Net;
+using Archipelago.MultiClient.Net.Enums;
 using Archipelago.MultiClient.Net.Models;
 using ArchipelagoDredge.Network;
 using ArchipelagoDredge.Utils;
@@ -177,8 +178,13 @@ public static class TrackerService
     {
         var receiver = session.Players.GetPlayerInfo(hint.ReceivingPlayer);
         var item = session.Items.GetItemName(hint.ItemId, receiver?.Game) ?? $"Item {hint.ItemId}";
-        return hint.ReceivingPlayer == session.ConnectionInfo.Slot
-            ? $"Holds your {item}"
-            : $"Holds {session.Players.GetPlayerAlias(hint.ReceivingPlayer)}'s {item}";
+        var owner = hint.ReceivingPlayer == session.ConnectionInfo.Slot
+            ? "your"
+            : $"{session.Players.GetPlayerAlias(hint.ReceivingPlayer)}'s";
+        var importance = hint.ItemFlags.HasFlag(ItemFlags.Advancement) ? " (progression)"
+            : hint.ItemFlags.HasFlag(ItemFlags.NeverExclude) ? " (useful)"
+            : hint.ItemFlags.HasFlag(ItemFlags.Trap) ? " (trap)"
+            : "";
+        return $"Holds {owner} {item}{importance}";
     }
 }
