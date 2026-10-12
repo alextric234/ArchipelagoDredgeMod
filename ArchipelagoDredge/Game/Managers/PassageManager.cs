@@ -34,6 +34,7 @@ public static class PassageManager
 
     private static ZoneEnum previousZone = ZoneEnum.NONE;
     private static Vector3 lastAllowedPosition;
+    private static bool hasAllowedPosition;
     private static float nextZoneCheckTime;
     private static Vector3 activeEjectionTarget;
     private static bool isEjecting;
@@ -45,6 +46,7 @@ public static class PassageManager
     {
         previousZone = ZoneEnum.NONE;
         lastAllowedPosition = Vector3.zero;
+        hasAllowedPosition = false;
         nextZoneCheckTime = 0f;
         activeEjectionTarget = Vector3.zero;
         isEjecting = false;
@@ -61,14 +63,15 @@ public static class PassageManager
 
         nextZoneCheckTime = Time.time + ZoneCheckIntervalSeconds;
 
-        var currentZone =
-            GameManager.Instance.Player.PlayerZoneDetector.GetCurrentZone();
-
+        // GetCurrentZone() reports Open Ocean until the zone triggers first fire after a load, so ask the zone
+        // colliders directly.
         var playerPosition = GameManager.Instance.Player.transform.position;
+        var currentZone = PlayerZoneDetector.GetZoneForPoint(playerPosition);
 
         if (HasPassageFor(currentZone))
         {
             lastAllowedPosition = playerPosition;
+            hasAllowedPosition = true;
             previousZone = currentZone;
             isEjecting = false;
             return;
@@ -121,6 +124,11 @@ public static class PassageManager
 
     private static void PushBoatToward()
     {
+        if (!hasAllowedPosition)
+        {
+            return;
+        }
+
         activeEjectionTarget = lastAllowedPosition;
         isEjecting = true;
     }
