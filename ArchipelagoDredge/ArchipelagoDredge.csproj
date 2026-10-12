@@ -16,6 +16,23 @@
         <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
     </PropertyGroup>
 
+    <!-- The apworld's data files are embedded so the in-game tracker evaluates the same items, locations and hull
+         layouts as generation. Override ApWorldDataPath if the apworld isn't checked out next to this repo. -->
+    <PropertyGroup>
+        <ApWorldDataPath Condition=" '$(ApWorldDataPath)' == '' ">$(MSBuildProjectDirectory)\..\..\ArchipelagoDredge\worlds\dredge\data</ApWorldDataPath>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <EmbeddedResource Include="$(ApWorldDataPath)\items.json;$(ApWorldDataPath)\locations.json;$(ApWorldDataPath)\hulls.json">
+            <LogicalName>ApWorldData.%(Filename)%(Extension)</LogicalName>
+        </EmbeddedResource>
+    </ItemGroup>
+
+    <Target Name="CheckApWorldData" BeforeTargets="BeforeBuild">
+        <Error Condition="!Exists('$(ApWorldDataPath)\locations.json')"
+               Text="Couldn't find the apworld data at '$(ApWorldDataPath)'. Check out the ArchipelagoDredge apworld next to this repo or set ApWorldDataPath." />
+    </Target>
+
     <ItemGroup>
         <None Update="Assets\Localization\en.json">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

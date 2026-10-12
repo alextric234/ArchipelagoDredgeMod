@@ -91,12 +91,15 @@ public static class ArchipelagoClient
             includePaleReachDlc: SlotDataParser.GetBool(slotData, "include_pale_reach_dlc"),
             addFishingLicenses: SlotDataParser.GetBool(slotData, "add_fishing_licenses"),
             addPassageItems: SlotDataParser.GetBool(slotData, "add_passage_items"),
-            progressiveAberrationChanceItems: SlotDataParser.GetInt(slotData, "progressive_aberration_chance_items"));
+            progressiveAberrationChanceItems: SlotDataParser.GetInt(slotData, "progressive_aberration_chance_items"),
+            logicalNets: SlotDataParser.GetBool(slotData, "logical_nets"),
+            requireBoatPerformance: SlotDataParser.GetBool(slotData, "require_boat_performance"));
 
         WinchCore.Log.Info($"Slot data: death_link={SlotData.DeathLink}, include_iron_rig_dlc={SlotData.IncludeIronRigDLC}, " +
                            $"include_pale_reach_dlc={SlotData.IncludePaleReachDLC}, add_fishing_licenses={SlotData.AddFishingLicenses}, " +
                            $"add_passage_items={SlotData.AddPassageItems}, " +
-                           $"progressive_aberration_chance_items={SlotData.ProgressiveAberrationChanceItems}");
+                           $"progressive_aberration_chance_items={SlotData.ProgressiveAberrationChanceItems}, " +
+                           $"logical_nets={SlotData.LogicalNets}, require_boat_performance={SlotData.RequireBoatPerformance}");
     }
 
     private static void OnMessageReceived(LogMessage message)

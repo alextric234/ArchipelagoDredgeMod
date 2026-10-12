@@ -238,6 +238,8 @@ public static class ArchipelagoStateManager
         StateData.SlotAddFishingLicenses = slotData.AddFishingLicenses;
         StateData.SlotAddPassageItems = slotData.AddPassageItems;
         StateData.SlotProgressiveAberrationChanceItems = slotData.ProgressiveAberrationChanceItems;
+        StateData.SlotLogicalNets = slotData.LogicalNets;
+        StateData.SlotRequireBoatPerformance = slotData.RequireBoatPerformance;
         StateData.ReceivedItemNames = receivedItemNames.ToList();
         SaveData();
     }
@@ -254,7 +256,9 @@ public static class ArchipelagoStateManager
             state.SlotIncludePaleReachDLC,
             state.SlotAddFishingLicenses,
             state.SlotAddPassageItems,
-            state.SlotProgressiveAberrationChanceItems);
+            state.SlotProgressiveAberrationChanceItems,
+            state.SlotLogicalNets,
+            state.SlotRequireBoatPerformance);
     }
 }
 
@@ -285,6 +289,8 @@ public class ArchipelagoStateData
     public bool SlotAddFishingLicenses;
     public bool SlotAddPassageItems;
     public int SlotProgressiveAberrationChanceItems;
+    public bool SlotLogicalNets;
+    public bool SlotRequireBoatPerformance;
 
     public bool BoostedAberrationsEnabled = true;
 }

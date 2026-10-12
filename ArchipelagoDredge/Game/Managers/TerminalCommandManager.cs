@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Archipelago.MultiClient.Net.Enums;
 using ArchipelagoDredge.Game.Helpers;
+using ArchipelagoDredge.Game.Tracker;
 using ArchipelagoDredge.Network;
 using ArchipelagoDredge.Utils;
 using CommandTerminal;
@@ -73,6 +74,9 @@ public static class TerminalCommandManager
                 break;
             case "aberrations":
                 AberrationsCommand(commandArgs);
+                break;
+            case "tracker":
+                TrackerCommand(commandArgs);
                 break;
 #if DEBUG
             case "trap":
@@ -151,6 +155,18 @@ public static class TerminalCommandManager
         var state = AberrationChanceManager.IsEnabled ? "on" : "off";
         Print(TerminalLogType.Message,
             $"Boosted aberration chance is {state}. Your items grant at least {AberrationChanceManager.GrantedChance:P0}.");
+    }
+
+    private static void TrackerCommand(CommandArg[] args)
+    {
+        if (!RequireConnection())
+        {
+            return;
+        }
+
+        var inLogic = TrackerService.UncheckedInLogic();
+        var lines = inLogic.Select(name => $"{ApWorldData.Locations[name].Region}: {name}");
+        LogList("Unchecked locations in logic", lines, JoinArgs(args), sort: false);
     }
 
     private static void ReadyCommand(CommandArg[] args)
@@ -287,6 +303,7 @@ public static class TerminalCommandManager
         helpMessage.AppendLine("received [filter]: lists items you've received");
         helpMessage.AppendLine("items [filter]: lists DREDGE item names, for hints");
         helpMessage.AppendLine("locations [filter]: lists locations you haven't checked yet");
+        helpMessage.AppendLine("tracker [filter]: lists unchecked locations that are in logic");
         helpMessage.AppendLine("ready: sends ready status to server");
         helpMessage.AppendLine("hint [itemname]: hints an item, or lists your hints with no name");
         helpMessage.AppendLine("hint_location <locationname>: hints what's at a location");
