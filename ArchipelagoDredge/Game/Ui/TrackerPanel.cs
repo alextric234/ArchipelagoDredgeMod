@@ -274,6 +274,7 @@ internal class TrackerPanel : TabbedPanel
             {
                 "Dredge" => "Dredge spot",
                 "Encyclopedia" => "Fish",
+                "Message" => "Message in a bottle",
                 _ => entry.LocationGroup
             } + $" in {entry.Region}",
             entry.Status switch

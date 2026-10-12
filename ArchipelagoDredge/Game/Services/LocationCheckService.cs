@@ -20,6 +20,7 @@ public static class LocationCheckService
 
         DredgeEvent.OnPOIHarvested += OnPOIHarvested;
         DredgeEvent.OnFishCaught += OnFishCaught;
+        DredgeEvent.OnPOIItemCollected += OnPOIItemCollected;
         _initialized = true;
     }
 
@@ -42,6 +43,23 @@ public static class LocationCheckService
         {
             WinchCore.Log.Error($"Error sending location check for {harvestPOI?.Harvestable?.GetId()}/{itemInstance?.id}: {e}");
         }
+    }
+
+    // The message still goes to the player as normal; picking up the bottle is the check.
+    private static void OnPOIItemCollected(ItemPOI itemPOI, ItemInstance itemInstance)
+    {
+        try
+        {
+            if (itemInstance?.GetItemData<ItemData>() is not MessageItemData)
+                return;
+        }
+        catch (Exception e)
+        {
+            WinchCore.Log.Error($"Error reading collected item {itemInstance?.id}: {e}");
+            return;
+        }
+
+        Report(itemInstance.id);
     }
 
     private static void OnFishCaught(SpatialItemInstance itemInstance)

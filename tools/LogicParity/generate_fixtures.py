@@ -26,7 +26,7 @@ from worlds.AutoWorld import call_all  # noqa: E402
 from worlds.dredge.world import DREDGEWorld  # noqa: E402
 
 LOGIC_OPTIONS = ["include_iron_rig_dlc", "include_pale_reach_dlc", "add_fishing_licenses", "add_passage_items",
-                 "logical_nets", "require_boat_performance"]
+                 "logical_nets", "require_boat_performance", "include_message_bottles"]
 
 
 def build_world(seed: int, options: dict) -> MultiWorld:

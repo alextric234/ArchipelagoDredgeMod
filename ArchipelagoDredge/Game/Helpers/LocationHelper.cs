@@ -479,7 +479,17 @@ public enum Location
     ROD4_R,
     ROD6_R,
     APLACETOREST_DELIVER,
-    APLACETOREST_ESCORT
+    APLACETOREST_ESCORT,
+    MESSAGE_1,
+    MESSAGE_2,
+    MESSAGE_3,
+    MESSAGE_4,
+    MESSAGE_5,
+    MESSAGE_6,
+    MESSAGE_7,
+    MESSAGE_8,
+    MESSAGE_9,
+    MESSAGE_10
 }
 
 public static class LocationHelper
@@ -952,7 +962,17 @@ public static class LocationHelper
         { Location.ROD4_R, "Flexible Fishing Pole Researched" },
         { Location.ROD6_R, "Bottomless Lines Researched" },
         { Location.APLACETOREST_DELIVER, "A Place to Rest - Deliver Materials" },
-        { Location.APLACETOREST_ESCORT, "A Place to Rest - Escort Builder" }
+        { Location.APLACETOREST_ESCORT, "A Place to Rest - Escort Builder" },
+        { Location.MESSAGE_1, "Stellar Basin - Message in a Bottle 1(E-5)" },
+        { Location.MESSAGE_2, "Devil's Spine - Message in a Bottle 1(N-14)" },
+        { Location.MESSAGE_3, "The Marrows - Message in a Bottle 1(K-9)" },
+        { Location.MESSAGE_4, "The Marrows - Message in a Bottle 2(K-7)" },
+        { Location.MESSAGE_5, "Gale Cliffs - Message in a Bottle 1(N-3)" },
+        { Location.MESSAGE_6, "Stellar Basin - Message in a Bottle 2(G-4)" },
+        { Location.MESSAGE_7, "Twisted Strand - Message in a Bottle 1(F-13)" },
+        { Location.MESSAGE_8, "Devil's Spine - Message in a Bottle 2(P-12)" },
+        { Location.MESSAGE_9, "Gale Cliffs - Message in a Bottle 2(N-4)" },
+        { Location.MESSAGE_10, "Twisted Strand - Message in a Bottle 2(F-13)" }
     };
 
     public static readonly IReadOnlyList<Location> RelicLocations = new List<Location>
@@ -1060,6 +1080,19 @@ public static class LocationHelper
     {
         var completedChecks = ArchipelagoClient.Session.Locations.AllLocationsChecked;
         ReconcileQuestChecks(completedChecks);
+        ReconcileMessageChecks(completedChecks);
+    }
+
+    // Catches bottles picked up before the save was connected or before bottles were locations.
+    private static void ReconcileMessageChecks(ReadOnlyCollection<long> completedChecks)
+    {
+        foreach (var message in GameManager.Instance.SaveData.GetMessages())
+            if (TryParseLocation(message.id, out var messageLocation) &&
+                TryGetArchipelagoId(messageLocation, out var locationId) &&
+                !completedChecks.Contains(locationId))
+            {
+                ReportLocationCheck(messageLocation);
+            }
     }
 
     private static void ReconcileQuestChecks(ReadOnlyCollection<long> completedChecks)

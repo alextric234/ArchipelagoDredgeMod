@@ -25,7 +25,7 @@ public class TrackerLogic
     private static readonly (int knots, int lumens) PaleReachPerformance = (60, 2100);
     private const int BaseSpeed = 10;
 
-    private static readonly HashSet<string> AtSeaLocationGroups = ["Dredge", "Encyclopedia", "World"];
+    private static readonly HashSet<string> AtSeaLocationGroups = ["Dredge", "Encyclopedia", "World", "Message"];
 
     // locations.py leaves these groups out of every seed.
     private static readonly HashSet<string> ExcludedLocationGroups = ["Shop", "Pursuit", "World", "Relic"];
