@@ -10,13 +10,14 @@
         }
 
         public SlotData(bool deathLink, bool includeIronRigDlc, bool includePaleReachDlc, bool addFishingLicenses,
-            bool addPassageItems)
+            bool addPassageItems, int progressiveAberrationChanceItems)
         {
             DeathLink = deathLink;
             IncludeIronRigDLC = includeIronRigDlc;
             IncludePaleReachDLC = includePaleReachDlc;
             AddFishingLicenses = addFishingLicenses;
             AddPassageItems = addPassageItems;
+            ProgressiveAberrationChanceItems = progressiveAberrationChanceItems;
         }
 
         public bool DeathLink { get; }
@@ -24,5 +25,6 @@
         public bool IncludePaleReachDLC { get; }
         public bool AddFishingLicenses { get; }
         public bool AddPassageItems { get; }
+        public int ProgressiveAberrationChanceItems { get; }
     }
 }

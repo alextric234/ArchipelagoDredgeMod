@@ -17,6 +17,7 @@ public static class ApConfigHelper
     public const string SlotKey = "apSlotName";
     public const string PasswordKey = "apPassword";
     public const string DeathLinkKey = "apEnableDeathLink";
+    public const string BoostedAberrationsKey = "apBoostedAberrations";
 
     private const int DefaultPort = 38281;
 
@@ -67,6 +68,23 @@ public static class ApConfigHelper
         {
             WinchCore.Log.Error("Save failed: " + ex);
             return false;
+        }
+    }
+
+    public static bool ReadBoostedAberrations()
+    {
+        return Get(BoostedAberrationsKey, true);
+    }
+
+    public static void SaveBoostedAberrationsValue(bool enabled)
+    {
+        try
+        {
+            Config.SetProperty(BoostedAberrationsKey, enabled);
+        }
+        catch (Exception ex)
+        {
+            WinchCore.Log.Error("Save failed: " + ex);
         }
     }
 

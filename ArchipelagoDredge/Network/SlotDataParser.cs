@@ -25,6 +25,31 @@ public static class SlotDataParser
         return defaultValue;
     }
 
+    public static int GetInt(Dictionary<string, object> slotData, string key, int defaultValue = 0)
+    {
+        if (slotData == null || !slotData.TryGetValue(key, out var value))
+        {
+            WinchCore.Log.Debug($"Slot data '{key}' missing; using {defaultValue}");
+            return defaultValue;
+        }
+
+        if (value is JValue jValue)
+        {
+            value = jValue.Value;
+        }
+
+        switch (value)
+        {
+            case long or int or short or byte:
+                return Convert.ToInt32(value);
+            case string s when int.TryParse(s, NumberStyles.Integer, CultureInfo.InvariantCulture, out var parsed):
+                return parsed;
+            default:
+                WinchCore.Log.Warn($"Slot data '{key}' has unexpected value '{value}'; using {defaultValue}");
+                return defaultValue;
+        }
+    }
+
     private static bool TryParseBool(object value, out bool result)
     {
         switch (value)

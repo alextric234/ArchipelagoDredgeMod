@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using ArchipelagoDredge.Game.Managers;
 using ArchipelagoDredge.Network;
 using ArchipelagoDredge.Network.Enums;
 using UnityEngine;
@@ -38,6 +39,7 @@ public static class ArchipelagoStateManager
             StateData = JsonUtility.FromJson<ArchipelagoStateData>(json);
             RevertStateData();
             ApplySavedSlotOptions();
+            AberrationChanceManager.SyncConfigFromSave();
             WinchCore.Log.Info($"Loaded Archipelago state for slot {slot} (last processed item index {StateData.LastProcessedIndex}, " +
                                $"hull tier {StateData.CurrentHullUpgrade}, {StateData.ReceivedVirtualItems.Count} virtual item(s), " +
                                (IsBound ? $"bound to seed '{StateData.Seed}' as '{StateData.SlotName}')" : "not bound to a multiworld)"));
@@ -55,6 +57,7 @@ public static class ArchipelagoStateManager
             SaveFilePath = GetSaveFilePath(slot);
             StateData = new ArchipelagoStateData();
             ApplySavedSlotOptions();
+            AberrationChanceManager.SyncConfigFromSave();
             Directory.CreateDirectory(Path.GetDirectoryName(SaveFilePath)!);
             SaveData();
             WinchCore.Log.Info($"Created new Archipelago state for slot {slot}");
@@ -99,6 +102,17 @@ public static class ArchipelagoStateManager
         StateData.LastProcessedIndex = StateData.LastProcessedIndexSinceSave;
         StateData.CurrentHullUpgrade = StateData.HullUpgradeSinceSave;
         StateData.ReceivedVirtualItems = StateData.ReceivedVirtualItemsSinceSave?.ToList() ?? new List<string>();
+    }
+
+    public static void SetBoostedAberrationsEnabled(bool enabled)
+    {
+        if (StateData == null)
+        {
+            return;
+        }
+
+        StateData.BoostedAberrationsEnabled = enabled;
+        SaveData();
     }
 
     public static bool HasVirtualItem(string itemKey)
@@ -198,6 +212,7 @@ public static class ArchipelagoStateManager
         StateData.SlotIncludePaleReachDLC = slotData.IncludePaleReachDLC;
         StateData.SlotAddFishingLicenses = slotData.AddFishingLicenses;
         StateData.SlotAddPassageItems = slotData.AddPassageItems;
+        StateData.SlotProgressiveAberrationChanceItems = slotData.ProgressiveAberrationChanceItems;
         StateData.ReceivedItemNames = receivedItemNames.ToList();
         SaveData();
     }
@@ -213,7 +228,8 @@ public static class ArchipelagoStateManager
             state.SlotIncludeIronRigDLC,
             state.SlotIncludePaleReachDLC,
             state.SlotAddFishingLicenses,
-            state.SlotAddPassageItems);
+            state.SlotAddPassageItems,
+            state.SlotProgressiveAberrationChanceItems);
     }
 }
 
@@ -239,4 +255,7 @@ public class ArchipelagoStateData
     public bool SlotIncludePaleReachDLC;
     public bool SlotAddFishingLicenses;
     public bool SlotAddPassageItems;
+    public int SlotProgressiveAberrationChanceItems;
+
+    public bool BoostedAberrationsEnabled = true;
 }

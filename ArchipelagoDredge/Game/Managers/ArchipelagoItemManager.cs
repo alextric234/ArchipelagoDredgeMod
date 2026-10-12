@@ -39,6 +39,14 @@ public static class ArchipelagoItemManager
                 return;
             }
 
+            if (item is Item.PROGRESSIVE_ABERRATION_CHANCE or Item.GUARANTEED_ABERRATIONS)
+            {
+                ArchipelagoStateManager.SetLastProcessedIndex(indexOfItemToProcess);
+                var offNote = AberrationChanceManager.IsEnabled ? "" : " (boost is switched off)";
+                UpgradeEquipped($"Aberration chance is now at least {AberrationChanceManager.GrantedChance:P0}{offNote}");
+                return;
+            }
+
             if (ItemNames.VirtualItems.Contains(item))
             {
                 ReceiveVirtualItem(apItem.ItemName);

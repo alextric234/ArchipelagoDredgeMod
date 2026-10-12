@@ -28,5 +28,11 @@
     "type": "toggle",
     "title": "alextric234.archipelagodredge.deathlink.title",
     "value": false
+  },
+  "apBoostedAberrations": {
+    "type": "toggle",
+    "title": "alextric234.archipelagodredge.boosted-aberrations.title",
+    "tooltip": "alextric234.archipelagodredge.boosted-aberrations.tooltip",
+    "value": true
   }
 }

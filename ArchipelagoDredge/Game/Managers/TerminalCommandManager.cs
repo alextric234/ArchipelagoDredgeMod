@@ -71,6 +71,9 @@ public static class TerminalCommandManager
             case "say":
                 SayCommand(commandArgs);
                 break;
+            case "aberrations":
+                AberrationsCommand(commandArgs);
+                break;
             default:
                 Print(TerminalLogType.Error, $"Unknown command '{command}'. Type 'ap help' for the list.");
                 break;
@@ -114,6 +117,35 @@ public static class TerminalCommandManager
         }
 
         SendToServer(message);
+    }
+
+    private static void AberrationsCommand(CommandArg[] args)
+    {
+        if (!ApSave.IsActive)
+        {
+            Print(TerminalLogType.Error, "Load an Archipelago save first.");
+            return;
+        }
+
+        if (args.Length > 0)
+        {
+            switch (args[0].ToString().ToLower())
+            {
+                case "on":
+                    AberrationChanceManager.SetEnabled(true);
+                    break;
+                case "off":
+                    AberrationChanceManager.SetEnabled(false);
+                    break;
+                default:
+                    Print(TerminalLogType.Error, "Usage: ap aberrations [on|off]");
+                    return;
+            }
+        }
+
+        var state = AberrationChanceManager.IsEnabled ? "on" : "off";
+        Print(TerminalLogType.Message,
+            $"Boosted aberration chance is {state}. Your items grant at least {AberrationChanceManager.GrantedChance:P0}.");
     }
 
     private static void ReadyCommand(CommandArg[] args)
@@ -254,6 +286,7 @@ public static class TerminalCommandManager
         helpMessage.AppendLine("hint [itemname]: hints an item, or lists your hints with no name");
         helpMessage.AppendLine("hint_location <locationname>: hints what's at a location");
         helpMessage.AppendLine("say <message>: sends a chat message to the multiworld");
+        helpMessage.AppendLine("aberrations [on|off]: shows or switches the boosted aberration chance from your items");
         helpMessage.AppendLine("!<command>: runs any server command, e.g. ap !missing or ap !remaining");
 
         Print(TerminalLogType.Message, helpMessage.ToString());
