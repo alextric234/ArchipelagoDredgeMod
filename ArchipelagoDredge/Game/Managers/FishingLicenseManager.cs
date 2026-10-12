@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using ArchipelagoDredge.Network;
 using ArchipelagoDredge.Utils;
 using UnityEngine;
@@ -65,6 +66,42 @@ public static class FishingLicenseManager
 
         missingLicense = FishingLicenses[item.zonesFoundIn];
         return true;
+    }
+
+    public static bool TryGetMissingFishingLicense(ZoneEnum zone, out FishingLicenseDefinition missingLicense)
+    {
+        missingLicense = null;
+        if (HasLicenseForZone(zone))
+        {
+            return false;
+        }
+
+        missingLicense = FishingLicenses[zone];
+        return true;
+    }
+
+    public static bool HasLicenseFor(HarvestableItemData item)
+    {
+        return (Object)item == null ||
+               item.itemSubtype != ItemSubtype.FISH ||
+               HasLicenseForZone(item.zonesFoundIn);
+    }
+
+    /// <summary>
+    ///     True when there is something to catch but every item needs a missing license,
+    ///     e.g. a crab pot sitting where only unlicensed crabs live.
+    /// </summary>
+    public static bool TryGetMissingFishingLicenseForAll(
+        IReadOnlyCollection<HarvestableItemData> items,
+        out FishingLicenseDefinition missingLicense)
+    {
+        missingLicense = null;
+        if (items == null || items.Count == 0 || items.Any(HasLicenseFor))
+        {
+            return false;
+        }
+
+        return TryGetMissingFishingLicense(items.First(), out missingLicense);
     }
 
     public static bool HasLicenseForZone(ZoneEnum zone)
