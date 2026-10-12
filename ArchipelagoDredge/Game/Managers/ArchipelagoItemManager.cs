@@ -89,7 +89,7 @@ public static class ArchipelagoItemManager
                 return;
             }
 
-            if (!HasEntitlementsFor(dredgeItem))
+            if (!HasEntitlementsFor(item, dredgeItem))
             {
                 SkipUnownedDlcItem(apItem.ItemName, indexOfItemToProcess);
                 return;
@@ -131,12 +131,16 @@ public static class ArchipelagoItemManager
         ArchipelagoStateManager.SetLastProcessedIndex(index);
     }
 
-    private static bool HasEntitlementsFor(ItemData itemData)
+    // The game only tags some DLC items with their entitlement, so the mod's own list is checked too.
+    private static bool HasEntitlementsFor(Item item, ItemData itemData)
     {
-        return itemData.entitlementsRequired == null ||
-               itemData.entitlementsRequired.All(entitlement =>
-                   entitlement == Entitlement.NONE ||
-                   GameManager.Instance.EntitlementManager.GetHasEntitlement(entitlement));
+        IEnumerable<Entitlement> required = itemData.entitlementsRequired ?? [];
+        if (ItemNames.RequiredEntitlements.TryGetValue(item, out var entitlement))
+        {
+            required = required.Append(entitlement);
+        }
+
+        return required.All(e => e == Entitlement.NONE || GameManager.Instance.EntitlementManager.GetHasEntitlement(e));
     }
 
     private static void SkipUnownedDlcItem(string apItemName, int index)
