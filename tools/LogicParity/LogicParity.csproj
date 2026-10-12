@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <!-- Runs the mod's tracker logic outside the game and compares it with fixtures from the apworld. -->
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net48</TargetFramework>
+        <LangVersion>latest</LangVersion>
+        <ApWorldDataPath Condition=" '$(ApWorldDataPath)' == '' ">$(MSBuildProjectDirectory)\..\..\..\ArchipelagoDredge\worlds\dredge\data</ApWorldDataPath>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <Compile Include="..\..\ArchipelagoDredge\Game\Tracker\ApWorldData.cs" Link="Tracker\ApWorldData.cs" />
+        <Compile Include="..\..\ArchipelagoDredge\Game\Tracker\Fitting.cs" Link="Tracker\Fitting.cs" />
+        <Compile Include="..\..\ArchipelagoDredge\Game\Tracker\TrackerLogic.cs" Link="Tracker\TrackerLogic.cs" />
+        <EmbeddedResource Include="$(ApWorldDataPath)\items.json;$(ApWorldDataPath)\locations.json;$(ApWorldDataPath)\hulls.json">
+            <LogicalName>ApWorldData.%(Filename)%(Extension)</LogicalName>
+        </EmbeddedResource>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    </ItemGroup>
+
+</Project>
