@@ -39,6 +39,13 @@ public static class ArchipelagoItemManager
                 return;
             }
 
+            if (TrapManager.IsTrap(item))
+            {
+                ArchipelagoStateManager.SetLastProcessedIndex(indexOfItemToProcess);
+                TrapManager.Receive(item);
+                return;
+            }
+
             if (item is Item.PROGRESSIVE_ABERRATION_CHANCE or Item.GUARANTEED_ABERRATIONS)
             {
                 ArchipelagoStateManager.SetLastProcessedIndex(indexOfItemToProcess);

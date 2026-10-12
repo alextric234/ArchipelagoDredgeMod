@@ -48,7 +48,7 @@ public class ArchipelagoDredge : MonoBehaviour
         try
         {
             NotificationHelper.Update();
-            EventTrapQueue.Update();
+            TrapManager.Update();
 
 #if DEBUG
             if (Input.GetKeyDown(KeyCode.F4))
@@ -124,6 +124,7 @@ public class ArchipelagoDredge : MonoBehaviour
     public void OnGameEnded()
     {
         PassageManager.Reset();
+        TrapManager.Reset();
 
         if (ArchipelagoStateManager.AwaitingDeathScreenChoice)
         {

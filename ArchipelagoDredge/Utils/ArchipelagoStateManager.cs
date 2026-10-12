@@ -94,6 +94,7 @@ public static class ArchipelagoStateManager
         StateData.LastProcessedIndexSinceSave = StateData.LastProcessedIndex;
         StateData.HullUpgradeSinceSave = StateData.CurrentHullUpgrade;
         StateData.ReceivedVirtualItemsSinceSave = StateData.ReceivedVirtualItems.ToList();
+        StateData.PendingTrapsSinceSave = StateData.PendingTraps.ToList();
         SaveData();
     }
 
@@ -102,6 +103,7 @@ public static class ArchipelagoStateManager
         StateData.LastProcessedIndex = StateData.LastProcessedIndexSinceSave;
         StateData.CurrentHullUpgrade = StateData.HullUpgradeSinceSave;
         StateData.ReceivedVirtualItems = StateData.ReceivedVirtualItemsSinceSave?.ToList() ?? new List<string>();
+        StateData.PendingTraps = StateData.PendingTrapsSinceSave?.ToList() ?? new List<string>();
     }
 
     public static void SetBoostedAberrationsEnabled(bool enabled)
@@ -113,6 +115,29 @@ public static class ArchipelagoStateManager
 
         StateData.BoostedAberrationsEnabled = enabled;
         SaveData();
+    }
+
+    public static IReadOnlyList<string> PendingTraps =>
+        (IReadOnlyList<string>) StateData?.PendingTraps ?? Array.Empty<string>();
+
+    public static void AddPendingTrap(string trapName)
+    {
+        if (StateData == null)
+        {
+            return;
+        }
+
+        StateData.PendingTraps ??= new List<string>();
+        StateData.PendingTraps.Add(trapName);
+        SaveData();
+    }
+
+    public static void RemovePendingTrap(string trapName)
+    {
+        if (StateData?.PendingTraps?.Remove(trapName) == true)
+        {
+            SaveData();
+        }
     }
 
     public static bool HasVirtualItem(string itemKey)
@@ -243,6 +268,10 @@ public class ArchipelagoStateData
 
     public List<string> ReceivedVirtualItemsSinceSave = new();
     public List<string> ReceivedVirtualItems = new();
+
+    // Received traps that haven't fired yet, reverted with the rest of the state when a save is reloaded.
+    public List<string> PendingTrapsSinceSave = new();
+    public List<string> PendingTraps = new();
     public string Seed = "";
     public string SlotName = "";
     public List<string> CheckedLocations = new();
