@@ -26,7 +26,11 @@ public static class SessionStartService
             {
                 saveData.WorldPhase = 1;
             }
-            
+
+            saveData.availableDestinations.Add("destination.rest");
+            saveData.availableDestinations.Add("destination.storage");
+            saveData.availableDestinations.Add("destination.research");
+            saveData.availableDestinations.Add("destination.gm-fishmonger");
             saveData.availableDestinations.Add("destination.gm-shipwright");
             saveData.availableDestinations.Add("destination.gm-shipwright-upgrades");
             saveData.availableDestinations.Add("destination.tm-upgrades");
