@@ -10,9 +10,9 @@ using Winch.Core;
 namespace ArchipelagoDredge.Game.Managers;
 
 /// <summary>
-///     Applies received trap items. Traps wait in the AP state until they make sense: nothing fires during a pause or
-///     forced time passage, and teleports, timed traps, hull damage and events wait until the boat leaves the dock. One
-///     trap fires per frame.
+///     Applies received trap items. Traps wait in the AP state until they make sense: nothing fires while fishing,
+///     harvesting, holding an item, in a menu, paused or during forced time passage, and teleports, timed traps, hull
+///     damage and events also wait until the boat leaves the dock. One trap fires per frame.
 /// </summary>
 public static class TrapManager
 {
@@ -100,9 +100,27 @@ public static class TrapManager
 
     private static bool CanApplyAnyNow()
     {
+        return ApSave.IsActive && IsPlayerFree();
+    }
+
+    /// <summary>
+    ///     True when nothing is mid-way through: no fishing or harvest screen, no held item and no open window other
+    ///     than the dock menu. A trap during a catch can leave the harvest screen stuck.
+    /// </summary>
+    public static bool IsPlayerFree()
+    {
         var gm = GameManager.Instance;
-        return ApSave.IsActive && gm != null && gm.IsPlaying && !gm.IsPaused && gm.Player != null &&
-               gm.Player.IsAlive && !gm.Time.IsTimePassingForcefully();
+        if (gm == null || !gm.IsPlaying || gm.IsPaused || gm.Player == null || !gm.Player.IsAlive ||
+            gm.Time.IsTimePassingForcefully())
+        {
+            return false;
+        }
+
+        var ui = gm.UI;
+        var windows = ui.ShowingWindowTypes;
+        var onlyDockMenu = windows.Count == 0 || (windows.Count == 1 && windows[0] == UIWindowType.DOCK);
+        return !gm.Player.IsFishing && !ui.IsHarvesting && !ui.IsShowingQuestGrid && !ui.IsShowingRadialMenu &&
+               onlyDockMenu && !gm.GridManager.IsCurrentlyHoldingObject();
     }
 
     private static bool Always() => true;

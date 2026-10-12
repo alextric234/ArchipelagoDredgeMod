@@ -140,9 +140,8 @@ public static class EventTrapQueue
     private static bool CanStartNow()
     {
         var gm = GameManager.Instance;
-        return gm != null && gm.IsPlaying && !gm.IsPaused && gm.Player != null && gm.Player.IsAlive &&
-               !gm.Player.IsDocked && gm.WorldEventManager != null && gm.WorldEventManager.CurrentEvent == null &&
-               !gm.Time.IsTimePassingForcefully();
+        return TrapManager.IsPlayerFree() && !gm.Player.IsDocked && gm.WorldEventManager != null &&
+               gm.WorldEventManager.CurrentEvent == null;
     }
 
     public static IEnumerable<WorldEventData> SpawnableEvents(EventTrapKind kind)
