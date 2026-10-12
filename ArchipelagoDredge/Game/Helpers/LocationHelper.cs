@@ -489,7 +489,20 @@ public enum Location
     MESSAGE_7,
     MESSAGE_8,
     MESSAGE_9,
-    MESSAGE_10
+    MESSAGE_10,
+    GIFT_FISHMONGER,
+    GIFT_SHIPWRIGHT,
+    GIFT_LITTLE_MARROW_TRADER,
+    GIFT_TRAVELLING_MERCHANT,
+    PURSUIT_PACKAGE_DELIVERY,
+    PURSUIT_CRAVEN_COURIER,
+    PURSUIT_FIGURE_IN_BLUE,
+    PURSUIT_FIGURE_IN_GOLD,
+    PURSUIT_FIGURE_IN_PURPLE,
+    PURSUIT_FIGURE_IN_RED,
+    PURSUIT_FIGURE_IN_WHITE,
+    PURSUIT_RESEARCH_ASSISTANT,
+    PURSUIT_A_PLACE_TO_REST
 }
 
 public static class LocationHelper
@@ -972,8 +985,54 @@ public static class LocationHelper
         { Location.MESSAGE_7, "Twisted Strand - Message in a Bottle 1(F-13)" },
         { Location.MESSAGE_8, "Devil's Spine - Message in a Bottle 2(P-12)" },
         { Location.MESSAGE_9, "Gale Cliffs - Message in a Bottle 2(N-4)" },
-        { Location.MESSAGE_10, "Twisted Strand - Message in a Bottle 2(F-13)" }
+        { Location.MESSAGE_10, "Twisted Strand - Message in a Bottle 2(F-13)" },
+        { Location.GIFT_FISHMONGER, "Fishmonger's Gift" },
+        { Location.GIFT_SHIPWRIGHT, "Shipwright's Gift" },
+        { Location.GIFT_LITTLE_MARROW_TRADER, "Little Marrow Trader's Gift" },
+        { Location.GIFT_TRAVELLING_MERCHANT, "Travelling Merchant's Gift" },
+        { Location.PURSUIT_PACKAGE_DELIVERY, "Package Delivery" },
+        { Location.PURSUIT_CRAVEN_COURIER, "Craven Courier" },
+        { Location.PURSUIT_FIGURE_IN_BLUE, "Figure in Blue" },
+        { Location.PURSUIT_FIGURE_IN_GOLD, "Figure in Gold" },
+        { Location.PURSUIT_FIGURE_IN_PURPLE, "Figure in Purple" },
+        { Location.PURSUIT_FIGURE_IN_RED, "Figure in Red" },
+        { Location.PURSUIT_FIGURE_IN_WHITE, "Figure in White" },
+        { Location.PURSUIT_RESEARCH_ASSISTANT, "Research Assistant" },
+        { Location.PURSUIT_A_PLACE_TO_REST, "A Place to Rest" }
     };
+
+    /// <summary>
+    ///     The pursuit or character that hands out each research book. Every book has one vanilla source, and the
+    ///     book itself is an AP item, so in AP saves giving the book becomes the check.
+    /// </summary>
+    public static readonly IReadOnlyDictionary<string, Location> BookRewardLocations = new Dictionary<string, Location>
+    {
+        { "book-fishing-1", Location.GIFT_FISHMONGER },
+        { "book-speed-1", Location.GIFT_SHIPWRIGHT },
+        { "book-sanity-1", Location.GIFT_LITTLE_MARROW_TRADER },
+        { "book-barter-2", Location.GIFT_TRAVELLING_MERCHANT },
+        { "book-ecology-1", Location.PURSUIT_PACKAGE_DELIVERY },
+        { "book-sanity-2", Location.PURSUIT_CRAVEN_COURIER },
+        { "book-barter-1", Location.PURSUIT_FIGURE_IN_BLUE },
+        { "book-fishing-2", Location.PURSUIT_FIGURE_IN_GOLD },
+        { "book-speed-2", Location.PURSUIT_FIGURE_IN_PURPLE },
+        { "book-equip-2", Location.PURSUIT_FIGURE_IN_RED },
+        { "book-aberration-1", Location.PURSUIT_FIGURE_IN_WHITE },
+        { "book-ecology-2", Location.PURSUIT_RESEARCH_ASSISTANT },
+        { "book-equip-1", Location.PURSUIT_A_PLACE_TO_REST }
+    };
+
+    // The Builder hands over his book only once his house is built, days after the pursuit ends, so the check is
+    // sent when the escort finishes.
+    private static readonly IReadOnlyDictionary<string, Location> QuestStepLocations = new Dictionary<string, Location>
+    {
+        { "APlaceToRest_Escort", Location.PURSUIT_A_PLACE_TO_REST }
+    };
+
+    public static bool TryGetQuestStepLocation(string questStepId, out Location location)
+    {
+        return QuestStepLocations.TryGetValue(questStepId, out location) || TryParseLocation(questStepId, out location);
+    }
 
     public static readonly IReadOnlyList<Location> RelicLocations = new List<Location>
     {
@@ -1101,7 +1160,7 @@ public static class LocationHelper
         var questStepIds = questManager.allQuestSteps.Keys;
         var completedQuestSteps = questStepIds.Where(questManager.GetIsQuestStepCompleted).ToList();
         foreach (var completedQuestStep in completedQuestSteps)
-            if (TryParseLocation(completedQuestStep, out var questLocation) &&
+            if (TryGetQuestStepLocation(completedQuestStep, out var questLocation) &&
                 TryGetArchipelagoId(questLocation, out var locationId) &&
                 !completedChecks.Contains(locationId))
             {

@@ -2,6 +2,7 @@
 using System.Linq;
 using ArchipelagoDredge.Game.Helpers;
 using ArchipelagoDredge.Game.Managers;
+using ArchipelagoDredge.Game.Patches;
 using ArchipelagoDredge.Network;
 using ArchipelagoDredge.Network.Enums;
 using ArchipelagoDredge.Utils;
@@ -40,6 +41,7 @@ public static class SessionStartService
             LocationHelper.LoadArchipelagoIds();
             RemoveCheckedRelicPois();
             LocationHelper.ReconcileArchipelagoChecks();
+            QuestManagerPatches.OfferPursuitsWithoutPrerequisites();
             LocationHelper.ResendRecordedChecks();
             ArchipelagoItemManager.RestockShops();
         }

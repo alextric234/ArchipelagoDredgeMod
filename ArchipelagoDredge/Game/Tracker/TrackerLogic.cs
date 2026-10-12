@@ -25,10 +25,10 @@ public class TrackerLogic
     private static readonly (int knots, int lumens) PaleReachPerformance = (60, 2100);
     private const int BaseSpeed = 10;
 
-    private static readonly HashSet<string> AtSeaLocationGroups = ["Dredge", "Encyclopedia", "World", "Message"];
+    private static readonly HashSet<string> AtSeaLocationGroups = ["Dredge", "Encyclopedia", "World", "Message", "Pursuit"];
 
     // locations.py leaves these groups out of every seed.
-    private static readonly HashSet<string> ExcludedLocationGroups = ["Shop", "Pursuit", "World", "Relic"];
+    private static readonly HashSet<string> ExcludedLocationGroups = ["Shop", "Unused Pursuit", "World", "Relic"];
 
     private static readonly HashSet<string> CatchToolGroups = ["Rod", "Net", "Crab Pot", "Consumable"];
     private static readonly HashSet<string> ExcludedCatchTools = ["Tendon Rod", "Viscera Crane"];
@@ -175,6 +175,10 @@ public class TrackerLogic
                 return Has("Research Part", requirement.Cost);
             case "iron_rig_phase":
                 return MeetsIronRigPhase(requirement.Phase);
+            case "locations":
+                return requirement.AllOf.All(CanReachLocation);
+            case "regions":
+                return requirement.AnyOf.Any(CanReachRegion);
             default:
                 return false;
         }
