@@ -315,6 +315,14 @@ internal class TrackerPanel : TabbedPanel
                 $"<color={(r.Met ? MetColor : UnmetColor)}>{(r.Met ? "+" : "-")} {r.Text}</color>"));
         }
 
+        var trading = entry.Status == TrackerStatus.Checked ? null : TrackerShopGifts.Requirement(entry.Name);
+        if (trading != null)
+        {
+            lines.Add("");
+            lines.Add("Also needs:");
+            lines.Add($"<color={(trading.Met ? MetColor : UnmetColor)}>{(trading.Met ? "+" : "-")} {trading.Text}</color>");
+        }
+
         detailBody.text = string.Join("\n", lines);
 
         var isUnchecked = entry.Status != TrackerStatus.Checked;
