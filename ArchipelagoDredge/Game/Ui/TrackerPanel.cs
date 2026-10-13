@@ -317,14 +317,20 @@ internal class TrackerPanel : TabbedPanel
 
         detailBody.text = string.Join("\n", lines);
 
-        var spots = entry.Status == TrackerStatus.Checked ? [] : TrackerTargets.GetSpots(entry);
-        pinButton.Root.SetActive(spots.Count > 0);
+        var isUnchecked = entry.Status != TrackerStatus.Checked;
+        var spots = isUnchecked ? TrackerTargets.GetSpots(entry) : [];
         if (spots.Count > 0)
         {
             var allPinned = TrackerTargets.AreAllPinned(spots);
             pinButton.SetText(allPinned ? "Unpin from map" : "Pin on map",
                 spots.Count == 1 ? "1 spot" : $"{spots.Count} spots");
         }
+        else if (isUnchecked && TrackerStamps.TryGetPosition(entry.Name, out var position))
+        {
+            pinButton.SetText(TrackerStamps.IsPinned(position) ? "Unpin from map" : "Pin on map", "Marks where to go");
+        }
+
+        pinButton.Root.SetActive(spots.Count > 0 || (isUnchecked && TrackerStamps.TryGetPosition(entry.Name, out _)));
 
         var fish = TrackerTargets.GetFish(entry);
         encyclopediaButton.Root.SetActive(fish != null);
@@ -346,7 +352,16 @@ internal class TrackerPanel : TabbedPanel
             return;
         }
 
-        actionMessage = TrackerTargets.TogglePins(TrackerTargets.GetSpots(entry));
+        var spots = TrackerTargets.GetSpots(entry);
+        if (spots.Count > 0)
+        {
+            actionMessage = TrackerTargets.TogglePins(spots);
+        }
+        else if (TrackerStamps.TryGetPosition(entry.Name, out var position))
+        {
+            actionMessage = TrackerStamps.TogglePin(position);
+        }
+
         RefreshDetails();
     }
 
