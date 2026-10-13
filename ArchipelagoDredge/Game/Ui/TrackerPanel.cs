@@ -26,6 +26,8 @@ internal class TrackerPanel : TabbedPanel
 
     private const float RowHeight = 90f;
     private const float PollSeconds = 1f;
+    private const string MetColor = "#3E6B35";
+    private const string UnmetColor = "#9E2B25";
 
     private JournalWindow journal;
     private TabbedPanelContainer tabbedPanel;
@@ -121,18 +123,26 @@ internal class TrackerPanel : TabbedPanel
         detailTitle = NewText(details, 34);
         Place(detailTitle.rectTransform, new Vector2(0, 1), new Vector2(0, 0), new Vector2(0, 110));
         StretchWidth(detailTitle.rectTransform);
+        // The body fills the space above the buttons and shrinks its text to fit long requirement lists.
         detailBody = NewText(details, 26);
-        Place(detailBody.rectTransform, new Vector2(0, 1), new Vector2(0, -120), new Vector2(0, 340));
-        StretchWidth(detailBody.rectTransform);
+        var bodyRect = detailBody.rectTransform;
+        bodyRect.anchorMin = Vector2.zero;
+        bodyRect.anchorMax = Vector2.one;
+        bodyRect.pivot = new Vector2(0, 1);
+        bodyRect.offsetMin = new Vector2(0, 2 * RowHeight + 40);
+        bodyRect.offsetMax = new Vector2(0, -120);
         detailBody.alignment = TextAlignmentOptions.TopLeft;
+        detailBody.enableAutoSizing = true;
+        detailBody.fontSizeMin = 16;
+        detailBody.fontSizeMax = 26;
 
         pinButton = Card.Create(style, details);
-        Place(pinButton.Rect, new Vector2(0, 1), new Vector2(0, -480), new Vector2(0, RowHeight));
+        Place(pinButton.Rect, Vector2.zero, new Vector2(0, RowHeight + 20), new Vector2(0, RowHeight));
         StretchWidth(pinButton.Rect);
         pinButton.Button.OnClick += TogglePins;
 
         encyclopediaButton = Card.Create(style, details);
-        Place(encyclopediaButton.Rect, new Vector2(0, 1), new Vector2(0, -590), new Vector2(0, RowHeight));
+        Place(encyclopediaButton.Rect, Vector2.zero, Vector2.zero, new Vector2(0, RowHeight));
         StretchWidth(encyclopediaButton.Rect);
         encyclopediaButton.Button.OnClick += OpenEncyclopedia;
     }
@@ -294,6 +304,15 @@ internal class TrackerPanel : TabbedPanel
         {
             lines.Add("");
             lines.Add(actionMessage);
+        }
+
+        var requirements = entry.Status == TrackerStatus.Checked ? [] : TrackerService.Requirements(entry.Name);
+        if (requirements.Count > 0)
+        {
+            lines.Add("");
+            lines.Add("Logic needs:");
+            lines.AddRange(requirements.Select(r =>
+                $"<color={(r.Met ? MetColor : UnmetColor)}>{(r.Met ? "+" : "-")} {r.Text}</color>"));
         }
 
         detailBody.text = string.Join("\n", lines);

@@ -46,8 +46,11 @@ public static class TrackerTargets
 
         if (entry.LocationGroup == DredgeGroup)
         {
-            return TryGetLocationKey(entry.Name, out var key)
-                ? lookup.Where(p => p.Value != null && Key(p.Key) == key).Select(p => p.Value).ToList()
+            // Dredge spot ids are the numbers in the location enum, as the mod reads them when a spot is harvested.
+            return LocationHelper.LocationsByName.TryGetValue(entry.Name, out var location)
+                ? lookup.Where(p => p.Value != null && LocationHelper.TryParseLocation(p.Key, out var spot) &&
+                                    spot == location)
+                    .Select(p => p.Value).ToList()
                 : [];
         }
 

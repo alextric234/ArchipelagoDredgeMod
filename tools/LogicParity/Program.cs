@@ -12,7 +12,7 @@ if (args.Length != 1)
 }
 
 var fixtures = JArray.Parse(File.ReadAllText(args[0]));
-int failures = 0, index = 0;
+int failures = 0, explainFailures = 0, index = 0;
 foreach (var fixture in fixtures)
 {
     var o = fixture["options"];
@@ -41,8 +41,20 @@ foreach (var fixture in fixtures)
         Console.WriteLine($"  in mod logic only ({extra.Count}): {string.Join(", ", extra.Take(10))}");
     }
 
+    // The tracker's "Logic needs" list should be all met exactly when the location is in logic.
+    foreach (var name in fixture["locations"].Values<string>())
+    {
+        var allMet = TrackerLogic.Explain(items, options, name).All(r => r.Met);
+        if (allMet != actual.Contains(name) && explainFailures++ < 10)
+        {
+            Console.WriteLine($"Case {index}: {name} explanation says {(allMet ? "met" : "unmet")} but logic says " +
+                              $"{(actual.Contains(name) ? "in" : "out of")} logic");
+        }
+    }
+
     index++;
 }
 
 Console.WriteLine($"{index - failures}/{index} cases match");
-return failures == 0 ? 0 : 1;
+Console.WriteLine($"{explainFailures} location explanations disagree with logic");
+return failures == 0 && explainFailures == 0 ? 0 : 1;

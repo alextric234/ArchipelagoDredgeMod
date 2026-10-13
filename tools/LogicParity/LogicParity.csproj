@@ -12,6 +12,7 @@
         <Compile Include="..\..\ArchipelagoDredge\Game\Tracker\ApWorldData.cs" Link="Tracker\ApWorldData.cs" />
         <Compile Include="..\..\ArchipelagoDredge\Game\Tracker\Fitting.cs" Link="Tracker\Fitting.cs" />
         <Compile Include="..\..\ArchipelagoDredge\Game\Tracker\TrackerLogic.cs" Link="Tracker\TrackerLogic.cs" />
+        <Compile Include="..\..\ArchipelagoDredge\Game\Tracker\TrackerLogicExplain.cs" Link="Tracker\TrackerLogicExplain.cs" />
         <EmbeddedResource Include="$(ApWorldDataPath)\items.json;$(ApWorldDataPath)\locations.json;$(ApWorldDataPath)\hulls.json">
             <LogicalName>ApWorldData.%(Filename)%(Extension)</LogicalName>
         </EmbeddedResource>

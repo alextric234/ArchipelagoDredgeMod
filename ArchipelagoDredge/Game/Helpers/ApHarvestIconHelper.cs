@@ -50,6 +50,11 @@ public static class ApHarvestIconHelper
         return IsUncheckedApLocation(spotLocationId) ? ApIcon : null;
     }
 
+    public static bool IsIconCopy(HarvestableItemData item)
+    {
+        return item != null && IconItemCopies.ContainsValue(item);
+    }
+
     public static Sprite GetIcon(string iconName)
     {
         return TextureUtil.GetSprite(iconName);

@@ -80,6 +80,18 @@ public static class TrackerService
         });
     }
 
+    /// <summary>What logic needs for a location, each marked met or not; empty when not connected.</summary>
+    public static List<LogicRequirement> Requirements(string locationName)
+    {
+        if (!ArchipelagoClient.IsConnected)
+        {
+            return [];
+        }
+
+        var counts = ApSave.ReceivedItemNames.GroupBy(name => name).ToDictionary(g => g.Key, g => g.Count());
+        return TrackerLogic.Explain(counts, CurrentOptions(), locationName);
+    }
+
     /// <summary>Unchecked locations in logic, or null when not connected.</summary>
     public static IReadOnlyList<string> UncheckedInLogic()
     {

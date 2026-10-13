@@ -20,5 +20,6 @@ Both steps expect the apworld checked out next to this repo (`../ArchipelagoDred
    dotnet run --project tools/LogicParity -- fixtures.json
    ```
 
-   It prints any case where the two disagree and exits non-zero if any do. Set `-p:ApWorldDataPath=...` on the
+   It prints any case where the two disagree and exits non-zero if any do. It also checks that every location's
+   "Logic needs" list in the journal tab is all met exactly when the location is in logic. Set `-p:ApWorldDataPath=...` on the
    `dotnet` command if the apworld data isn't next to this repo.

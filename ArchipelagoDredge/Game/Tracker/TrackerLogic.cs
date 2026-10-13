@@ -19,7 +19,7 @@ public class TrackerOptions
 ///     Port of the apworld's rules.py and region graph. Given received items, works out which locations are in logic.
 ///     Keep in step with the apworld; tools/LogicParity compares the two.
 /// </summary>
-public class TrackerLogic
+public partial class TrackerLogic
 {
     // (knots, lumens), as in rules.py.
     private static readonly (int knots, int lumens) MidRegionsPerformance = (50, 1800);
