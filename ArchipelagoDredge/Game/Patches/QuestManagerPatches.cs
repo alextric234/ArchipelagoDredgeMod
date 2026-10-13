@@ -28,12 +28,12 @@ public class QuestManagerPatches
         public string Message { get; } = message;
     }
 
-    // Losing these mid-pursuit fails it for good in vanilla. The Castaway and the dog can't be picked up again once
-    // aboard, so losing them sends the pursuit's check and lets it fail.
+    // Losing these mid-pursuit fails it for good in vanilla. The Castaway can't be picked up again once aboard, so
+    // losing it sends the pursuit's check and lets it fail. (The dog has a failure rule too, but its cells can't be
+    // damaged and it can't be discarded, so it's never lost.)
     private static readonly Dictionary<string, (string failingStepId, Location location)> ChecksSentOnLoss = new()
     {
-        ["quest-castaway"] = ("Castaway_Escort", Location.PURSUIT_CASTAWAY),
-        ["quest-dog"] = ("Dog_OnBoard", Location.PURSUIT_LOST_DOG)
+        ["quest-castaway"] = ("Castaway_Escort", Location.PURSUIT_CASTAWAY)
     };
 
     // The rest can be picked up again, so the pursuit goes back to its pickup step.
