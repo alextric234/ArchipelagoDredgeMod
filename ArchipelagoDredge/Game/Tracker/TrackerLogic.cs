@@ -11,6 +11,8 @@ public class TrackerOptions
     public bool AddPassageItems;
     public bool LogicalNets;
     public bool RequireBoatPerformance;
+    public int ProgressiveAberrationChanceItems;
+    public bool GuaranteedAberrationsItem;
 }
 
 /// <summary>
@@ -28,7 +30,7 @@ public class TrackerLogic
     private static readonly HashSet<string> AtSeaLocationGroups = ["Dredge", "Encyclopedia", "World", "Message", "Pursuit"];
 
     // locations.py leaves these groups out of every seed.
-    private static readonly HashSet<string> ExcludedLocationGroups = ["Shop", "Unused Pursuit", "World", "Relic"];
+    private static readonly HashSet<string> ExcludedLocationGroups = ["Shop", "Unused Pursuit", "Unused World", "Relic"];
 
     private static readonly HashSet<string> CatchToolGroups = ["Rod", "Net", "Crab Pot", "Consumable"];
     private static readonly HashSet<string> ExcludedCatchTools = ["Tendon Rod", "Viscera Crane"];
@@ -154,6 +156,11 @@ public class TrackerLogic
             return false;
         }
 
+        if (location.IsAberration && location.Group == "Encyclopedia" && !CanGetAberrations())
+        {
+            return false;
+        }
+
         if (location.Region == "Open Ocean" && AtSeaLocationGroups.Contains(location.Group) &&
             !HasBoatPerformance(OpenOceanPerformance))
         {
@@ -179,9 +186,24 @@ public class TrackerLogic
                 return requirement.AllOf.All(CanReachLocation);
             case "regions":
                 return requirement.AnyOf.Any(CanReachRegion);
+            case "aberrations":
+                return CanGetAberrations();
             default:
                 return false;
         }
+    }
+
+    // As rules.can_get_aberrations: half the Progressive Aberration Chance items, or Guaranteed Aberrations.
+    private bool CanGetAberrations()
+    {
+        var progressiveCount = options.ProgressiveAberrationChanceItems;
+        if (progressiveCount == 0 && !options.GuaranteedAberrationsItem)
+        {
+            return true;
+        }
+
+        return (options.GuaranteedAberrationsItem && Has("Guaranteed Aberrations")) ||
+               (progressiveCount > 0 && Has("Progressive Aberration Chance", (progressiveCount + 1) / 2));
     }
 
     private bool MeetsIronRigPhase(int phase)

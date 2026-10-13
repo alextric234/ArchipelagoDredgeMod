@@ -28,7 +28,15 @@ public class QuestManagerPatches
         public string Message { get; } = message;
     }
 
-    // Losing these mid-pursuit fails it for good in vanilla, which would make its check impossible.
+    // Losing these mid-pursuit fails it for good in vanilla. The Castaway and the dog can't be picked up again once
+    // aboard, so losing them sends the pursuit's check and lets it fail.
+    private static readonly Dictionary<string, (string failingStepId, Location location)> ChecksSentOnLoss = new()
+    {
+        ["quest-castaway"] = ("Castaway_Escort", Location.PURSUIT_CASTAWAY),
+        ["quest-dog"] = ("Dog_OnBoard", Location.PURSUIT_LOST_DOG)
+    };
+
+    // The rest can be picked up again, so the pursuit goes back to its pickup step.
     private static readonly Dictionary<string, Rollback> RollbacksByItemId = new()
     {
         ["quest-builder"] = new Rollback(APlaceToRestQuestId, "APlaceToRest_Escort", "APlaceToRest_Return",
@@ -54,8 +62,19 @@ public class QuestManagerPatches
     {
         try
         {
-            if (!ApSave.IsActive || itemData == null ||
-                !RollbacksByItemId.TryGetValue(itemData.id, out var rollback) ||
+            if (!ApSave.IsActive || itemData == null)
+            {
+                return true;
+            }
+
+            if (ChecksSentOnLoss.TryGetValue(itemData.id, out var lost) && __instance.GetIsQuestStepActive(lost.failingStepId))
+            {
+                WinchCore.Log.Info($"{itemData.id} lost; sending {LocationHelper.LocationNames[lost.location]}");
+                LocationHelper.ReportLocationCheck(lost.location);
+                return true;
+            }
+
+            if (!RollbacksByItemId.TryGetValue(itemData.id, out var rollback) ||
                 !__instance.GetIsQuestStepActive(rollback.FailingStepId))
             {
                 return true;

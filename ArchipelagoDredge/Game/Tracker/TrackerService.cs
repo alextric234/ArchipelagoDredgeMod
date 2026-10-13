@@ -58,7 +58,9 @@ public static class TrackerService
             AddFishingLicenses = slotData.AddFishingLicenses,
             AddPassageItems = slotData.AddPassageItems,
             LogicalNets = slotData.LogicalNets,
-            RequireBoatPerformance = slotData.RequireBoatPerformance
+            RequireBoatPerformance = slotData.RequireBoatPerformance,
+            ProgressiveAberrationChanceItems = slotData.ProgressiveAberrationChanceItems,
+            GuaranteedAberrationsItem = slotData.GuaranteedAberrationsItem
         };
     }
 

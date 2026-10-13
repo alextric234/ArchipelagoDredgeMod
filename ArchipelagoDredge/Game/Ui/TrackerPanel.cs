@@ -275,6 +275,7 @@ internal class TrackerPanel : TabbedPanel
                 "Dredge" => "Dredge spot",
                 "Encyclopedia" => "Fish",
                 "Message" => "Message in a bottle",
+                "World" => "Shrine, cache or found loot",
                 _ => entry.LocationGroup
             } + $" in {entry.Region}",
             entry.Status switch

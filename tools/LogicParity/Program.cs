@@ -23,7 +23,9 @@ foreach (var fixture in fixtures)
         AddFishingLicenses = (bool) o["add_fishing_licenses"],
         AddPassageItems = (bool) o["add_passage_items"],
         LogicalNets = (bool) o["logical_nets"],
-        RequireBoatPerformance = (bool) o["require_boat_performance"]
+        RequireBoatPerformance = (bool) o["require_boat_performance"],
+        ProgressiveAberrationChanceItems = (int?) o["progressive_aberration_chance_items"] ?? 0,
+        GuaranteedAberrationsItem = (bool?) o["guaranteed_aberrations_item"] ?? false
     };
     var items = ((JObject) fixture["items"]).Properties().ToDictionary(p => p.Name, p => (int) p.Value);
     var expected = fixture["reachable"].Values<string>().ToHashSet();

@@ -75,6 +75,8 @@ rng = random.Random(args.seed)
 fixtures = []
 for _ in range(args.worlds):
     options = {name: rng.random() < 0.5 for name in LOGIC_OPTIONS}
+    options["progressive_aberration_chance_items"] = rng.choice([0, 0, 1, 4, 7, 20])
+    options["guaranteed_aberrations_item"] = rng.random() < 0.3
     multiworld = build_world(rng.randrange(1 << 30), options)
     pool_size = len([item for item in multiworld.itempool if item.player == 1])
     for item_count in (0, pool_size // 8, pool_size // 4, pool_size // 2, pool_size):

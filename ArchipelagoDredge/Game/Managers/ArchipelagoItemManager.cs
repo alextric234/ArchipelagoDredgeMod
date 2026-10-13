@@ -122,7 +122,7 @@ public static class ArchipelagoItemManager
 
             if (dredgeItem is SpatialItemData)
             {
-                validGrid = GetValidGrid(dredgeItem);
+                validGrid = GetValidGrid(dredgeItem, preferInventory: ItemNames.QuestItems.Contains(item));
 
                 if (validGrid == null)
                 {
@@ -256,9 +256,29 @@ public static class ArchipelagoItemManager
         return shopDredgeItems;
     }
 
-    private static SerializableGrid GetValidGrid(ItemData dredgeItem)
+    /// <summary>Puts an item in the hold, or storage when the hold is full. False when neither has room.</summary>
+    public static bool TryGiveToHold(string itemId)
+    {
+        var itemData = ItemUtil.GetItemData(itemId);
+        var grid = itemData is SpatialItemData ? GetValidGrid(itemData, preferInventory: true) : null;
+        if (grid == null)
+        {
+            return false;
+        }
+
+        GameManager.Instance.ItemManager.AddItemById(itemId, grid);
+        return true;
+    }
+
+    private static SerializableGrid GetValidGrid(ItemData dredgeItem, bool preferInventory = false)
     {
         Vector3Int foundPosition;
+        if (preferInventory &&
+            GameManager.Instance.SaveData.Inventory.FindPositionForObject((SpatialItemData) dredgeItem, out foundPosition))
+        {
+            return GameManager.Instance.SaveData.Inventory;
+        }
+
         if (GameManager.Instance.SaveData.Storage.FindPositionForObject((SpatialItemData) dredgeItem,
                 out foundPosition))
         {

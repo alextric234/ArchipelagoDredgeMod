@@ -959,6 +959,19 @@ public static class ItemNames
         {Item.RESEARCHED_EVENT_5, "Large Trawl Net Researched"}
     };
 
+    // Pursuits only count these in the hold, so they're delivered there when there's room.
+    public static readonly IReadOnlyList<Item> QuestItems =
+    [
+        Item.QUEST_BELT_BUCKLE,
+        Item.QUEST_DOG_TAG,
+        Item.QUEST_MORTAR_1,
+        Item.QUEST_MORTAR_2,
+        Item.QUEST_CREST,
+        Item.QUEST_TABLET_1,
+        Item.QUEST_TABLET_2,
+        Item.QUEST_TABLET_3
+    ];
+
     // The Collector's abilities, by the id the game unlocks them with.
     public static readonly IReadOnlyDictionary<Item, string> AbilityIds = new Dictionary<Item, string>
     {

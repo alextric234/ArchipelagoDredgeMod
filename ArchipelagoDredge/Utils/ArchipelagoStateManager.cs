@@ -238,6 +238,7 @@ public static class ArchipelagoStateManager
         StateData.SlotAddFishingLicenses = slotData.AddFishingLicenses;
         StateData.SlotAddPassageItems = slotData.AddPassageItems;
         StateData.SlotProgressiveAberrationChanceItems = slotData.ProgressiveAberrationChanceItems;
+        StateData.SlotGuaranteedAberrationsItem = slotData.GuaranteedAberrationsItem;
         StateData.SlotLogicalNets = slotData.LogicalNets;
         StateData.SlotRequireBoatPerformance = slotData.RequireBoatPerformance;
         StateData.ReceivedItemNames = receivedItemNames.ToList();
@@ -257,6 +258,7 @@ public static class ArchipelagoStateManager
             state.SlotAddFishingLicenses,
             state.SlotAddPassageItems,
             state.SlotProgressiveAberrationChanceItems,
+            state.SlotGuaranteedAberrationsItem,
             state.SlotLogicalNets,
             state.SlotRequireBoatPerformance);
     }
@@ -289,6 +291,7 @@ public class ArchipelagoStateData
     public bool SlotAddFishingLicenses;
     public bool SlotAddPassageItems;
     public int SlotProgressiveAberrationChanceItems;
+    public bool SlotGuaranteedAberrationsItem;
     public bool SlotLogicalNets;
     public bool SlotRequireBoatPerformance;
 

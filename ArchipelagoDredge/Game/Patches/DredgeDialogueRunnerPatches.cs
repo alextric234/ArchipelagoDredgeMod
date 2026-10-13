@@ -1,6 +1,11 @@
 ﻿using System;
+using System.Collections;
+using System.Reflection;
 using System.Linq;
+using Archipelago.MultiClient.Net.Colors;
 using ArchipelagoDredge.Game.Helpers;
+using ArchipelagoDredge.Game.Managers;
+using ArchipelagoDredge.Game.Models;
 using ArchipelagoDredge.Network;
 using ArchipelagoDredge.Utils;
 using HarmonyLib;
@@ -11,6 +16,43 @@ namespace ArchipelagoDredge.Game.Patches;
 [HarmonyPatch(typeof(DredgeDialogueRunner))]
 public class DredgeDialogueRunnerPatches
 {
+    private static readonly MethodInfo LastQuestGridResultSetter =
+        AccessTools.PropertySetter(typeof(DredgeDialogueRunner), "LastQuestGridResult");
+
+    // In AP saves a pursuit's reward grid is replaced by its check. 0 is the result dialogue reads as "collected".
+    [HarmonyPrefix]
+    [HarmonyPatch(nameof(DredgeDialogueRunner.ShowQuestGrid))]
+    public static bool ShowQuestGrid_Prefix(DredgeDialogueRunner __instance, string param, ref IEnumerator __result)
+    {
+        try
+        {
+            if (!ApSave.IsActive)
+            {
+                return true;
+            }
+
+            if (LocationHelper.TryGetRewardGridLocation(param, out var location))
+            {
+                WinchCore.Log.Info($"Reward grid {param} skipped; sending {LocationHelper.LocationNames[location]} instead");
+                LocationHelper.ReportLocationCheck(location);
+                GiveQuestItems(param);
+            }
+            else if (param != LocationHelper.RareFishRewardGrid && !LocationHelper.SkippedGrids.Contains(param))
+            {
+                return true;
+            }
+
+            LastQuestGridResultSetter.Invoke(__instance, [0]);
+            __result = Array.Empty<object>().GetEnumerator();
+            return false;
+        }
+        catch (Exception e)
+        {
+            WinchCore.Log.Error($"Error in DredgeDialogueRunnerPatches.ShowQuestGrid_Prefix: {e}");
+            return true;
+        }
+    }
+
     // Dialogue's AddItemById command calls this overload; the mod gives AP items through the grid overload, so those
     // aren't affected.
     [HarmonyPrefix]
@@ -33,6 +75,27 @@ public class DredgeDialogueRunnerPatches
         {
             WinchCore.Log.Error($"Error in DredgeDialogueRunnerPatches.AddItemById_Prefix: {e}");
             return true;
+        }
+    }
+
+    private static void GiveQuestItems(string gridName)
+    {
+        if (!LocationHelper.RewardGridQuestItems.TryGetValue(gridName, out var itemIds))
+        {
+            return;
+        }
+
+        foreach (var itemId in itemIds)
+        {
+            if (!ArchipelagoItemManager.TryGiveToHold(itemId))
+            {
+                WinchCore.Log.Warn($"No room for {itemId} from {gridName}");
+                NotificationHelper.TryToSendNotification(new DredgeNotification
+                {
+                    Message = "No room anywhere for a quest item from here; it was not collected.",
+                    MessageColor = PaletteColor.Red
+                });
+            }
         }
     }
 

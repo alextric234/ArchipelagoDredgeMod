@@ -38,6 +38,7 @@ public class ApLocationData
     public ApRequirement[] Requirements;
     public bool CanCatchRod;
     public bool CanCatchNet;
+    public bool IsAberration;
 }
 
 /// <summary>
@@ -95,7 +96,8 @@ public static class ApWorldData
                 Phase = (string) r["type"] == "iron_rig_phase" ? (int) r["value"] : 0
             }).ToArray(),
             CanCatchRod = (bool?) p.Value["can_catch_rod"] ?? true,
-            CanCatchNet = (bool?) p.Value["can_catch_net"] ?? false
+            CanCatchNet = (bool?) p.Value["can_catch_net"] ?? false,
+            IsAberration = (bool?) p.Value["is_aberration"] ?? false
         });
     }
 

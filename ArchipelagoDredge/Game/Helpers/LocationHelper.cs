@@ -508,7 +508,39 @@ public enum Location
     COLLECTOR_RUSTED_MUSIC_BOX,
     COLLECTOR_JEWEL_ENCRUSTED_BAND,
     COLLECTOR_SHIMMERING_NECKLACE,
-    COLLECTOR_ANTIQUE_POCKET_WATCH
+    COLLECTOR_ANTIQUE_POCKET_WATCH,
+    PURSUIT_A_FRESH_START,
+    PURSUIT_CASTAWAY,
+    PURSUIT_CAUGHT_TO_ORDER,
+    PURSUIT_LOST_DOG,
+    PURSUIT_LOST_AT_SEA,
+    PURSUIT_RARE_OARFISH,
+    PURSUIT_RARE_GULPER_EEL,
+    PURSUIT_RARE_GOLIATH_TIGERFISH,
+    PURSUIT_RARE_COELACANTH,
+    PURSUIT_BITTER_END_DOG_TAGS,
+    PURSUIT_BITTER_END,
+    PURSUIT_FLAMES_OF_THE_DEEP,
+    WORLD_CRAB_SHRINE,
+    WORLD_DS_SHRINE_1,
+    WORLD_DS_SHRINE_2,
+    WORLD_GM_SHORE_CACHE_1,
+    WORLD_GM_SHORE_CACHE_2,
+    WORLD_OLD_WRECK,
+    WORLD_GC_SHORE_CACHE_1,
+    WORLD_GC_SHORE_CACHE_2,
+    WORLD_GC_SHORE_CACHE_3,
+    WORLD_SB_SHORE_CACHE_1,
+    WORLD_SB_SHORE_CACHE_2,
+    WORLD_SB_SHORE_CACHE_3,
+    WORLD_SB_SHORE_CACHE_4,
+    WORLD_SB_SHORE_CACHE_5,
+    WORLD_TS_SHORE_CACHE_1,
+    WORLD_TS_SHORE_CACHE_2,
+    WORLD_OLD_MAYOR_CAMP_GC,
+    WORLD_OLD_MAYOR_CAMP_SB,
+    WORLD_OLD_LABORATORY,
+    PURSUIT_STONE_TABLETS
 }
 
 public static class LocationHelper
@@ -782,10 +814,10 @@ public static class LocationHelper
         { Location.ROD13, "Anti-Tangle Line" },
         { Location.ROD14, "Versatile Rod" },
         { Location.ROD15, "Harvesting Platform" },
-        { Location.ROD16, "Tendon Rod" },
-        { Location.ROD17, "Encrusted Talisman" },
+        { Location.ROD16, "Twisted Strand - Aberration Shrine(D-13)" },
+        { Location.ROD17, "Devil's Spine - Shrine 3(O-14)" },
         { Location.ROD18, "Simple Skimmer" },
-        { Location.ROD19, "Sinew Spindle" },
+        { Location.ROD19, "The Marrows - Cod Shrine(J-9)" },
         { Location.ROD2, "Weighted Line" },
         { Location.ROD20, "Sign of Ruin" },
         { Location.ROD21, "Custom Rod" },
@@ -795,7 +827,7 @@ public static class LocationHelper
         { Location.ROD4, "Flexible Fishing Pole" },
         { Location.ROD5, "Sampling Device" },
         { Location.ROD6, "Bottomless Lines" },
-        { Location.ROD8, "Viscera Crane" },
+        { Location.ROD8, "Stellar Basin - Shark Shrine(H-2)" },
         { Location.SILVER_PLATE_3, "Open Ocean - Silver Plate 1(M-10)" },
         { Location.CLOTH_10, "The Marrows - Cloth 1(J-8)" },
         { Location.LUMBER_18, "Open Ocean - Lumber 1(I-6)" },
@@ -1010,7 +1042,39 @@ public static class LocationHelper
         { Location.COLLECTOR_RUSTED_MUSIC_BOX, "The Collector - Rusted Music Box" },
         { Location.COLLECTOR_JEWEL_ENCRUSTED_BAND, "The Collector - Jewel Encrusted Band" },
         { Location.COLLECTOR_SHIMMERING_NECKLACE, "The Collector - Shimmering Necklace" },
-        { Location.COLLECTOR_ANTIQUE_POCKET_WATCH, "The Collector - Antique Pocket Watch" }
+        { Location.COLLECTOR_ANTIQUE_POCKET_WATCH, "The Collector - Antique Pocket Watch" },
+        { Location.PURSUIT_A_FRESH_START, "A Fresh Start" },
+        { Location.PURSUIT_CASTAWAY, "Castaway" },
+        { Location.PURSUIT_CAUGHT_TO_ORDER, "Caught to Order" },
+        { Location.PURSUIT_LOST_DOG, "Lost Dog" },
+        { Location.PURSUIT_LOST_AT_SEA, "Lost at Sea" },
+        { Location.PURSUIT_RARE_OARFISH, "Recording Rarities - Oarfish" },
+        { Location.PURSUIT_RARE_GULPER_EEL, "Recording Rarities - Gulper Eel" },
+        { Location.PURSUIT_RARE_GOLIATH_TIGERFISH, "Recording Rarities - Goliath Tigerfish" },
+        { Location.PURSUIT_RARE_COELACANTH, "Recording Rarities - Coelacanth" },
+        { Location.PURSUIT_BITTER_END_DOG_TAGS, "The Bitter End - Dog Tags" },
+        { Location.PURSUIT_BITTER_END, "The Bitter End" },
+        { Location.PURSUIT_FLAMES_OF_THE_DEEP, "Flames of The Deep" },
+        { Location.WORLD_CRAB_SHRINE, "Gale Cliffs - Crab Shrine(P-3)" },
+        { Location.WORLD_DS_SHRINE_1, "Devil's Spine - Shrine 1(P-13)" },
+        { Location.WORLD_DS_SHRINE_2, "Devil's Spine - Shrine 2(P-14)" },
+        { Location.WORLD_GM_SHORE_CACHE_1, "The Marrows - Shore Cache 1(J-8)" },
+        { Location.WORLD_GM_SHORE_CACHE_2, "The Marrows - Shore Cache 2(L-10)" },
+        { Location.WORLD_OLD_WRECK, "Open Ocean - Old Wreck(L-5)" },
+        { Location.WORLD_GC_SHORE_CACHE_1, "Open Ocean - Shore Cache 1(M-6)" },
+        { Location.WORLD_GC_SHORE_CACHE_2, "Gale Cliffs - Shore Cache 1(P-3)" },
+        { Location.WORLD_GC_SHORE_CACHE_3, "Open Ocean - Shore Cache 2(P-6)" },
+        { Location.WORLD_SB_SHORE_CACHE_1, "Stellar Basin - Shore Cache 1(G-4)" },
+        { Location.WORLD_SB_SHORE_CACHE_2, "Stellar Basin - Shore Cache 2(I-4)" },
+        { Location.WORLD_SB_SHORE_CACHE_3, "Stellar Basin - Shore Cache 3(D-3)" },
+        { Location.WORLD_SB_SHORE_CACHE_4, "Stellar Basin - Shore Cache 4(C-3)" },
+        { Location.WORLD_SB_SHORE_CACHE_5, "Open Ocean - Shore Cache 3(I-5)" },
+        { Location.WORLD_TS_SHORE_CACHE_1, "Twisted Strand - Shore Cache 1(E-14)" },
+        { Location.WORLD_TS_SHORE_CACHE_2, "Twisted Strand - Shore Cache 2(D-12)" },
+        { Location.WORLD_OLD_MAYOR_CAMP_GC, "Gale Cliffs - Old Mayor's Camp(O-2)" },
+        { Location.WORLD_OLD_MAYOR_CAMP_SB, "Open Ocean - Old Mayor's Camp(J-3)" },
+        { Location.WORLD_OLD_LABORATORY, "Stellar Basin - Old Laboratory(G-4)" },
+        { Location.PURSUIT_STONE_TABLETS, "Stone Tablets" }
     };
 
     /// <summary>
@@ -1048,9 +1112,83 @@ public static class LocationHelper
         { "RelicSub5_Return", Location.COLLECTOR_ANTIQUE_POCKET_WATCH }
     };
 
+    /// <summary>
+    ///     Reward and loot grids (pursuit rewards, shrines, shore caches) that become checks in AP saves, by grid name.
+    ///     Recording Rarities shows one grid for every rare fish, so its checks come from the hand-in steps instead.
+    /// </summary>
+    private static readonly IReadOnlyDictionary<string, Location> RewardGridLocations = new Dictionary<string, Location>
+    {
+        { "IntroReward", Location.PURSUIT_A_FRESH_START },
+        { "CastawayReward", Location.PURSUIT_CASTAWAY },
+        { "CaughtToOrderReward", Location.PURSUIT_CAUGHT_TO_ORDER },
+        { "DogReward", Location.PURSUIT_LOST_DOG },
+        { "GrievingFatherReward", Location.PURSUIT_LOST_AT_SEA },
+        { "DogTagIntroReward", Location.PURSUIT_BITTER_END_DOG_TAGS },
+        { "SoldierRelic", Location.PURSUIT_BITTER_END },
+        { "DSPyre", Location.PURSUIT_FLAMES_OF_THE_DEEP },
+        { "ShrineCodReward", Location.ROD19 },
+        { "ShrineSharkReward", Location.ROD8 },
+        { "ShrineAberrationReward", Location.ROD16 },
+        { "DSShrine3Reward", Location.ROD17 },
+        { "ShrineCrabReward", Location.WORLD_CRAB_SHRINE },
+        { "DSShrine1Reward", Location.WORLD_DS_SHRINE_1 },
+        { "DSShrine2Reward", Location.WORLD_DS_SHRINE_2 },
+        { "GMShoreCache1", Location.WORLD_GM_SHORE_CACHE_1 },
+        { "GMShoreCache2", Location.WORLD_GM_SHORE_CACHE_2 },
+        { "GMShoreCache3", Location.WORLD_OLD_WRECK },
+        { "GCShoreCache1", Location.WORLD_GC_SHORE_CACHE_1 },
+        { "GCShoreCache2", Location.WORLD_GC_SHORE_CACHE_2 },
+        { "GCShoreCache3", Location.WORLD_GC_SHORE_CACHE_3 },
+        { "SBShoreCache1", Location.WORLD_SB_SHORE_CACHE_1 },
+        { "SBShoreCache2", Location.WORLD_SB_SHORE_CACHE_2 },
+        { "SBShoreCache3", Location.WORLD_SB_SHORE_CACHE_3 },
+        { "SBShoreCache4", Location.WORLD_SB_SHORE_CACHE_4 },
+        { "SBShoreCache5", Location.WORLD_SB_SHORE_CACHE_5 },
+        { "TSShoreCache1", Location.WORLD_TS_SHORE_CACHE_1 },
+        { "TSShoreCache2", Location.WORLD_TS_SHORE_CACHE_2 },
+        { "OMD_GC_1", Location.WORLD_OLD_MAYOR_CAMP_GC },
+        { "OMD_SB_1", Location.WORLD_OLD_MAYOR_CAMP_SB },
+        { "LaboratorySearch", Location.WORLD_OLD_LABORATORY },
+        { "LighthouseRuinReward", Location.PURSUIT_STONE_TABLETS }
+    };
+
+    // Quest items in those grids that a pursuit still needs, so they're handed over when the grid is skipped.
+    public static readonly IReadOnlyDictionary<string, string[]> RewardGridQuestItems = new Dictionary<string, string[]>
+    {
+        { "DSShrine3Reward", ["quest-flame"] },
+        { "DSShrine1Reward", ["quest-flame"] },
+        { "DSShrine2Reward", ["quest-flame"] },
+        { "SBShoreCache1", ["quest-map-1"] },
+        { "SBShoreCache2", ["quest-map-2"] },
+        { "SBShoreCache3", ["quest-map-3"] },
+        { "SBShoreCache5", ["quest-camera-case"] },
+        { "TSShoreCache1", ["quest-dog-tag"] },
+        { "TSShoreCache2", ["quest-dog-tag"] }
+    };
+
+    // Freebies outside any pursuit that would hand out AP items, skipped in AP saves without a check.
+    public static readonly IReadOnlyCollection<string> SkippedGrids = new HashSet<string> { "FreeBait", "FreeExplosives" };
+
+    private static readonly IReadOnlyDictionary<string, Location> RareFishReturnLocations = new Dictionary<string, Location>
+    {
+        { "RareFishSub1_Return", Location.PURSUIT_RARE_OARFISH },
+        { "RareFishSub2_Return", Location.PURSUIT_RARE_GULPER_EEL },
+        { "RareFishSub3_Return", Location.PURSUIT_RARE_GOLIATH_TIGERFISH },
+        { "RareFishSub4_Return", Location.PURSUIT_RARE_COELACANTH }
+    };
+
+    public const string RareFishRewardGrid = "RareFishReward";
+
+    public static bool TryGetRewardGridLocation(string gridName, out Location location)
+    {
+        return RewardGridLocations.TryGetValue(gridName, out location);
+    }
+
     public static bool TryGetQuestStepLocation(string questStepId, out Location location)
     {
-        return QuestStepLocations.TryGetValue(questStepId, out location) || TryParseLocation(questStepId, out location);
+        return QuestStepLocations.TryGetValue(questStepId, out location) ||
+               RareFishReturnLocations.TryGetValue(questStepId, out location) ||
+               TryParseLocation(questStepId, out location);
     }
 
     public static readonly IReadOnlyList<Location> RelicLocations = new List<Location>

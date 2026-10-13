@@ -93,6 +93,7 @@ public static class ArchipelagoClient
             addFishingLicenses: SlotDataParser.GetBool(slotData, "add_fishing_licenses"),
             addPassageItems: SlotDataParser.GetBool(slotData, "add_passage_items"),
             progressiveAberrationChanceItems: SlotDataParser.GetInt(slotData, "progressive_aberration_chance_items"),
+            guaranteedAberrationsItem: SlotDataParser.GetBool(slotData, "guaranteed_aberrations_item"),
             logicalNets: SlotDataParser.GetBool(slotData, "logical_nets"),
             requireBoatPerformance: SlotDataParser.GetBool(slotData, "require_boat_performance"));
 
@@ -100,6 +101,7 @@ public static class ArchipelagoClient
                            $"include_pale_reach_dlc={SlotData.IncludePaleReachDLC}, add_fishing_licenses={SlotData.AddFishingLicenses}, " +
                            $"add_passage_items={SlotData.AddPassageItems}, " +
                            $"progressive_aberration_chance_items={SlotData.ProgressiveAberrationChanceItems}, " +
+                           $"guaranteed_aberrations_item={SlotData.GuaranteedAberrationsItem}, " +
                            $"logical_nets={SlotData.LogicalNets}, require_boat_performance={SlotData.RequireBoatPerformance}");
 
         TrackerService.TrackHints(session);
