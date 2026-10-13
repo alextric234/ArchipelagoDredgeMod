@@ -145,10 +145,6 @@ public partial class TrackerLogic
             case "catch_type":
                 lines.Add(new LogicRequirement(DescribeTackle(location), CanCatch(location)));
                 break;
-            case "research":
-                lines.Add(new LogicRequirement($"{requirement.Cost} Research Parts (have {Count("Research Part")})",
-                    Has("Research Part", requirement.Cost)));
-                break;
             case "iron_rig_phase":
                 lines.Add(new LogicRequirement($"Iron Rig phase {requirement.Phase}",
                     MeetsIronRigPhase(requirement.Phase)));

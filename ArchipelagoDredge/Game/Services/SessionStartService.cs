@@ -42,6 +42,10 @@ public static class SessionStartService
             RemoveCheckedRelicPois();
             LocationHelper.ReconcileArchipelagoChecks();
             QuestManagerPatches.PreparePursuits();
+            if (ArchipelagoClient.SlotData.IncludeIronRigDLC)
+            {
+                IronRigConstructionManager.MakeBuildingsFree();
+            }
             LocationHelper.ResendRecordedChecks();
             ArchipelagoItemManager.RestockShops();
         }

@@ -125,6 +125,7 @@ public class ArchipelagoDredge : MonoBehaviour
     {
         PassageManager.Reset();
         TrapManager.Reset();
+        IronRigConstructionManager.Restore();
 
         if (ArchipelagoStateManager.AwaitingDeathScreenChoice)
         {

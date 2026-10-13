@@ -177,7 +177,8 @@ public partial class TrackerLogic
             case "catch_type":
                 return CanCatch(location);
             case "research":
-                return Has("Research Part", requirement.Cost);
+                // Research costs nothing in AP saves; the tree order comes from the unlock events.
+                return true;
             case "iron_rig_phase":
                 return MeetsIronRigPhase(requirement.Phase);
             case "locations":
