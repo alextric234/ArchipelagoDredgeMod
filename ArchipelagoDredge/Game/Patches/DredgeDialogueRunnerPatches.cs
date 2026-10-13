@@ -26,7 +26,7 @@ public class DredgeDialogueRunnerPatches
     {
         try
         {
-            if (!ApSave.IsActive)
+            if (!ApSave.IsActive || !LocationHelper.IsGridInSeed(param))
             {
                 return true;
             }
@@ -37,7 +37,11 @@ public class DredgeDialogueRunnerPatches
                 LocationHelper.ReportLocationCheck(location);
                 GiveQuestItems(param);
             }
-            else if (param != LocationHelper.RareFishRewardGrid && !LocationHelper.SkippedGrids.Contains(param))
+            else if (LocationHelper.SkippedGrids.Contains(param))
+            {
+                GiveQuestItems(param);
+            }
+            else if (param != LocationHelper.RareFishRewardGrid)
             {
                 return true;
             }
@@ -61,8 +65,20 @@ public class DredgeDialogueRunnerPatches
     {
         try
         {
-            if (!ApSave.IsActive || !LocationHelper.DialogueRewardLocations.TryGetValue(id, out var location) ||
-                !IsInSeed(location))
+            if (!ApSave.IsActive)
+            {
+                return true;
+            }
+
+            // The Pale Reach logs are checks, but the log is still handed over, like a bottle's message.
+            if (id.StartsWith("message-") && LocationHelper.TryParseLocation(id, out var log))
+            {
+                LocationHelper.ReportLocationCheck(log);
+                return true;
+            }
+
+            if (!LocationHelper.DialogueRewardLocations.TryGetValue(id, out var location) ||
+                !LocationHelper.IsInSeed(location))
             {
                 return true;
             }
@@ -113,11 +129,6 @@ public class DredgeDialogueRunnerPatches
         return false;
     }
 
-    // Without the Pale Reach in the seed its book isn't an AP item, so the game should still hand it out.
-    private static bool IsInSeed(Location location)
-    {
-        return location != Location.PURSUIT_FIGURE_IN_WHITE || ArchipelagoClient.SlotData.IncludePaleReachDLC;
-    }
 
     [HarmonyPostfix]
     [HarmonyPatch(nameof(DredgeDialogueRunner.DoFinalePreparations))]

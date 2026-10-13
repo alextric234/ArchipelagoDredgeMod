@@ -89,6 +89,24 @@ public static class TrackerStamps
         Dock("The Bitter End", "Pilot Camp");
         Dock("The Bitter End - Dog Tags", "Pilot Camp");
         Dock("Flames of The Deep", "Temple");
+        Conversation("The Pale Reach - Shrine(K--4)", "DLC1_Shrine");
+        Dock("Under The Ice - Central Camp", "TPR Middle");
+        Dock("Under The Ice - Eastern Terminus", "TPR East");
+        Dock("Under The Ice - Western Bearing", "TPR West");
+        Dock("Under The Ice - Southern Locus", "TPR South");
+        Dock("Getting Power - Rig Built", "The Iron Rig Dock");
+        Dock("Getting Power - Science Lab Built", "The Iron Rig Dock");
+        Dock("Getting Power - Generator Fuelled", "The Iron Rig Dock");
+        Dock("Drilling in the Deep - Factory", "The Iron Rig Dock");
+        Dock("The Pale Reach - Central Camp Log 1", "TPR Middle");
+        Dock("The Pale Reach - Central Camp Log 2", "TPR Middle");
+        Dock("The Pale Reach - Central Camp Log 3", "TPR Middle");
+        Dock("The Pale Reach - Eastern Terminus Log 1", "TPR East");
+        Dock("The Pale Reach - Eastern Terminus Log 2", "TPR East");
+        Dock("The Pale Reach - Eastern Terminus Log 3", "TPR East");
+        Dock("The Pale Reach - Western Bearing Log 1", "TPR West");
+        Dock("The Pale Reach - Western Bearing Log 2", "TPR West");
+        Dock("The Pale Reach - Western Bearing Log 3", "TPR West");
         return targets;
     }
 

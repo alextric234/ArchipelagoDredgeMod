@@ -164,6 +164,10 @@ public partial class TrackerLogic
             case "aberrations":
                 ExplainAberrations(lines);
                 break;
+            case "item_count":
+                lines.Add(new LogicRequirement($"{requirement.Cost} {requirement.Item} (have {Count(requirement.Item)})",
+                    Has(requirement.Item, requirement.Cost)));
+                break;
         }
     }
 

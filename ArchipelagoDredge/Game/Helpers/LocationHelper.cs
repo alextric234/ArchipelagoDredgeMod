@@ -540,7 +540,26 @@ public enum Location
     WORLD_OLD_MAYOR_CAMP_GC,
     WORLD_OLD_MAYOR_CAMP_SB,
     WORLD_OLD_LABORATORY,
-    PURSUIT_STONE_TABLETS
+    PURSUIT_STONE_TABLETS,
+    MESSAGE_TPR_1,
+    MESSAGE_TPR_2,
+    MESSAGE_TPR_3,
+    MESSAGE_TPR_4,
+    MESSAGE_TPR_5,
+    MESSAGE_TPR_6,
+    MESSAGE_TPR_7,
+    MESSAGE_TPR_8,
+    MESSAGE_TPR_9,
+    PURSUIT_UNDER_THE_ICE_CENTRAL,
+    PURSUIT_UNDER_THE_ICE_EAST,
+    PURSUIT_UNDER_THE_ICE_WEST,
+    PURSUIT_UNDER_THE_ICE_SOUTH,
+    WORLD_PALE_REACH_SHRINE,
+    PURSUIT_ICE_SHAPER,
+    PURSUIT_RIG_BUILT,
+    PURSUIT_SCIENCE_LAB_BUILT,
+    PURSUIT_GENERATOR_FUELLED,
+    PURSUIT_FACTORY
 }
 
 public static class LocationHelper
@@ -1074,7 +1093,26 @@ public static class LocationHelper
         { Location.WORLD_OLD_MAYOR_CAMP_GC, "Gale Cliffs - Old Mayor's Camp(O-2)" },
         { Location.WORLD_OLD_MAYOR_CAMP_SB, "Open Ocean - Old Mayor's Camp(J-3)" },
         { Location.WORLD_OLD_LABORATORY, "Stellar Basin - Old Laboratory(G-4)" },
-        { Location.PURSUIT_STONE_TABLETS, "Stone Tablets" }
+        { Location.PURSUIT_STONE_TABLETS, "Stone Tablets" },
+        { Location.MESSAGE_TPR_1, "The Pale Reach - Central Camp Log 1" },
+        { Location.MESSAGE_TPR_2, "The Pale Reach - Central Camp Log 2" },
+        { Location.MESSAGE_TPR_3, "The Pale Reach - Central Camp Log 3" },
+        { Location.MESSAGE_TPR_4, "The Pale Reach - Eastern Terminus Log 1" },
+        { Location.MESSAGE_TPR_5, "The Pale Reach - Eastern Terminus Log 2" },
+        { Location.MESSAGE_TPR_6, "The Pale Reach - Eastern Terminus Log 3" },
+        { Location.MESSAGE_TPR_7, "The Pale Reach - Western Bearing Log 1" },
+        { Location.MESSAGE_TPR_8, "The Pale Reach - Western Bearing Log 2" },
+        { Location.MESSAGE_TPR_9, "The Pale Reach - Western Bearing Log 3" },
+        { Location.PURSUIT_UNDER_THE_ICE_CENTRAL, "Under The Ice - Central Camp" },
+        { Location.PURSUIT_UNDER_THE_ICE_EAST, "Under The Ice - Eastern Terminus" },
+        { Location.PURSUIT_UNDER_THE_ICE_WEST, "Under The Ice - Western Bearing" },
+        { Location.PURSUIT_UNDER_THE_ICE_SOUTH, "Under The Ice - Southern Locus" },
+        { Location.WORLD_PALE_REACH_SHRINE, "The Pale Reach - Shrine(K--4)" },
+        { Location.PURSUIT_ICE_SHAPER, "Ice Shaper" },
+        { Location.PURSUIT_RIG_BUILT, "Getting Power - Rig Built" },
+        { Location.PURSUIT_SCIENCE_LAB_BUILT, "Getting Power - Science Lab Built" },
+        { Location.PURSUIT_GENERATOR_FUELLED, "Getting Power - Generator Fuelled" },
+        { Location.PURSUIT_FACTORY, "Drilling in the Deep - Factory" }
     };
 
     /// <summary>
@@ -1105,6 +1143,10 @@ public static class LocationHelper
     {
         { "APlaceToRest_Escort", Location.PURSUIT_A_PLACE_TO_REST },
         { "StrangeFish_CollectorAgree", Location.PURSUIT_GROTESQUE_FISH },
+        { "UnderTheIceSub1_Free", Location.PURSUIT_UNDER_THE_ICE_CENTRAL },
+        { "UnderTheIceSub2_Free", Location.PURSUIT_UNDER_THE_ICE_EAST },
+        { "UnderTheIceSub3_Free", Location.PURSUIT_UNDER_THE_ICE_WEST },
+        { "UnderTheIceSub4_Free", Location.PURSUIT_UNDER_THE_ICE_SOUTH },
         { "RelicSub1_Return", Location.COLLECTOR_ORNATE_KEY },
         { "RelicSub2_Return", Location.COLLECTOR_RUSTED_MUSIC_BOX },
         { "RelicSub3_Return", Location.COLLECTOR_JEWEL_ENCRUSTED_BAND },
@@ -1149,7 +1191,13 @@ public static class LocationHelper
         { "OMD_GC_1", Location.WORLD_OLD_MAYOR_CAMP_GC },
         { "OMD_SB_1", Location.WORLD_OLD_MAYOR_CAMP_SB },
         { "LaboratorySearch", Location.WORLD_OLD_LABORATORY },
-        { "LighthouseRuinReward", Location.PURSUIT_STONE_TABLETS }
+        { "LighthouseRuinReward", Location.PURSUIT_STONE_TABLETS },
+        { "DLC1_ShrineReward", Location.WORLD_PALE_REACH_SHRINE },
+        { "DLC1_IceCutterReward", Location.PURSUIT_ICE_SHAPER },
+        { "DLC2_GeneratorReward", Location.PURSUIT_RIG_BUILT },
+        { "DLC2_ScienceLabReward", Location.PURSUIT_SCIENCE_LAB_BUILT },
+        { "DLC2_GeneratorReward2", Location.PURSUIT_GENERATOR_FUELLED },
+        { "DLC2_FactoryReward", Location.PURSUIT_FACTORY }
     };
 
     // Quest items in those grids that a pursuit still needs, so they're handed over when the grid is skipped.
@@ -1163,11 +1211,44 @@ public static class LocationHelper
         { "SBShoreCache3", ["quest-map-3"] },
         { "SBShoreCache5", ["quest-camera-case"] },
         { "TSShoreCache1", ["quest-dog-tag"] },
-        { "TSShoreCache2", ["quest-dog-tag"] }
+        { "TSShoreCache2", ["quest-dog-tag"] },
+        { "DLC1_IceShardShatterReward", ["quest-ice-stone"] }
     };
 
     // Freebies outside any pursuit that would hand out AP items, skipped in AP saves without a check.
-    public static readonly IReadOnlyCollection<string> SkippedGrids = new HashSet<string> { "FreeBait", "FreeExplosives" };
+    // The ice shard grid still hands over its Frozen Heart; its checks come from the Under The Ice steps.
+    public static readonly IReadOnlyCollection<string> SkippedGrids = new HashSet<string>
+    {
+        "FreeBait", "FreeExplosives", "DLC1_IceShardShatterReward"
+    };
+
+    /// <summary>
+    ///     False for DLC content the seed leaves out, so players who own the DLC but left it out of their seed keep
+    ///     getting its vanilla rewards.
+    /// </summary>
+    public static bool IsDlcContentInSeed(string expansion)
+    {
+        var slotData = ArchipelagoClient.SlotData;
+        return expansion switch
+        {
+            "PaleReach" => slotData.IncludePaleReachDLC,
+            "IronRig" => slotData.IncludeIronRigDLC,
+            "Both" => slotData.IncludePaleReachDLC && slotData.IncludeIronRigDLC,
+            _ => true
+        };
+    }
+
+    public static bool IsInSeed(Location location)
+    {
+        return !LocationNames.TryGetValue(location, out var name) ||
+               !Tracker.ApWorldData.Locations.TryGetValue(name, out var data) || IsDlcContentInSeed(data.Expansion);
+    }
+
+    public static bool IsGridInSeed(string gridName)
+    {
+        return gridName.StartsWith("DLC1_") ? IsDlcContentInSeed("PaleReach")
+            : !gridName.StartsWith("DLC2_") || IsDlcContentInSeed("IronRig");
+    }
 
     private static readonly IReadOnlyDictionary<string, Location> RareFishReturnLocations = new Dictionary<string, Location>
     {

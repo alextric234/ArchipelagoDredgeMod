@@ -26,6 +26,7 @@ public class ApRequirement
     public int Cost;
     public string CatchType;
     public int Phase;
+    public string Item;
 }
 
 public class ApLocationData
@@ -91,9 +92,10 @@ public static class ApWorldData
                 Type = (string) r["type"],
                 AnyOf = Strings(r["any_of"]),
                 AllOf = Strings(r["all_of"]),
-                Cost = (int?) r["cost"] ?? 0,
+                Cost = (int?) r["cost"] ?? (int?) r["count"] ?? 0,
                 CatchType = (string) r["type"] == "catch_type" ? (string) r["value"] : null,
-                Phase = (string) r["type"] == "iron_rig_phase" ? (int) r["value"] : 0
+                Phase = (string) r["type"] == "iron_rig_phase" ? (int) r["value"] : 0,
+                Item = (string) r["item"]
             }).ToArray(),
             CanCatchRod = (bool?) p.Value["can_catch_rod"] ?? true,
             CanCatchNet = (bool?) p.Value["can_catch_net"] ?? false,

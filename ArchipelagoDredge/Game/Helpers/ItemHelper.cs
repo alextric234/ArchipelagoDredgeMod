@@ -969,7 +969,8 @@ public static class ItemNames
         Item.QUEST_CREST,
         Item.QUEST_TABLET_1,
         Item.QUEST_TABLET_2,
-        Item.QUEST_TABLET_3
+        Item.QUEST_TABLET_3,
+        Item.QUEST_ICE_AXE
     ];
 
     // The Collector's abilities, by the id the game unlocks them with.

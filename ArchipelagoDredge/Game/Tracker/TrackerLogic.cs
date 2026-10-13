@@ -188,6 +188,8 @@ public partial class TrackerLogic
                 return requirement.AnyOf.Any(CanReachRegion);
             case "aberrations":
                 return CanGetAberrations();
+            case "item_count":
+                return Has(requirement.Item, requirement.Cost);
             default:
                 return false;
         }
