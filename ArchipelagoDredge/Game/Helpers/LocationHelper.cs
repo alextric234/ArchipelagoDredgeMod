@@ -839,7 +839,6 @@ public static class LocationHelper
         { Location.ROD21, "Custom Rod" },
         { Location.ROD3, "Hydraulic Rod" },
         { Location.ROD4, "Flexible Fishing Pole" },
-        { Location.ROD5, "Sampling Device" },
         { Location.ROD6, "Bottomless Lines" },
         { Location.ROD8, "Stellar Basin - Shark Shrine(H-2)" },
         { Location.SILVER_PLATE_3, "Open Ocean - Silver Plate 1(M-10)" },
@@ -1212,7 +1211,7 @@ public static class LocationHelper
     // The ice shard grid still hands over its Frozen Heart; its checks come from the Under The Ice steps.
     public static readonly IReadOnlyCollection<string> SkippedGrids = new HashSet<string>
     {
-        "FreeBait", "FreeExplosives", "DLC1_IceShardShatterReward"
+        "FreeBait", "FreeExplosives", "DLC1_IceShardShatterReward", "ResearchSamplingDevicePickup"
     };
 
     /// <summary>

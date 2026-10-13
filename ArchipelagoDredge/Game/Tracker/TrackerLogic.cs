@@ -29,8 +29,6 @@ public partial class TrackerLogic
 
     private static readonly HashSet<string> AtSeaLocationGroups = ["Dredge", "Encyclopedia", "World", "Message", "Pursuit"];
 
-    // locations.py leaves these groups out of every seed.
-    private static readonly HashSet<string> ExcludedLocationGroups = ["Unused Pursuit"];
 
     private static readonly HashSet<string> CatchToolGroups = ["Rod", "Net", "Crab Pot", "Consumable"];
     private static readonly HashSet<string> ExcludedCatchTools = ["Tendon Rod", "Viscera Crane"];
@@ -104,7 +102,7 @@ public partial class TrackerLogic
             "Both" => options.IncludeIronRig && options.IncludePaleReach,
             _ => false
         };
-        return expansionEnabled && !ExcludedLocationGroups.Contains(location.Group);
+        return expansionEnabled;
     }
 
     private int Count(string item) => counts.TryGetValue(item, out var count) ? count : 0;

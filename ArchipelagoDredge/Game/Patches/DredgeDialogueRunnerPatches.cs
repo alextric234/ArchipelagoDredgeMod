@@ -115,6 +115,21 @@ public class DredgeDialogueRunnerPatches
         }
     }
 
+    /// <summary>
+    ///     The Researcher hands over a Sampling Device straight after taking the prototype components, and that's an
+    ///     AP item. In AP saves the components can't be handed in until the Sampling Device has arrived from the
+    ///     multiworld, so Research Assistant waits for it; the handover grid is then skipped (see SkippedGrids).
+    /// </summary>
+    [HarmonyPostfix]
+    [HarmonyPatch(nameof(DredgeDialogueRunner.GetNumItemInInventoryById))]
+    public static void GetNumItemInInventoryById_Postfix(string id, ref int __result)
+    {
+        if (id == "quest-components" && ApSave.IsActive && !ApSave.ReceivedItemNames.Contains("Sampling Device"))
+        {
+            __result = 0;
+        }
+    }
+
     // The Collector's abilities are AP items in AP saves.
     [HarmonyPrefix]
     [HarmonyPatch(nameof(DredgeDialogueRunner.UnlockAbility))]
