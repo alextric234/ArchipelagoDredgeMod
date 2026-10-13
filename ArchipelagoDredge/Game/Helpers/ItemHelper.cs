@@ -1078,97 +1078,33 @@ public static class ItemNames
         Item.QUEST_ICEBREAKER_3
     ];
 
-    public static readonly IReadOnlyList<Item> PaleReachItems =
-    [
-        Item.BOOK_ABERRATION_1,
-        Item.COLOSSAL_SQUID,
-        Item.COLOSSAL_SQUID_AB_1,
-        Item.GOBLIN_SHARK,
-        Item.GOBLIN_SHARK_AB_1,
-        Item.ICEFISH,
-        Item.ICEFISH_AB_1,
-        Item.ICEFISH_AB_2,
-        Item.ICEFISH_AB_3,
-        Item.LIZARDFISH,
-        Item.LIZARDFISH_AB_1,
-        Item.NET7,
-        Item.NET8,
-        Item.QUEST_ICEBREAKER_1,
-        Item.QUEST_ICEBREAKER_2,
-        Item.QUEST_ICEBREAKER_3,
-        Item.QUEST_ICE_SHAPER,
-        Item.ROD22,
-        Item.ROD23,
-        Item.SLEEPER_SHARK,
-        Item.SLEEPER_SHARK_AB_1,
-        Item.STARGAZER,
-        Item.STARGAZER_AB_1,
-        Item.TOOTHFISH,
-        Item.TOOTHFISH_AB_1,
-        Item.WOLFFISH,
-        Item.WOLFFISH_AB_1
-    ];
+    // DLC items need their DLC owned to be received. Expansions come from the apworld data the mod embeds, so they
+    // can't drift from generation.
+    public static readonly IReadOnlyDictionary<Item, Entitlement> RequiredEntitlements = BuildRequiredEntitlements();
 
-    public static readonly IReadOnlyList<Item> IronRigItems =
-    [
-        Item.ABYSSAL_GAR,
-        Item.ABYSSAL_GAR_AB_1,
-        Item.ARAPAIMA,
-        Item.ARAPAIMA_AB_1,
-        Item.BAIT_AB,
-        Item.BAIT_CRAB,
-        Item.BAIT_EXOTIC,
-        Item.BOREASPIS,
-        Item.BOREASPIS_AB_1,
-        Item.CRATE,
-        Item.DUNKLEOSTEUS,
-        Item.DUNKLEOSTEUS_AB_1,
-        Item.EAGLE_SHARK,
-        Item.EAGLE_SHARK_AB_1,
-        Item.GIANT_DRAGONFISH,
-        Item.GIANT_DRAGONFISH_AB_1,
-        Item.KERYGMACHELA,
-        Item.KERYGMACHELA_AB_1,
-        Item.LANCETFISH,
-        Item.LANCETFISH_AB_1,
-        Item.MAHI_MAHI,
-        Item.MAHI_MAHI_AB_1,
-        Item.NAUTILUS,
-        Item.NAUTILUS_AB_1,
-        Item.OPABINIA,
-        Item.OPABINIA_AB_1,
-        Item.OSTEOSTRACAN,
-        Item.OSTEOSTRACAN_AB_1,
-        Item.PADDLEFISH,
-        Item.PADDLEFISH_AB_1,
-        Item.SAWFISH,
-        Item.SAWFISH_AB_1,
-        Item.SOLLASINA,
-        Item.SOLLASINA_AB_1,
-        Item.SWORDFISH,
-        Item.SWORDFISH_AB_1,
-        Item.TIR_NET1,
-        Item.TIR_POT1,
-        Item.TIR_ROD1,
-        Item.TIR_ROD2,
-        Item.TIR_ROD3,
-        Item.TIR_ROD4,
-        Item.TIR_ROD5,
-        Item.TRIPOD_SPIDERFISH,
-        Item.TRIPOD_SPIDERFISH_AB_1,
-        Item.TULLIMONSTRUM,
-        Item.TULLIMONSTRUM_AB_1,
-        Item.VETULICOLIA,
-        Item.VETULICOLIA_AB_1,
-        Item.XIPHACTINUS,
-        Item.XIPHACTINUS_AB_1
-    ];
+    private static Dictionary<Item, Entitlement> BuildRequiredEntitlements()
+    {
+        var entitlements = new Dictionary<Item, Entitlement> { [Item.ENGINE10] = Entitlement.DELUXE };
+        foreach (var pair in Names)
+        {
+            if (!Tracker.ApWorldData.Items.TryGetValue(pair.Value, out var data))
+            {
+                continue;
+            }
 
-    public static readonly IReadOnlyDictionary<Item, Entitlement> RequiredEntitlements =
-        PaleReachItems.Select(item => new KeyValuePair<Item, Entitlement>(item, EntitlementExtra.PALE_REACH))
-            .Concat(IronRigItems.Select(item => new KeyValuePair<Item, Entitlement>(item, EntitlementExtra.IRON_RIG)))
-            .Append(new KeyValuePair<Item, Entitlement>(Item.ENGINE10, Entitlement.DELUXE))
-            .ToDictionary(pair => pair.Key, pair => pair.Value);
+            switch (data.Expansion)
+            {
+                case "PaleReach":
+                    entitlements[pair.Key] = EntitlementExtra.PALE_REACH;
+                    break;
+                case "IronRig":
+                    entitlements[pair.Key] = EntitlementExtra.IRON_RIG;
+                    break;
+            }
+        }
+
+        return entitlements;
+    }
 
     public static readonly IReadOnlyDictionary<string, Item> ItemsByName =
         Names.ToDictionary(name => name.Value, name => name.Key);

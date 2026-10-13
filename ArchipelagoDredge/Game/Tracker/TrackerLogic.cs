@@ -30,7 +30,7 @@ public partial class TrackerLogic
     private static readonly HashSet<string> AtSeaLocationGroups = ["Dredge", "Encyclopedia", "World", "Message", "Pursuit"];
 
     // locations.py leaves these groups out of every seed.
-    private static readonly HashSet<string> ExcludedLocationGroups = ["Shop", "Unused Pursuit", "Unused World", "Relic"];
+    private static readonly HashSet<string> ExcludedLocationGroups = ["Unused Pursuit"];
 
     private static readonly HashSet<string> CatchToolGroups = ["Rod", "Net", "Crab Pot", "Consumable"];
     private static readonly HashSet<string> ExcludedCatchTools = ["Tendon Rod", "Viscera Crane"];

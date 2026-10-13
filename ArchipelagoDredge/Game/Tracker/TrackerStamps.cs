@@ -65,6 +65,7 @@ public static class TrackerStamps
         Dock("Gale Cliffs - Old Mayor's Camp(O-2)", "Old Mayor Dock GC");
         Dock("Open Ocean - Old Mayor's Camp(J-3)", "Old Mayor Dock SB");
         Dock("Stellar Basin - Old Laboratory(G-4)", "Research Pontoon");
+        Dock("Research Assistant", "Old Fort");
         Dock("Stone Tablets", "Ancient Lighthouse Ruin");
         foreach (var location in new[] { "Fishmonger's Gift", "Shipwright's Gift", "A Place to Rest", "A Fresh Start", "Caught to Order" })
         {
