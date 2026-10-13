@@ -19,7 +19,9 @@ public class DredgeDialogueRunnerPatches
     private static readonly MethodInfo LastQuestGridResultSetter =
         AccessTools.PropertySetter(typeof(DredgeDialogueRunner), "LastQuestGridResult");
 
-    // In AP saves a pursuit's reward grid is replaced by its check. 0 is the result dialogue reads as "collected".
+    // In AP saves a pursuit's reward grid is replaced by its check. The quest grid panel reports 1 when a grid is
+    // complete (everything taken) and 0 when the player leaves, and dialogue checks for 1 before moving on.
+    private const int GridCompleteResult = 1;
     [HarmonyPrefix]
     [HarmonyPatch(nameof(DredgeDialogueRunner.ShowQuestGrid))]
     public static bool ShowQuestGrid_Prefix(DredgeDialogueRunner __instance, string param, ref IEnumerator __result)
@@ -46,7 +48,7 @@ public class DredgeDialogueRunnerPatches
                 return true;
             }
 
-            LastQuestGridResultSetter.Invoke(__instance, [0]);
+            LastQuestGridResultSetter.Invoke(__instance, [GridCompleteResult]);
             __result = Array.Empty<object>().GetEnumerator();
             return false;
         }
